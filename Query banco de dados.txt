@@ -1,0 +1,94 @@
+-- Arquivo criado - quinta-feira-setembro-04-2025
+-- Script adaptado para PostgreSQL (versão final com correção de case-sensitivity)
+
+--------------------------------------------------------
+--  DDL for Table TB_CAD_AREA
+--------------------------------------------------------
+CREATE TABLE "TB_CAD_AREA" (
+    "CODIGO" INTEGER,
+    "TAGS" VARCHAR(1000)
+);
+
+--------------------------------------------------------
+--  DDL for Table TB_CAD_FUNCIONARIO
+--------------------------------------------------------
+CREATE TABLE "TB_CAD_FUNCIONARIO" (
+    "CODIGO" INTEGER,
+    "NOME" VARCHAR(120),
+    "TELEFONE" VARCHAR(120),
+    "EMAIL" VARCHAR(120),
+    "CPF" VARCHAR(120),
+    "CODIGO_PERFIL" INTEGER,
+    "CODIGO_AREA" INTEGER
+);
+
+--------------------------------------------------------
+--  DDL for Table TB_CAD_FUNCIONARIO_AVALIACAO
+--------------------------------------------------------
+CREATE TABLE "TB_CAD_FUNCIONARIO_AVALIACAO" (
+    "CODIGO" INTEGER,
+    "AVALIACAO_FUNCIONARIO" VARCHAR(1000),
+    "CODIGO_FUNCIONARIO" INTEGER,
+    "OBSERVACAO" VARCHAR(1000),
+    "CODIGO_FUNCIONARIO_GESTOR" INTEGER
+);
+
+--------------------------------------------------------
+--  DDL for Table TB_CAD_FUNCIONARIO_PERFIL
+--------------------------------------------------------
+CREATE TABLE "TB_CAD_FUNCIONARIO_PERFIL" (
+    "CODIGO" INTEGER,
+    "DESCRICAO" VARCHAR(100),
+    "PERMISSOES" VARCHAR(20)
+);
+
+
+-- INSERINDO DADOS (COM CORREÇÃO NAS COLUNAS)
+INSERT INTO "TB_CAD_FUNCIONARIO" ("CODIGO", "NOME", "TELEFONE", "EMAIL", "CPF", "CODIGO_PERFIL", "CODIGO_AREA") 
+VALUES (1, 'Jose', '12 98815-2219', 'will_dai2012@hotmail.com', '111.111.111-11', 1, null);
+
+INSERT INTO "TB_CAD_FUNCIONARIO_PERFIL" ("CODIGO", "DESCRICAO", "PERMISSOES") 
+VALUES (1, 'teste', 'teste');
+
+
+--------------------------------------------------------
+--  Constraints and Indexes
+--------------------------------------------------------
+
+-- Constraints for Table TB_CAD_AREA
+ALTER TABLE "TB_CAD_AREA" 
+    ADD CONSTRAINT "TB_CAD_AREA_PK" PRIMARY KEY ("CODIGO");
+
+-- Constraints for Table TB_CAD_FUNCIONARIO
+ALTER TABLE "TB_CAD_FUNCIONARIO" 
+    ALTER COLUMN "NOME" SET NOT NULL,
+    ALTER COLUMN "CPF" SET NOT NULL,
+    ADD CONSTRAINT "TB_CAD_FUNCIONARIO_PK" PRIMARY KEY ("CODIGO");
+
+-- Constraints for Table TB_CAD_FUNCIONARIO_AVALIACAO
+ALTER TABLE "TB_CAD_FUNCIONARIO_AVALIACAO" 
+    ADD CONSTRAINT "PK_AVALIACAO" PRIMARY KEY ("CODIGO");
+
+-- Constraints for Table TB_CAD_FUNCIONARIO_PERFIL
+ALTER TABLE "TB_CAD_FUNCIONARIO_PERFIL" 
+    ALTER COLUMN "DESCRICAO" SET NOT NULL,
+    ALTER COLUMN "PERMISSOES" SET NOT NULL,
+    ADD CONSTRAINT "TB_STC_PERFIL_PK" PRIMARY KEY ("CODIGO");
+
+--------------------------------------------------------
+--  Foreign Key Constraints
+--------------------------------------------------------
+
+-- Ref Constraints for Table TB_CAD_FUNCIONARIO
+ALTER TABLE "TB_CAD_FUNCIONARIO" 
+    ADD CONSTRAINT "TB_CAD_FUNCIONARIO_FK1" FOREIGN KEY ("CODIGO_AREA")
+    REFERENCES "TB_CAD_AREA" ("CODIGO");
+
+ALTER TABLE "TB_CAD_FUNCIONARIO" 
+    ADD CONSTRAINT "TB_CAD_FUNCIONARIO_FK2" FOREIGN KEY ("CODIGO_PERFIL")
+    REFERENCES "TB_CAD_FUNCIONARIO_PERFIL" ("CODIGO");
+
+-- Ref Constraints for Table TB_CAD_FUNCIONARIO_AVALIACAO
+ALTER TABLE "TB_CAD_FUNCIONARIO_AVALIACAO" 
+    ADD CONSTRAINT "FK_AVALIACAO_GESTOR" FOREIGN KEY ("CODIGO_FUNCIONARIO_GESTOR")
+    REFERENCES "TB_CAD_FUNCIONARIO" ("CODIGO");
