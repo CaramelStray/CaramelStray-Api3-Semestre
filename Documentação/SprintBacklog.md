@@ -16,7 +16,7 @@
 ### ✅ Definition of Done (DoD) – Altallent
 
 - Código backend desenvolvido em **Spring Boot** versionado no repositório principal.  
-- Banco de dados (**PostgreSQL**) atualizado com **scripts versionados (Liquibase/Flyway)**.  
+- Banco de dados (**PostgreSQL**) atualizado com **scripts versionados (Flyway)**.  
 - Frontend implementado em **Vue.js + Vuetify**, responsivo e integrado ao backend.  
 - Autenticação e autorização implementadas via **JWT**, validadas em **Postman**.  
 - Testes unitários e de integração com cobertura mínima de **80%** nas regras críticas.  
@@ -47,9 +47,8 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S1-1 | Como diretor ou supervisor, quero cadastrar novos usuários                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [1] Cadastro de usuários com hierarquia |
-| S1-2 | Como usuário, quero visualizar os perfis e suas respectivas equipes        | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [2] Listagem e organização de equipes |
-| S1-3 | Como colaborador, quero editar meu perfil profissional                     | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [3] Edição de perfil |
+| S1-1 | Como colaborador, quero editar meu perfil profissional                     | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [1] Edição de perfil |
+| S1-2 | Como diretor ou supervisor, quero adicionar tags aos perfis dos colaboradores | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [2] Implementação de tags |
 
 ---
 
@@ -57,8 +56,8 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S2-1 | Como diretor ou supervisor, quero adicionar tags aos perfis dos colaboradores | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [4] Implementação de tags |
-| S2-2 | Como supervisor ou diretor, quero avaliar os colaboradores                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [5] Avaliações de colaboradores |
+| S2-1 | Como usuário, quero visualizar os perfis e suas respectivas equipes        | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [3] Listagem e organização de equipes |
+| S2-2 | Como supervisor ou diretor, quero avaliar os colaboradores                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [4] Avaliações de colaboradores |
 
 ---
 
@@ -66,9 +65,10 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S3-1 | Como usuário, quero realizar login seguro na plataforma                    | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [6] Login e autenticação via JWT |
-| S3-2 | Como diretor, quero gerar relatórios exportáveis da equipe                 | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [7] Relatórios exportáveis |
-| S3-3 | Como diretor, quero acessar dashboards de competências com filtros dinâmicos | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [8] Dashboard visual |
+| S3-1 | Como diretor ou supervisor, quero cadastrar novos usuários                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [5] Cadastro de usuários com hierarquia |
+| S3-2 | Como usuário, quero realizar login seguro na plataforma                    | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [6] Login e autenticação via JWT |
+| S3-3 | Como diretor, quero gerar relatórios exportáveis da equipe                 | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [7] Relatórios exportáveis |
+| S3-4 | Como diretor, quero acessar dashboards de competências com filtros dinâmicos | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [8] Dashboard visual |
 
 ---
 
