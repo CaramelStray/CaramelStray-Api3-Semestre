@@ -1,7 +1,7 @@
-package br.com.william.caramelstray.controller; // Garante que está no pacote certo
+package br.com.AllTallent.controller; // Garante que está no pacote certo
 
-import br.com.william.caramelstray.model.Funcionario; // Importa do pacote 'model'
-import br.com.william.caramelstray.repository.FuncionarioRepository; // Importa do pacote 'repository'
+import br.com.AllTallent.model.Funcionario; // Importa do pacote 'model'
+import br.com.AllTallent.repository.FuncionarioRepository; // Importa do pacote 'repository'
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

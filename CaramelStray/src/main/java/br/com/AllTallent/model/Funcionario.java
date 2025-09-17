@@ -1,4 +1,4 @@
-package br.com.william.caramelstray.model;
+package br.com.AllTallent.model;
 
 import jakarta.persistence.*;
 

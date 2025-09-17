@@ -1,6 +1,6 @@
-package br.com.william.caramelstray.repository;
+package br.com.AllTallent.repository;
 
-import br.com.william.caramelstray.model.Funcionario;
+import br.com.AllTallent.model.Funcionario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // Usamos JpaRepository para mais funcionalidades, como paginação
