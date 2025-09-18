@@ -8,7 +8,7 @@
         <version>3.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>br.com.william</groupId>
+    <groupId>br.com.AllTallent</groupId>
     <artifactId>CaramelStray</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>CaramelStray</name>

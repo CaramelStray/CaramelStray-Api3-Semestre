@@ -1,19 +1,26 @@
 package br.com.AllTallent.controller; // Garante que está no pacote certo
 
-import br.com.AllTallent.model.Funcionario; // Importa do pacote 'model'
-import br.com.AllTallent.repository.FuncionarioRepository; // Importa do pacote 'repository'
+import java.util.List; // Importa do pacote 'model'
+import java.util.Optional; // Importa do pacote 'repository'
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable; // Adicione este import
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.web.bind.annotation.CrossOrigin; // Adicione este import
+import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.repository.FuncionarioRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/funcionarios")
+@RequestMapping("/api/funcionarios")
 public class FuncionarioController {
 
     private final FuncionarioRepository funcionarioRepository;
