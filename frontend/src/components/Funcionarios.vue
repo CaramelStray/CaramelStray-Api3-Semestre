@@ -70,9 +70,9 @@ const fetchAllData = async () => {
       areasResponse, 
       perfisResponse
     ] = await Promise.all([
-      axios.get(`${API_URL}/funcionarios`),
-      axios.get(`${API_URL}/areas`),
-      axios.get(`${API_URL}/perfis`)
+      axios.get(`${API_URL}/funcionario`),
+      axios.get(`${API_URL}/area`),
+      axios.get(`${API_URL}/perfil`)
     ]);
 
     funcionarios.value = funcionariosResponse.data;
