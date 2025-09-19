@@ -14,7 +14,7 @@ import br.com.AllTallent.model.Perfil;
 import br.com.AllTallent.repository.PerfilRepository;
 
 @RestController
-@RequestMapping("/api/perfis") // Define o endereço base para este controller
+@RequestMapping("/api/perfil") // Define o endereço base para este controller
 public class PerfilController {
 
     private final PerfilRepository perfilRepository;

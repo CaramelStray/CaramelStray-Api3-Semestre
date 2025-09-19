@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/areas") // Define o endereço base para este controller
+@RequestMapping("/api/area") // Define o endereço base para este controller
 public class AreaController {
 
     private final AreaRepository areaRepository;

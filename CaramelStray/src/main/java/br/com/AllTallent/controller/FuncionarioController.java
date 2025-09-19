@@ -20,7 +20,7 @@ import br.com.AllTallent.repository.FuncionarioRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/funcionarios")
+@RequestMapping("/api/funcionario")
 public class FuncionarioController {
 
     private final FuncionarioRepository funcionarioRepository;
