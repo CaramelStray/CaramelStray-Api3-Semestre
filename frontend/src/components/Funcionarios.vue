@@ -138,12 +138,12 @@ onMounted(() => {
     color: #000; /* Pode ser útil para garantir texto preto em fundos cinza */
 }
 .container { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-.form-card, .list-card { background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+.form-card, .list-card { background: #00d447ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
 input, select { display: block; width: 100%; padding: 8px; margin-bottom: 10px; }
-button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
-.delete-btn { background-color: #dc3545; margin-left: 10px; }
+button { padding: 10px 15px; background-color: #00ff6aff; color: white; border: none; cursor: pointer; }
+.delete-btn { background-color: #09ff00ff; margin-left: 10px; }
 ul { list-style: none; padding: 0; }
-li { background: #fff; padding: 10px; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; align-items: flex-start; }
-.details { font-size: 0.9em; color: #666; margin-top: 5px;}
+li { background: #00ce56ff; padding: 10px; border-bottom: 1px solid #ddd; display: flex; flex-direction: column; align-items: flex-start; }
+.details { font-size: 0.9em; color: #009c00ff; margin-top: 5px;}
 li button { align-self: flex-end; margin-top: -30px; }
 </style>

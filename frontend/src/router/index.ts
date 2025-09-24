@@ -1,23 +1,35 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Funcionarios from '../components/Funcionarios.vue';
-import Areas from '../components/Areas.vue';
+import perfil from '../components/Perfil.vue';
+import Inicio from '../components/Inicio.vue';
+import Competencia from '../components/Competencia.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      redirect: '/funcionarios',
+      redirect: '/competencia',
     },
     {
       path: '/funcionarios',
       name: 'Funcionarios',
       component: Funcionarios,
     },
+      {
+      path: '/perfil',
+      name: 'perfil',
+      component: perfil,
+    },
     {
-      path: '/areas',
-      name: 'Areas',
-      component: Areas,
+      path: '/inicio',
+      name: 'Inicio',
+      component: Inicio,
+    },
+    {
+      path: '/competenci',
+      name: 'Competencia',
+      component: Competencia,
     },
   ],
 });
