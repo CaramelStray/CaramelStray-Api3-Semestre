@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Funcionarios from '../components/Funcionarios.vue';
-import perfil from '../components/perfil.vue';
+import perfil from '../components/Perfil.vue';
 import Inicio from '../components/Inicio.vue';
-//import Competencia from '../components/Competencia.vue';
+import Competencia from '../components/Competencia.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      redirect: '/perfil',
+      redirect: '/competencia',
     },
     {
       path: '/funcionarios',
@@ -26,11 +26,11 @@ const router = createRouter({
       name: 'Inicio',
       component: Inicio,
     },
-    /*{
-      path: '/competencia',
+    {
+      path: '/competenci',
       name: 'Competencia',
       component: Competencia,
-    },*/
+    },
   ],
 });
 

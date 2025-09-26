@@ -1,70 +1,75 @@
-package br.com.AllTallent.controller;
+package br.com.AllTallent.controller; // Garante que está no pacote certo
 
-import java.net.URI;
-import java.util.List; // <- Importante
+import java.util.List; // Importa do pacote 'model'
+import java.util.Optional; // Importa do pacote 'repository'
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PathVariable; // Adicione este import
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.com.AllTallent.dto.FuncionarioPerfilDTO;
-import br.com.AllTallent.dto.FuncionarioRequestDTO;
-import br.com.AllTallent.dto.FuncionarioResponseDTO;
-import br.com.AllTallent.service.FuncionarioService;
+import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.repository.FuncionarioRepository;
 
+@CrossOrigin
 @RestController
-@RequestMapping("/api/funcionarios")
+@RequestMapping("/api/funcionario")
 public class FuncionarioController {
 
-    private final FuncionarioService funcionarioService;
+    private final FuncionarioRepository funcionarioRepository;
 
-    public FuncionarioController(FuncionarioService funcionarioService) {
-        this.funcionarioService = funcionarioService;
+    public FuncionarioController(FuncionarioRepository funcionarioRepository) {
+        this.funcionarioRepository = funcionarioRepository;
     }
 
-    // ✅ CORRETO: Retorna uma lista de DTOs
     @GetMapping
-    public ResponseEntity<List<FuncionarioResponseDTO>> listarTodos() {
-        return ResponseEntity.ok(funcionarioService.listarTodos());
+    public List<Funcionario> getAllFuncionarios() {
+        return funcionarioRepository.findAll();
     }
 
-    // ✅ CORRETO: Retorna um DTO
     @GetMapping("/{id}")
-    public ResponseEntity<FuncionarioResponseDTO> buscarPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(funcionarioService.buscarPorId(id));
+    public ResponseEntity<Funcionario> getFuncionarioById(@PathVariable Integer id) {
+        Optional<Funcionario> funcionario = funcionarioRepository.findById(id);
+        return funcionario.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // ✅ CORRETO: Recebe um DTO de requisição e retorna um DTO de resposta
     @PostMapping
-    public ResponseEntity<FuncionarioResponseDTO> criar(@RequestBody FuncionarioRequestDTO dto) {
-        FuncionarioResponseDTO novoFuncionario = funcionarioService.criar(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(novoFuncionario.codigo()).toUri();
-        return ResponseEntity.created(uri).body(novoFuncionario);
+    public ResponseEntity<Funcionario> createFuncionario(@RequestBody Funcionario funcionario) {
+        Funcionario novoFuncionario = funcionarioRepository.save(funcionario);
+        return new ResponseEntity<>(novoFuncionario, HttpStatus.CREATED);
     }
 
-    // ✅ CORRETO: Recebe um DTO de requisição e retorna um DTO de resposta
     @PutMapping("/{id}")
-    public ResponseEntity<FuncionarioResponseDTO> atualizar(@PathVariable Integer id, @RequestBody FuncionarioRequestDTO dto) {
-        FuncionarioResponseDTO funcionarioAtualizado = funcionarioService.atualizar(id, dto);
-        return ResponseEntity.ok(funcionarioAtualizado);
+    public ResponseEntity<Funcionario> updateFuncionario(@PathVariable Integer id, @RequestBody Funcionario funcionarioDetalhes) {
+        return funcionarioRepository.findById(id)
+                .map(funcionario -> {
+                    funcionario.setNome(funcionarioDetalhes.getNome());
+                    funcionario.setTelefone(funcionarioDetalhes.getTelefone());
+                    funcionario.setEmail(funcionarioDetalhes.getEmail());
+                    funcionario.setCpf(funcionarioDetalhes.getCpf());
+                    funcionario.setPerfil(funcionarioDetalhes.getPerfil());
+                    funcionario.setArea(funcionarioDetalhes.getArea());
+                    Funcionario funcionarioAtualizado = funcionarioRepository.save(funcionario);
+                    return ResponseEntity.ok(funcionarioAtualizado);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        funcionarioService.deletar(id);
+    public ResponseEntity<Void> deleteFuncionario(@PathVariable Integer id) {
+        if (!funcionarioRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        funcionarioRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/{id}/perfil")
-    public ResponseEntity<FuncionarioPerfilDTO> buscarPerfilPorId(@PathVariable Integer id) {
-    FuncionarioPerfilDTO perfilDTO = funcionarioService.buscarPerfilPorId(id);
-    return ResponseEntity.ok(perfilDTO);
-    }
 }
+
