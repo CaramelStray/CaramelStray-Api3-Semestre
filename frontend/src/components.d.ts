@@ -9,12 +9,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Areas: typeof import('./components/Areas.vue')['default']
-    Competencia: typeof import('./components/Competencia.vue')['default']
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Inicio: typeof import('./components/Inicio.vue')['default']
     Perfil: typeof import('./components/perfil.vue')['default']
-    Perfis: typeof import('./components/Perfis.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
