@@ -9,13 +9,16 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "codigo")
 @Entity
-@Table(name = "tb_cad_perfil")
-public class Perfil {
+@Table(name = "tb_cad_funcionario_certificado")
+public class FuncionarioCertificado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codigo;
 
-    private String nome;
-    private String descricao;
+    private String certificado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "codigo_funcionario")
+    private Funcionario funcionario;
 }
