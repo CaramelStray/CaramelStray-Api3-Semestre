@@ -1,39 +1,22 @@
 package br.com.AllTallent.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*; // Import simplificado
+import lombok.*;             // Import simplificado
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "codigo") // Padrão recomendado
 @Entity
-@Table(name = "TB_CAD_AREA") // Mapeia para a tabela "TB_CAD_AREA"
+@Table(name = "tb_cad_area")
 public class Area {
 
+    // --- CORREÇÃO AQUI ---
     @Id
-    @Column(name = "CODIGO") // Mapeia para a coluna "CODIGO"
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codigo;
 
-    @Column(name = "TAGS") // Mapeia para a coluna "TAGS"
-    private String tags;
-
-    // Construtor vazio (exigido pelo JPA)
-    public Area() {
-    }
-
-    // Getters e Setters
-    public Integer getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
+    private String nome;
+    private String descricao;
 }
