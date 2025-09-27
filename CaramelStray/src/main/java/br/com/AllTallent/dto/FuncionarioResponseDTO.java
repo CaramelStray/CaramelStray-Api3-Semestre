@@ -14,7 +14,9 @@ public record FuncionarioResponseDTO(
     String telefone,
     String nomeArea,
     String nomePerfil,
-    String nomeGestor
+    String nomeGestor,
+    String tituloProfissional,
+    String localizacao
 ) {
     // Este construtor é o "tradutor" mágico. Ele sabe como converter
     // a entidade Funcionario para este DTO.
@@ -24,10 +26,13 @@ public record FuncionarioResponseDTO(
             funcionario.getNomeCompleto(),
             funcionario.getEmail(),
             funcionario.getTelefone(),
+            
             // Lógica para evitar erros se a área, perfil ou gestor forem nulos
             funcionario.getArea() != null ? funcionario.getArea().getNome() : null,
             funcionario.getPerfil() != null ? funcionario.getPerfil().getNome() : null,
-            funcionario.getGestor() != null ? funcionario.getGestor().getNomeCompleto() : null
+            funcionario.getGestor() != null ? funcionario.getGestor().getNomeCompleto() : null,
+            funcionario.getTituloProfissional() ,
+            funcionario.getLocalizacao()
         );
     }
 }

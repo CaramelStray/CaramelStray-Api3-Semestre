@@ -1,8 +1,9 @@
 package br.com.AllTallent.controller;
 
 import java.net.URI;
-import java.util.List; // <- Importante
+import java.util.List;
 
+import org.springframework.http.HttpStatus; // <- Importante
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.AllTallent.dto.CertificadoDTO;
+import br.com.AllTallent.dto.CertificadoRequestDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
@@ -66,5 +69,13 @@ public class FuncionarioController {
     public ResponseEntity<FuncionarioPerfilDTO> buscarPerfilPorId(@PathVariable Integer id) {
     FuncionarioPerfilDTO perfilDTO = funcionarioService.buscarPerfilPorId(id);
     return ResponseEntity.ok(perfilDTO);
+    }
+    @PostMapping("/{Id}/certificados")
+    public ResponseEntity<CertificadoDTO> adicionarCertificado(
+            @PathVariable Integer funcionarioId,
+            @RequestBody CertificadoRequestDTO dto) {
+
+        CertificadoDTO novoCertificado = funcionarioService.adicionarCertificado(funcionarioId, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoCertificado);
     }
 }

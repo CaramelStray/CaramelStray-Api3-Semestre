@@ -53,6 +53,10 @@ public class Funcionario {
 
     @Column(name = "data_cadastro", updatable = false)
     private OffsetDateTime dataCadastro;
+    @Column(name ="titulo_profissional")
+    private String tituloProfissional;
+    private String localizacao;
+
 
     // --- RELACIONAMENTOS (não mudam) ---
 

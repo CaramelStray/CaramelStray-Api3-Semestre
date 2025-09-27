@@ -1,10 +1,11 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Funcionario;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import br.com.AllTallent.model.Funcionario;
 
 public record FuncionarioPerfilDTO(
     // Dados Principais
@@ -32,10 +33,11 @@ public record FuncionarioPerfilDTO(
             funcionario.getEmail(),
             funcionario.getTelefone(),
             funcionario.getDataCadastro(),
+            funcionario.getTituloProfissional(),
+            funcionario.getLocalizacao(),
             // Acessa os dados do perfil profissional (pode ser nulo)
-            funcionario.getPerfilProfissional() != null ? funcionario.getPerfilProfissional().getTituloProfissional() : null,
             funcionario.getPerfilProfissional() != null ? funcionario.getPerfilProfissional().getResumo() : null,
-            funcionario.getPerfilProfissional() != null ? funcionario.getPerfilProfissional().getLocalizacao() : null,
+            
             // Acessa os nomes das entidades relacionadas (pode ser nulo)
             funcionario.getArea() != null ? funcionario.getArea().getNome() : null,
             funcionario.getGestor() != null ? funcionario.getGestor().getNomeCompleto() : null,
@@ -47,6 +49,7 @@ public record FuncionarioPerfilDTO(
             funcionario.getCertificados() != null ?
                 funcionario.getCertificados().stream().map(CertificadoDTO::new).collect(Collectors.toList()) :
                 Collections.emptyList()
+        
         );
     }
 }

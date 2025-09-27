@@ -6,16 +6,20 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.AllTallent.dto.CertificadoDTO;
+import br.com.AllTallent.dto.CertificadoRequestDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
 import br.com.AllTallent.exception.ResourceNotFoundException;
 import br.com.AllTallent.model.Area;
 import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.model.FuncionarioCertificado;
 import br.com.AllTallent.model.Perfil;
 import br.com.AllTallent.repository.AreaRepository;
 import br.com.AllTallent.repository.FuncionarioRepository;
 import br.com.AllTallent.repository.PerfilRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class FuncionarioService {
@@ -106,5 +110,25 @@ public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
     return funcionarioRepository.findByIdCompleto(id)
             .map(FuncionarioPerfilDTO::new) // Converte a entidade completa para o DTO de perfil
             .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
-}
+    }
+    public CertificadoDTO adicionarCertificado(Integer funcionarioId, CertificadoRequestDTO dto) {
+        // 1. Encontra o funcionário no banco de dados
+        Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Funcionário não encontrado com o ID: " + funcionarioId));
+
+        // 2. Cria uma nova entidade de certificado
+        FuncionarioCertificado novoCertificado = new FuncionarioCertificado();
+        novoCertificado.setCertificado(dto.nome());
+        novoCertificado.setFuncionario(funcionario);
+
+        // 3. Adiciona o novo certificado à lista de certificados do funcionário
+        funcionario.getCertificados().add(novoCertificado);
+
+        // 4. Salva o funcionário. Devido ao CascadeType.ALL na entidade Funcionario,
+        //    o novo certificado será salvo automaticamente junto.
+        funcionarioRepository.save(funcionario);
+
+        // 5. Retorna um DTO do certificado recém-criado
+        return new CertificadoDTO(novoCertificado);
+    }
 }

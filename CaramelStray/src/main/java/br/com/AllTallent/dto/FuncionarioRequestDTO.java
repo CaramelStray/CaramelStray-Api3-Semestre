@@ -13,5 +13,7 @@ public record FuncionarioRequestDTO(
     String senhaHash,
     Integer areaId,
     Integer perfilId,
-    Integer gestorId
+    Integer gestorId,
+    String tituloProfissional,
+    String localizacao
 ) {}

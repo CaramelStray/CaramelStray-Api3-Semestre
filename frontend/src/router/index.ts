@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Funcionarios from '../components/Funcionarios.vue';
-import perfil from '../components/Perfil.vue';
+import Perfilbase from '../components/perfilBase.vue';
+import Perfilfun from '../components/perfilFun.vue';
 import Inicio from '../components/Inicio.vue';
 import Competencia from '../components/Competencia.vue';
 
@@ -16,10 +17,15 @@ const router = createRouter({
       name: 'Funcionarios',
       component: Funcionarios,
     },
-      {
-      path: '/perfil',
-      name: 'perfil',
-      component: perfil,
+    {
+      path: '/perfilbase',
+      name: 'perfilbase',
+      component: Perfilbase,
+    },
+    {
+      path: '/perfilfun',
+      name: 'perfilfun',
+      component: Perfilfun,
     },
     {
       path: '/inicio',
