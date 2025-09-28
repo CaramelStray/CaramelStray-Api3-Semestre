@@ -142,35 +142,30 @@ const selected = ref([])
 
 async function loadCompetencias() {
     isLoading.value=true
-    try {
-        const allResponse = await axios.get(API_BASE_URL)
-        const selectResponse = await axios.get(API_FUNCIONARIO_COMP_URL)
-        
-        // 1. Processar TODAS as Competências (Catálogo)
-        // Usando allResponse, que é a variável correta
-        const allCompetencias = allResponse.data.map(comp => ({
-            // Certifique-se de usar 'codigo' ou 'id' da API para o campo 'id'
-            id: comp.codigo, 
-            nome: comp.nome,
-            descricao: `Detalhe temporário da competência: ${comp.nome}`, 
-            // Mapeamento de categoria
-            categoria: categorias[(comp.codigo % categorias.length)], 
-            extras: []
-        }));
+     try {
+      
+        const allResponse = await axios.get(API_BASE_URL);
+        const selectResponse = await axios.get(API_FUNCIONARIO_COMP_URL); // Busca as competências existentes
 
-        // Atribuir ao array do catálogo
-        all.value = allCompetencias;
         
-        // 2. Processar Competências SELECIONADAS
-        // selectResponse.data deve conter um array (FuncionarioCompetenciasResponseDTO.competencias)
+        
+        const allCompetencias = allResponse.data.map(comp => ({
+            id: comp.codigo, 
+            nome: comp.nome,
+            descricao: `Detalhe temporário da competência: ${comp.nome}`, 
+            // Mapeamento de categoria
+            categoria: categorias[(comp.codigo % categorias.length)], 
+            extras: []
+        }));
+
+        all.value = allCompetencias;
+
         const existingCompetencias = selectResponse.data.competencias || [];
 
-        // Mapear as selecionadas, garantindo que elas tenham os detalhes (categoria, descricao)
         selected.value = existingCompetencias.map(existingComp => {
-             // Tenta encontrar o objeto completo no catálogo 'all'
+            
              const fullDetails = allCompetencias.find(c => c.id === existingComp.id);
              
-             // Retorna o objeto completo para o array 'selected'
              return fullDetails || { 
                  id: existingComp.id, 
                  nome: existingComp.nome, 
@@ -179,13 +174,20 @@ async function loadCompetencias() {
                  extras: []
              };
         });
-    } catch (error) {
-        console.error('Erro ao buscar competências:', error)
-        // ... (Fallback)
-    }finally{
-      isLoading.value = false
-    }
-  }
+        
+    } catch (error) {
+        console.error('Erro ao carregar dados iniciais:', error);
+        alert('Falha ao conectar com a API ou buscar dados. Verifique a conexão.');
+        
+        all.value = [
+            { id: 999, nome: 'Falha na Conexão', descricao: 'Não foi possível carregar dados da API.', categoria: 'Técnica', extras: [] }
+        ];
+
+    } finally {
+        isLoading.value = false;
+    }
+}
+
 async function saveCompetencias() {
     isSaving.value = true;
     const codigosCompetencia = selected.value.map(item => item.id);
