@@ -11,17 +11,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.AllTallent.dto.CertificadoDTO;
 import br.com.AllTallent.dto.CertificadoRequestDTO;
+import br.com.AllTallent.dto.FuncionarioCompetenciaUpdateDTO;
+import br.com.AllTallent.dto.FuncionarioCompetenciasResponseDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
-import br.com.AllTallent.service.FuncionarioService;
-
+import br.com.AllTallent.exception.ResourceNotFoundException;
+import br.com.AllTallent.exception.UnauthorizedActionException;
+import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.service.FuncionarioService; 
 @RestController
 @RequestMapping("/api/funcionario")
 public class FuncionarioController {
@@ -77,5 +82,35 @@ public class FuncionarioController {
 
         CertificadoDTO novoCertificado = funcionarioService.adicionarCertificado(funcionarioId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCertificado);
+    }
+    @PutMapping("/{id}/competencias")
+    public ResponseEntity<Void> atualizarCompetencias(
+            // Recebe o ID do usuário que está logado
+            @RequestHeader("X-Usuario-Logado-Id") Integer idUsuarioLogado, 
+            // Recebe o ID do funcionário que será alterado
+            @PathVariable Integer id,
+            @RequestBody FuncionarioCompetenciaUpdateDTO dto) {
+
+        try {
+            funcionarioService.associarCompetencias(
+                idUsuarioLogado, 
+                id, 
+                dto.codigosCompetencia()
+            );
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        } catch (UnauthorizedActionException e) {
+            // Lançamos a exceção. O Spring vai mapear para 403 Forbidden
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+    @GetMapping("/{id}/competencias")
+    public ResponseEntity<FuncionarioCompetenciasResponseDTO> listarCompetenciasPorFuncionario(@PathVariable Integer id) {
+        // Usa o service para buscar o funcionário completo
+        Funcionario funcionario = funcionarioService.buscarFuncionarioCompleto(id);
+        
+        // Retorna apenas as competências no formato DTO
+        return ResponseEntity.ok(new FuncionarioCompetenciasResponseDTO(funcionario));
     }
 }

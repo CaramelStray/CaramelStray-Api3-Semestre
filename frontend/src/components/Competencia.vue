@@ -39,7 +39,15 @@
         </div>
       </div>
     </section>
-
+      <section class="action-bar">
+          <button 
+              class="save-button" 
+              :disabled="isSaving" 
+              @click="saveCompetencias"
+          >
+              {{ isSaving ? 'Salvando...' : 'Salvar Competências' }}
+          </button>
+    </section>
 
     <template v-if="isLoading">
         <div class="loading-container">
@@ -116,42 +124,96 @@
 import { computed, reactive, ref, onMounted} from 'vue'
 import axios from 'axios'
 
+const FUNCIONARIO_ID = 6
 const API_BASE_URL= 'http://localhost:8080/api/competencia'
-
+const API_FUNCIONARIO_COMP_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;
+const API_FUNCIONARIO_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;
 const all = ref([]) 
 
 /** Dados base – ajuste/expanda conforme necessário */
 
 const isLoading = ref(true)
+const isSaving = ref(false)
 const categorias = ['Comportamental', 'Técnica', 'Negócios', 'RH', 'Idiomas']
 const categoriasComTodas = ['Todas', ...categorias]
-
 const query = ref('')
 const filtroCategoria = ref('Todas')
 const selected = ref([])
 
 async function loadCompetencias() {
     isLoading.value=true
-    try {
-        const response = await axios.get(API_BASE_URL)
+    try {
+        const allResponse = await axios.get(API_BASE_URL)
+        const selectResponse = await axios.get(API_FUNCIONARIO_COMP_URL)
+        
+        // 1. Processar TODAS as Competências (Catálogo)
+        // Usando allResponse, que é a variável correta
+        const allCompetencias = allResponse.data.map(comp => ({
+            // Certifique-se de usar 'codigo' ou 'id' da API para o campo 'id'
+            id: comp.codigo, 
+            nome: comp.nome,
+            descricao: `Detalhe temporário da competência: ${comp.nome}`, 
+            // Mapeamento de categoria
+            categoria: categorias[(comp.codigo % categorias.length)], 
+            extras: []
+        }));
+
+        // Atribuir ao array do catálogo
+        all.value = allCompetencias;
         
-        all.value = response.data.map(comp => ({
-            ...comp,
-            descricao: `Detalhe temporário da competência: ${comp.nome}`, 
-            categoria: categorias[(comp.id % categorias.length)], 
-            extras: []
-        }))
-        
-    } catch (error) {
-        console.error('Erro ao buscar competências:', error)
-        // Fallback em caso de falha na API
-        all.value = [
-            { id: 999, nome: 'Falha na Conexão', descricao: 'Não foi possível carregar dados da API.', categoria: 'Técnica', extras: [] }
-        ]
-    }finally{
-      isLoading.value = false
-    }
+        // 2. Processar Competências SELECIONADAS
+        // selectResponse.data deve conter um array (FuncionarioCompetenciasResponseDTO.competencias)
+        const existingCompetencias = selectResponse.data.competencias || [];
+
+        // Mapear as selecionadas, garantindo que elas tenham os detalhes (categoria, descricao)
+        selected.value = existingCompetencias.map(existingComp => {
+             // Tenta encontrar o objeto completo no catálogo 'all'
+             const fullDetails = allCompetencias.find(c => c.id === existingComp.id);
+             
+             // Retorna o objeto completo para o array 'selected'
+             return fullDetails || { 
+                 id: existingComp.id, 
+                 nome: existingComp.nome, 
+                 descricao: 'Detalhes indisponíveis', 
+                 categoria: 'Outros', 
+                 extras: []
+             };
+        });
+    } catch (error) {
+        console.error('Erro ao buscar competências:', error)
+        // ... (Fallback)
+    }finally{
+      isLoading.value = false
+    }
   }
+async function saveCompetencias() {
+    isSaving.value = true;
+    const codigosCompetencia = selected.value.map(item => item.id);
+    const body = {
+        codigosCompetencia: codigosCompetencia
+    };
+    try {
+        await axios.put(API_FUNCIONARIO_URL, body, {
+            headers: {
+                'X-Usuario-Logado-Id': 1
+            }
+        });
+        alert('Competências salvas com sucesso!');
+    } catch (error) {
+        console.error('Falha ao salvar competências:', error);
+        let message = 'Erro desconhecido ao salvar competências.';
+        if (error.response) {
+            if (error.response.status === 403) {
+                message = 'Ação não autorizada. Você só pode alterar suas próprias competências.';
+            } else if (error.response.status === 404) {
+                message = 'Funcionário ou Competência não encontrados.';
+            }
+        }
+        alert(`Erro ao salvar: ${message}`);
+    } finally {
+        isSaving.value = false;
+    }
+}
 
 
 onMounted(loadCompetencias)
@@ -395,5 +457,33 @@ const disponiveisFiltradas = computed(() => {
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+.action-bar {
+    margin-top: 22px;
+    padding: 16px;
+    text-align: right;
+    border-top: 1px solid var(--outline);
+}
+
+.save-button {
+    all: unset;
+    padding: 12px 24px;
+    border-radius: 10px;
+    background: var(--primary); /* Cor primária turquesa */
+    color: var(--surface); /* Cor branca */
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s;
+    box-shadow: 0 4px 8px rgba(42, 166, 161, 0.2);
+}
+
+.save-button:hover:not(:disabled) {
+    background: #1e8c88; /* Tom mais escuro */
+}
+
+.save-button:disabled {
+    background: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 </style>
