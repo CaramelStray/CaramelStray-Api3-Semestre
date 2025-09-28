@@ -123,7 +123,7 @@ const fetchFuncionarioData = async (id) => {
   error.value = null;
   try {
     // IMPORTANTE: Verifique se a porta (:8080) é a mesma do seu backend Spring Boot.
-    const response = await axios.get(`http://localhost:8080/api/funcionarios/${id}`);
+    const response = await axios.get(`http://localhost:8080/api/funcionario/${id}`);
     funcionario.value = response.data; // Armazena os dados da API na nossa variável reativa.
   } catch (err) {
     console.error("Falha ao buscar dados do funcionário:", err);

@@ -23,7 +23,7 @@ import br.com.AllTallent.dto.FuncionarioResponseDTO;
 import br.com.AllTallent.service.FuncionarioService;
 
 @RestController
-@RequestMapping("/api/funcionarios")
+@RequestMapping("/api/funcionario")
 public class FuncionarioController {
 
     private final FuncionarioService funcionarioService;

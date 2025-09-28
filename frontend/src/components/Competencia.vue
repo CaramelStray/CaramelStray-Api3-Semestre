@@ -40,6 +40,15 @@
       </div>
     </section>
 
+
+    <template v-if="isLoading">
+        <div class="loading-container">
+            <h3>Carregando competências...</h3>
+            <p>Aguarde a conexão com a API.</p>
+        </div>
+    </template>
+
+    <template v-else>
     <!-- Busca e filtros -->
     <section class="searchbar">
       <h3 class="sr-only">Buscar Competências</h3>
@@ -99,47 +108,21 @@
         </article>
       </div>
     </section>
+  </template>
   </div>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, onMounted} from 'vue'
+import axios from 'axios'
+
+const API_BASE_URL= 'http://localhost:8080/api/competencia'
+
+const all = ref([]) 
 
 /** Dados base – ajuste/expanda conforme necessário */
-const all = reactive([
-  // Comportamental
-  { id: 1,  nome: 'Liderança', descricao: 'Capacidade de liderar equipes e projetos', categoria: 'Comportamental' },
-  { id: 2,  nome: 'Comunicação', descricao: 'Habilidades de comunicação verbal e escrita', categoria: 'Comportamental' },
-  { id: 3,  nome: 'Trabalho em Equipe', descricao: 'Colaboração eficaz com colegas', categoria: 'Comportamental' },
-  { id: 4,  nome: 'Resolução de Problemas', descricao: 'Análise e solução de desafios', categoria: 'Comportamental' },
-  { id: 5,  nome: 'Gestão de Tempo', descricao: 'Organização e priorização de tarefas', categoria: 'Comportamental' },
 
-  // Técnica
-  { id: 6,  nome: 'Excel Avançado', descricao: 'Uso avançado de planilhas eletrônicas', categoria: 'Técnica' },
-  { id: 7,  nome: 'Power BI', descricao: 'Criação de dashboards e relatórios', categoria: 'Técnica' },
-  { id: 8,  nome: 'Python', descricao: 'Programação em linguagem Python', categoria: 'Técnica' },
-  { id: 9,  nome: 'SQL', descricao: 'Consultas e manipulação de banco de dados', categoria: 'Técnica' },
-
-  // Negócios
-  { id:10,  nome: 'Análise de Negócios', descricao: 'Mapeamento de requisitos e processos', categoria: 'Negócios' },
-  { id:11,  nome: 'Gestão de Projetos', descricao: 'Planejamento, execução e monitoramento', categoria: 'Negócios' },
-
-  // RH
-  { id:12,  nome: 'Recrutamento & Seleção', descricao: 'Triagem, entrevistas e hunting', categoria: 'RH' },
-  { id:13,  nome: 'Treinamento & Desenvolvimento', descricao: 'Desenho e avaliação de trilhas', categoria: 'RH' },
-
-  // Idiomas
-  { id:14,  nome: 'Inglês', descricao: 'Leitura, escrita e conversação', categoria: 'Idiomas', extras:['B2+'] },
-  { id:15,  nome: 'Alemão', descricao: 'Leitura, escrita e conversação', categoria: 'Idiomas', extras:['A2'] },
-
-  // Extras para chegar perto de 20
-  { id:16,  nome: 'Noções de Estatística', descricao: 'Métricas, distribuições, testes', categoria: 'Técnica' },
-  { id:17,  nome: 'Data Visualization', descricao: 'Boas práticas de visualização', categoria: 'Técnica' },
-  { id:18,  nome: 'Negociação', descricao: 'Condução de acordos ganha-ganha', categoria: 'Comportamental' },
-  { id:19,  nome: 'Documentação Técnica', descricao: 'Especificações claras e reutilizáveis', categoria: 'Técnica' },
-  { id:20,  nome: 'Planejamento Estratégico', descricao: 'Metas, OKRs e desdobramento', categoria: 'Negócios' },
-])
-
+const isLoading = ref(true)
 const categorias = ['Comportamental', 'Técnica', 'Negócios', 'RH', 'Idiomas']
 const categoriasComTodas = ['Todas', ...categorias]
 
@@ -147,7 +130,33 @@ const query = ref('')
 const filtroCategoria = ref('Todas')
 const selected = ref([])
 
-/** Drag & Drop payload */
+async function loadCompetencias() {
+    isLoading.value=true
+    try {
+        const response = await axios.get(API_BASE_URL)
+        
+        all.value = response.data.map(comp => ({
+            ...comp,
+            descricao: `Detalhe temporário da competência: ${comp.nome}`, 
+            categoria: categorias[(comp.id % categorias.length)], 
+            extras: []
+        }))
+        
+    } catch (error) {
+        console.error('Erro ao buscar competências:', error)
+        // Fallback em caso de falha na API
+        all.value = [
+            { id: 999, nome: 'Falha na Conexão', descricao: 'Não foi possível carregar dados da API.', categoria: 'Técnica', extras: [] }
+        ]
+    }finally{
+      isLoading.value = false
+    }
+  }
+
+
+onMounted(loadCompetencias)
+
+
 const dragPayload = ref(null)
 function onDragStart(item, from) {
   dragPayload.value = { item, from }
@@ -158,7 +167,7 @@ function onDropToSelected(e) {
   dragPayload.value = null
 }
 
-/** Ações */
+
 function add(comp) {
   if (!selected.value.find(s => s.id === comp.id)) {
     selected.value.push(comp)
@@ -171,12 +180,12 @@ function toggleFiltro(tag) {
   filtroCategoria.value = tag
 }
 
-/** Computeds */
+
 const disponiveisFiltradas = computed(() => {
   const q = query.value.trim().toLowerCase()
   const cat = filtroCategoria.value
 
-  return all.filter(c => {
+  return all.value.filter(c => {
     const matchCat = cat === 'Todas' ? true : c.categoria === cat
     const matchQ =
       !q ||

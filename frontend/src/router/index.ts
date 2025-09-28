@@ -23,7 +23,7 @@ const router = createRouter({
       component: Perfilbase,
     },
     {
-      path: '/perfilfun',
+      path: '/perfil',
       name: 'perfilfun',
       component: Perfilfun,
     },

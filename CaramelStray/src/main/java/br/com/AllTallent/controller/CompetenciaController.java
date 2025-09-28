@@ -1,15 +1,25 @@
 package br.com.AllTallent.controller;
 
-import br.com.AllTallent.model.Competencia;
-import br.com.AllTallent.repository.CompetenciaRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.AllTallent.dto.CompetenciaDTO;
+import br.com.AllTallent.model.Competencia;
+import br.com.AllTallent.repository.CompetenciaRepository;
 
 @RestController
-@RequestMapping("/api/competencias")
+@RequestMapping("/api/competencia")
 public class CompetenciaController {
 
     private final CompetenciaRepository competenciaRepository;
@@ -19,9 +29,12 @@ public class CompetenciaController {
     }
 
     // ✅ Listar todas as competências
-    @GetMapping
-    public ResponseEntity<List<Competencia>> listar() {
-        return ResponseEntity.ok(competenciaRepository.findAll());
+     @GetMapping
+    public ResponseEntity<List<CompetenciaDTO>> listar() {
+        List<CompetenciaDTO> dtos = competenciaRepository.findAll().stream()
+                .map(CompetenciaDTO::new) // Converte Competencia para CompetenciaDTO
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     // ✅ Buscar uma competência por ID
