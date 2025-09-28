@@ -2,12 +2,21 @@
   <div class="page">
     <!-- Header -->
     <header class="page__header">
-      <div class="header__icon"> <img src="@/assets/target-svgrepo-com.svg" alt="Ícone de alvo" /> </div>
-      <div>
-        <h1 class="header__title">Insira suas Competências</h1>
-        <p class="header__subtitle">Selecione e gerencie suas habilidades profissionais</p>
-      </div>
-    </header>
+  <div class="header__left">
+    <div class="header__icon">
+      <img src="@/assets/target-svgrepo-com.svg" alt="Ícone de alvo" width="40" height="40" />
+    </div>
+    <div>
+      <h1 class="header__title">Insira suas Competências</h1>
+      <p class="header__subtitle">Selecione e gerencie suas habilidades profissionais</p>
+    </div>
+  </div>
+
+  <div class="header__user">
+    <img src="@/assets/user-circle-svgrepo-com.svg" alt="Ícone de usuário" width="40" height="40" />
+    <span class="user__name">Usuário Teste</span>
+  </div>
+</header>
 
     <!-- Selecionadas -->
     <section class="selected">
@@ -277,6 +286,42 @@ const disponiveisFiltradas = computed(() => {
   min-height: 100%;
   padding: 24px;
   line-height: 1.35;
+}
+
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* esquerda x direita */
+}
+
+.header__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #142032;
+}
+
+.user__icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #e6f7f6;
+  border: 1px solid #2aa6a1ff;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.header__icon img {
+  width: 40px;
+  height: 40px;
 }
 
 .header__icon img {
