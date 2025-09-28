@@ -2,6 +2,10 @@ package br.com.AllTallent.dto;
 
 import br.com.AllTallent.model.Funcionario;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Este é o "cartão de visita" que a sua API envia de volta como resposta.
  * Ele traduz a entidade Funcionario para um formato limpo e amigável para o cliente,
@@ -16,7 +20,10 @@ public record FuncionarioResponseDTO(
     String nomePerfil,
     String nomeGestor,
     String tituloProfissional,
-    String localizacao
+    String localizacao,
+    OffsetDateTime dataCadastro,
+    List<CertificadoDTO> certificados,
+    List<CompetenciaDTO> competencias
 ) {
     // Este construtor é o "tradutor" mágico. Ele sabe como converter
     // a entidade Funcionario para este DTO.
@@ -32,7 +39,16 @@ public record FuncionarioResponseDTO(
             funcionario.getPerfil() != null ? funcionario.getPerfil().getNome() : null,
             funcionario.getGestor() != null ? funcionario.getGestor().getNomeCompleto() : null,
             funcionario.getTituloProfissional() ,
-            funcionario.getLocalizacao()
+            funcionario.getLocalizacao(), funcionario.getDataCadastro(), funcionario.getCertificados() != null
+                        ? funcionario.getCertificados().stream()
+                        .map(CertificadoDTO::new)
+                        .collect(Collectors.toList())
+                        : null, funcionario.getCompetencias() != null
+                        ? funcionario.getCompetencias().stream()
+                        .map(CompetenciaDTO::new)
+                        .collect(Collectors.toList())
+                        : null
+
         );
     }
 }

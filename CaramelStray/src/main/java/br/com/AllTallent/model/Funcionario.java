@@ -1,6 +1,7 @@
 package br.com.AllTallent.model;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -79,7 +80,7 @@ public class Funcionario {
     private FuncionarioPerfil perfilProfissional;
 
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<FuncionarioCertificado> certificados;
+    private List<FuncionarioCertificado> certificados;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
