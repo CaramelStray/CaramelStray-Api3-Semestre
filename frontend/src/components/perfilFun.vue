@@ -15,7 +15,7 @@
     </header>
 
     <main class="mx-auto max-w-7xl p-4 md:p-6 lg:p-8">
-      
+
       <div v-if="loading" class="text-center py-10 text-slate-600">
         <p>Carregando informações do colaborador...</p>
       </div>
@@ -75,6 +75,28 @@
           </div>
         </section>
 
+        <section class="mt-6 rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+                  <h3 class="text-base font-semibold">Histórico Profissional</h3>
+
+                  <div v-if="funcionario.experiencias && funcionario.experiencias.length" class="space-y-6 mt-4">
+                    <div v-for="experiencia in funcionario.experiencias" :key="experiencia.codigo" class="border-l-4 border-teal-600 pl-4">
+
+                      <h4 class="text-lg font-medium">{{ experiencia.cargo }}</h4>
+
+                      <p class="text-sm text-slate-700">{{ experiencia.empresa }}</p>
+
+                      <p class="text-xs text-slate-500 mt-1">
+                        {{ formatDate(experiencia.dataInicio) }} - {{ experiencia.dataFim ? formatDate(experiencia.dataFim) : 'Atual' }}
+                      </p>
+
+                      <p v-if="experiencia.descricao" class="text-sm text-slate-600 mt-2">
+                        {{ experiencia.descricao }}
+                      </p>
+                      </div>
+                  </div>
+                  <p v-else class="mt-4 text-sm text-slate-500">Nenhuma experiência profissional cadastrada.</p>
+        </section>
+
         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
             <h3 class="text-base font-semibold">Competências</h3>
@@ -118,7 +140,7 @@ import axios from 'axios';
 
 const funcionario = ref(null); // Inicia como nulo. Só recebe valor após a chamada da API.
 const loading = ref(true);     // Inicia como verdadeiro, pois começamos carregando.
-const error = ref(null);     
+const error = ref(null);
 
 const fetchFuncionarioData = async (id) => {
   loading.value = true;
