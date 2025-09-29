@@ -52,7 +52,7 @@ public class CompetenciaController {
             return ResponseEntity.badRequest().build();
         }
         Competencia salva = competenciaRepository.save(nova);
-        return ResponseEntity.created(URI.create("/api/competencias/" + salva.getCodigo())).body(salva);
+        return ResponseEntity.created(URI.create("/api/competencia/" + salva.getCodigo())).body(salva);
     }
 
     // ✅ Atualizar competência existente
