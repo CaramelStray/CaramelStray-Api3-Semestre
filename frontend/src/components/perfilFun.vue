@@ -48,28 +48,58 @@
               </p>
 
               <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
-                  <dt class="text-xs uppercase tracking-wide text-slate-500">Departamento</dt>
-                  <dd class="text-sm font-medium">{{ funcionario.nomeArea }}</dd>
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-teal-600 shrink-0">
+                        <path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M12 6h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/><path d="M8 6h.01"/><path d="M9 22v-3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/><rect x="4" y="2" width="16" height="20" rx="2"/>
+                    </svg>
+                    <div>
+                        <dt class="text-xs uppercase tracking-wide text-slate-500">Departamento</dt>
+                        <dd class="text-sm font-medium">{{ funcionario.nomeArea }}</dd>
+                    </div>
                 </div>
-                 <div>
-                  <dt class="text-xs uppercase tracking-wide text-slate-500">Localização</dt>
-                  <dd class="text-sm font-medium">{{ funcionario.localizacao }}</dd>
+
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-teal-600 shrink-0 lucide lucide-map-pin">
+                        <path d="M12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M12 2a9 9 0 0 0-9 9c0 6 9 13 9 13s9-7 9-13a9 9 0 0 0-9-9Z"/>
+                    </svg>
+                    <div>
+                    <dt class="text-xs uppercase tracking-wide text-slate-500">Localização</dt>
+                    <dd class="text-sm font-medium">{{ funcionario.localizacao }}</dd>
+                    </div>
                 </div>
-                <div>
-                  <dt class="text-xs uppercase tracking-wide text-slate-500">Data de Admissão</dt>
-                  <dd class="text-sm font-medium">{{ formatDate(funcionario.dataCadastro) }}</dd>
+                
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-teal-600 shrink-0 lucide lucide-mail">
+                        <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/>
+                    </svg>
+                    <div>
+                        <dt class="text-xs uppercase tracking-wide text-slate-500">Email (não editável)</dt>
+                        <dd class="text-sm font-medium">
+                            <a class="text-teal-700 hover:underline" :href="'mailto:' + funcionario.email">{{ funcionario.email }}</a>
+                        </dd>
+                    </div>
                 </div>
-                 <div>
-                  <dt class="text-xs uppercase tracking-wide text-slate-500">Email</dt>
-                  <dd class="text-sm font-medium">
-                    <a class="text-teal-700 hover:underline" :href="'mailto:' + funcionario.email">{{ funcionario.email }}</a>
-                  </dd>
+                
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-teal-600 shrink-0 lucide lucide-calendar">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <div>
+                        <dt class="text-xs uppercase tracking-wide text-slate-500">Data de Admissão</dt>
+                        <dd class="text-sm font-medium">{{ formatDate(funcionario.dataCadastro) }}</dd>
+                    </div>
                 </div>
-                <div>
-                  <dt class="text-xs uppercase tracking-wide text-slate-500">Telefone</dt>
-                  <dd class="text-sm font-medium">{{ funcionario.telefone }}</dd>
+
+                <div class="flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-teal-600 shrink-0 lucide lucide-phone">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.08 2h3a2 2 0 0 1 2 1.72a12.84 12.84 0 0 0 .7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45a12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/>
+                    </svg>
+                    <div>
+                        <dt class="text-xs uppercase tracking-wide text-slate-500">Telefone</dt>
+                        <dd class="text-sm font-medium">{{ funcionario.telefone }}</dd>
+                    </div>
                 </div>
+
               </dl>
             </div>
           </div>
