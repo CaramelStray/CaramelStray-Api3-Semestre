@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.AllTallent.dto.CertificadoDTO;
 import br.com.AllTallent.dto.CertificadoRequestDTO;
+import br.com.AllTallent.dto.FuncionarioExperienciasResponseDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
@@ -104,12 +105,15 @@ public class FuncionarioService {
 
         entidade.setNomeCompleto(dto.nomeCompleto());
         entidade.setEmail(dto.email());
-        entidade.setCpf(dto.cpf());
         entidade.setTelefone(dto.telefone());
         entidade.setSenhaHash(dto.senhaHash());
+        entidade.setTituloProfissional(dto.tituloProfissional());
+        entidade.setLocalizacao(dto.localizacao());
+        entidade.setResumo(dto.resumo()); // ✅ ATUALIZA O RESUMO
         entidade.setArea(area);
         entidade.setPerfil(perfil);
 
+        
         if (dto.gestorId() != null) {
             Funcionario gestor = funcionarioRepository.findById(dto.gestorId())
                     .orElseThrow(() -> new ResourceNotFoundException("Gestor não encontrado com o ID: " + dto.gestorId()));
@@ -192,5 +196,14 @@ public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
         // Usa o findByIdCompleto que já carrega as competências via FETCH
         return funcionarioRepository.findByIdCompleto(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
+    }
+    @Transactional(readOnly = true)
+    public FuncionarioExperienciasResponseDTO listarExperienciasPorFuncionario(Integer id) {
+        // O método findByIdCompleto já carrega tudo que precisamos de forma otimizada
+        Funcionario funcionario = funcionarioRepository.findByIdCompleto(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
+        
+        // O construtor do DTO faz toda a "mágica" da conversão
+        return new FuncionarioExperienciasResponseDTO(funcionario);
     }
 }

@@ -1,4 +1,4 @@
-package br.com.AllTallent.model;
+/*package br.com.AllTallent.model;
 
 import jakarta.persistence.*; // Este import já inclui @Id, @GeneratedValue, etc.
 import lombok.Getter;
@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.util.Set;
 
 @Getter
 @Setter
@@ -37,6 +36,4 @@ public class FuncionarioPerfil {
     @JoinColumn(name = "codigo_funcionario")
     private Funcionario funcionario;
 
-    @OneToMany(mappedBy = "funcionarioPerfil", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Experiencia> experiencias;
-}
+}*/

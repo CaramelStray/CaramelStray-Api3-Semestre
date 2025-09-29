@@ -133,7 +133,7 @@
 import { computed, reactive, ref, onMounted} from 'vue'
 import axios from 'axios'
 
-const FUNCIONARIO_ID = 6
+const FUNCIONARIO_ID = 1
 const API_BASE_URL= 'http://localhost:8080/api/competencia'
 const API_FUNCIONARIO_COMP_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;
 const API_FUNCIONARIO_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;

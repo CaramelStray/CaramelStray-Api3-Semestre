@@ -20,6 +20,7 @@ import br.com.AllTallent.dto.CertificadoDTO;
 import br.com.AllTallent.dto.CertificadoRequestDTO;
 import br.com.AllTallent.dto.FuncionarioCompetenciaUpdateDTO;
 import br.com.AllTallent.dto.FuncionarioCompetenciasResponseDTO;
+import br.com.AllTallent.dto.FuncionarioExperienciasResponseDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
@@ -75,7 +76,7 @@ public class FuncionarioController {
     FuncionarioPerfilDTO perfilDTO = funcionarioService.buscarPerfilPorId(id);
     return ResponseEntity.ok(perfilDTO);
     }
-    @PostMapping("/{Id}/certificados")
+    @PostMapping("/{id}/certificados")
     public ResponseEntity<CertificadoDTO> adicionarCertificado(
             @PathVariable Integer funcionarioId,
             @RequestBody CertificadoRequestDTO dto) {
@@ -112,5 +113,10 @@ public class FuncionarioController {
         
         // Retorna apenas as competências no formato DTO
         return ResponseEntity.ok(new FuncionarioCompetenciasResponseDTO(funcionario));
+    }
+    @GetMapping("/{id}/experiencias")
+    public ResponseEntity<FuncionarioExperienciasResponseDTO> listarExperienciasPorFuncionario(@PathVariable Integer id) {
+        FuncionarioExperienciasResponseDTO experienciasDTO = funcionarioService.listarExperienciasPorFuncionario(id);
+        return ResponseEntity.ok(experienciasDTO);
     }
 }

@@ -1,8 +1,22 @@
 package br.com.AllTallent.model;
 
-import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -11,7 +25,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = "codigo")
 @ToString(of = {"codigo", "cargo", "empresa"})
 @Entity
-@Table(name = "tb_cad_funcionario_perfil_experiencia")
+@Table(name = "tb_cad_funcionario_historico_experiencia")
 public class Experiencia {
 
     @Id
@@ -29,6 +43,6 @@ public class Experiencia {
     private LocalDate dataFim;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_funcionario_perfil")
-    private FuncionarioPerfil funcionarioPerfil;
+    @JoinColumn(name = "codigo_funcionario")
+    private Funcionario funcionario;
 }

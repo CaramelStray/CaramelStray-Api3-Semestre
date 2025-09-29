@@ -15,5 +15,6 @@ public record FuncionarioRequestDTO(
     Integer perfilId,
     Integer gestorId,
     String tituloProfissional,
-    String localizacao
+    String localizacao,
+    String resumo
 ) {}
