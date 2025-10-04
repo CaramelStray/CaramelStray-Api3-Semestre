@@ -28,14 +28,14 @@
       <template v-else-if="funcionario">
         <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
           <div class="flex flex-col md:flex-row md:items-start gap-6">
-            <div class="flex flex-col items-center md:items-start">
-              <div class="h-28 w-28 shrink-0 rounded-full bg-teal-600 text-white grid place-items-center text-3xl font-semibold select-none">
-                {{ getInitials(funcionario.nomeCompleto) }}
-              </div>
-              <span class="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 border border-emerald-200">
-                <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                Ativo
-              </span>
+            <div class="relative shrink-0">
+                <div class="h-28 w-28 rounded-full bg-teal-600 text-white grid place-items-center text-3xl font-semibold select-none">
+                    {{ getInitials(funcionario.nomeCompleto) }}
+                </div>
+                <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 border border-emerald-200">
+                    <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                </span>
             </div>
 
             <div class="flex-1">
@@ -43,9 +43,36 @@
                 <h2 class="text-2xl font-semibold">{{ funcionario.nomeCompleto }}</h2>
                 <p class="text-slate-500">{{ funcionario.tituloProfissional }}</p>
               </div>
-              <p class="mt-4 text-sm leading-relaxed text-slate-700 max-w-3xl">
-                {{ funcionario.resumo }}
-              </p>
+              <div class="mt-6">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-base font-semibold">Resumo Profissional</h3>
+
+                    <button v-if="podeEditarPerfil && !isEditingResumo" @click="iniciarEdicaoResumo" class="h-6 w-6 grid place-items-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-teal-600" aria-label="Editar Resumo">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    </button>
+                  </div>
+                  <div v-if="podeEditarPerfil && isEditingResumo" class="flex items-center gap-2">
+                    <button @click="cancelarEdicaoResumo" class="h-8 w-8 grid place-items-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-red-600" aria-label="Cancelar Edição">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                    <button @click="salvarResumo" class="h-8 w-8 grid place-items-center rounded-full text-slate-500 hover:bg-slate-100 hover:text-emerald-600" aria-label="Salvar Resumo">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                  </div>
+                </div>
+ 
+                <p v-if="!isEditingResumo" class="mt-2 text-sm leading-relaxed text-slate-700 max-w-3xl">
+                  {{ funcionario.resumo || 'Nenhum resumo profissional cadastrado. Clique no lápis para adicionar um.' }}
+                </p>
+                <textarea 
+                v-else 
+                v-model="resumoEmEdicao" 
+                rows="4"
+                  class="mt-2 w-full max-w-3xl rounded-md bg-transparent border-2 border-slate-800 focus:ring-0 focus:border-teal-600 sm:text-sm text-slate-800 resize-none" 
+                    placeholder="Escreva um breve resumo sobre sua carreira..."
+                ></textarea>
+              </div>
 
               <dl class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="flex items-start gap-3">
@@ -106,48 +133,115 @@
         </section>
 
         <section class="mt-6 rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
-                  <h3 class="text-base font-semibold">Histórico Profissional</h3>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold">Histórico Profissional</h3>
+            
+            <button v-if="podeEditarPerfil" @click="abrirModalParaNovaExperiencia" class="rounded-lg bg-teal-50 px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-teal-100">
+              ➕ Adicionar Novo
+            </button>
+          </div>
 
-                  <div v-if="funcionario.experiencias && funcionario.experiencias.length" class="space-y-6 mt-4">
-                    <div v-for="experiencia in funcionario.experiencias" :key="experiencia.codigo" class="border-l-4 border-teal-600 pl-4">
-
-                      <h4 class="text-lg font-medium">{{ experiencia.cargo }}</h4>
-
-                      <p class="text-sm text-slate-700">{{ experiencia.empresa }}</p>
-
-                      <p class="text-xs text-slate-500 mt-1">
-                        {{ formatDate(experiencia.dataInicio) }} - {{ experiencia.dataFim ? formatDate(experiencia.dataFim) : 'Atual' }}
-                      </p>
-
-                      <p v-if="experiencia.descricao" class="text-sm text-slate-600 mt-2">
-                        {{ experiencia.descricao }}
-                      </p>
-                      </div>
-                  </div>
-                  <p v-else class="mt-4 text-sm text-slate-500">Nenhuma experiência profissional cadastrada.</p>
+          <div v-if="funcionario.experiencias && funcionario.experiencias.length" class="space-y-6 mt-4">
+            <div v-for="experiencia in funcionario.experiencias" :key="experiencia.codigo" class="relative border-l-4 border-teal-600 pl-4 py-2">
+                <div class="flex items-center gap-2">
+                    <h4 class="text-lg font-medium">{{ experiencia.cargo }}</h4>
+              <button v-if="podeEditarPerfil" @click="abrirModalParaEditarExperiencia(experiencia)" class="absolute top-1 right-1 h-8 w-8 grid place-items-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-teal-600" aria-label="Editar Experiência">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+              </button>
+                </div>
+               
+              
+              <p class="text-sm text-slate-700">{{ experiencia.empresa }}</p>
+              <p class="text-xs text-slate-500 mt-1">
+                {{ formatDate(experiencia.dataInicio) }} - {{ experiencia.dataFim ? formatDate(experiencia.dataFim) : 'Atual' }}
+              </p>
+              <p v-if="experiencia.descricao" class="mt-2 pr-8 text-sm text-slate-600">
+                {{ experiencia.descricao }}
+              </p>
+            </div>
+          </div>
+          <p v-else class="mt-4 text-sm text-slate-500">Nenhuma experiência profissional cadastrada.</p>
         </section>
 
         <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
-            <h3 class="text-base font-semibold">Competências</h3>
-            <ul v-if="funcionario.competencias && funcionario.competencias.length" class="mt-4 space-y-3">
-              <li v-for="competencias in funcionario.competencias" :key="competencias.codigo" class="flex items-center gap-3">
-                 <span class="text-sm">{{ competencias.nome }}</span>
-              </li>
-            </ul>
-            <p v-else class="mt-4 text-sm text-slate-500">Nenhuma competência cadastrada.</p>
-          </section>
+                  <div class="flex items-center justify-between">
+                      
+                      <h3 class="text-base font-semibold">Competências</h3>
 
-          <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
-            <h3 class="text-base font-semibold">Certificações</h3>
-            <ul v-if="funcionario.certificados && funcionario.certificados.length" class="mt-4 space-y-3">
-              <li v-for="certificado in funcionario.certificados" :key="certificado.codigo" class="flex items-center gap-3">
-                 <span class="text-sm">{{ certificado.nome }}</span>
-              </li>
-            </ul>
-            <p v-else class="mt-4 text-sm text-slate-500">Nenhuma certificação cadastrada.</p>
-          </section>
+                      <button v-if="podeEditarCompetencias" @click="navegarParaCompetencias" 
+                          class="rounded-md px-2.5 py-1 text-md font-semibold text-teal-700 hover:bg-teal-50">
+                          Editar
+                      </button>
 
+                  </div>
+                  
+                  <div v-if="funcionario.competencias && funcionario.competencias.length" class="mt-4 space-y-2">
+
+                      <div v-for="competencia in funcionario.competencias" :key="competencia.codigo" class="flex text-sm">
+                          
+                          <span class="mr-2">•</span>
+
+                          <span>{{ competencia.nome }}</span>
+
+                      </div>
+                  </div>
+                  <p v-else class="mt-4 text-sm text-slate-500">Nenhuma competência cadastrada.</p>
+
+              </section>
+                    <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+              <h3 class="text-base font-semibold">Certificações</h3>
+
+              <div class="mt-4 space-y-2">
+                  <div v-for="certificado in funcionario.certificados" :key="certificado.codigo"
+                      class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-2 pr-1 pl-3">
+                      
+                      <span class="flex-grow text-sm font-medium text-slate-700">{{ certificado.nome }}</span>
+                      
+                      <button v-if="podeEditarPerfil" @click="removerCertificado(certificado.codigo)"
+                          class="h-7 w-7 grid place-items-center rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-800 shrink-0"
+                          aria-label="Remover certificação">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none"
+                              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                              class="h-4 w-4">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                      </button>
+                  </div>
+
+                  <div v-if="isAddingCertificado"
+                      class="flex items-center gap-3 rounded-lg border border-teal-500 bg-white p-2 pr-1 pl-3 ring-2 ring-teal-200">
+                      
+                      <input 
+                          ref="inputNovoCertificado"
+                          v-model="novoCertificadoNome"
+                          @keydown.enter.prevent="salvarNovoCertificado"
+                          @keydown.esc.prevent="cancelarAdicao"
+                          type="text"
+                          placeholder="Digite o nome e tecle Enter"
+                          class="flex-grow text-sm font-medium text-slate-700 bg-transparent focus:outline-none"
+                      />
+                      <button @click="cancelarAdicao" class="h-7 w-7 grid place-items-center rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-800 shrink-0" aria-label="Cancelar adição">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                      </button>
+                  </div>
+                  
+                  <p v-if="!funcionario.certificados || !funcionario.certificados.length" class="text-sm text-slate-500 py-2">
+                      Nenhuma certificação cadastrada.
+                  </p>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-slate-200" v-if="podeEditarPerfil && !isAddingCertificado">
+                      <button @click="iniciarAdicao"
+                      class="w-full text-center rounded-lg border-2 border-dashed border-slate-300 px-3 py-2 text-sm font-semibold text-slate-600 hover:border-teal-500 hover:bg-teal-50 hover:text-teal-700">
+                      Adicionar Certificação
+                  </button>
+              </div>
+          </section>
           <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
             <h3 class="text-base font-semibold">Equipe</h3>
             <dl class="mt-4 space-y-4">
@@ -159,37 +253,74 @@
           </section>
         </div>
       </template>
-
+        <ExperienciaModal 
+      :isOpen="isExperienciaModalOpen" 
+      :experiencia-para-editar="experienciaSendoEditada"
+      @close="fecharExperienciaModal"
+      @save="salvarExperiencia"
+        />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted,nextTick,computed } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
+import {useAuth} from '../auth';
+import ExperienciaModal from './ExperienciaModal.vue';
+
+const props = defineProps({ id: String }); // Recebe o ID da URL
+const router = useRouter();                // Para podermos navegar para outras páginas
+const { usuarioLogado } = useAuth(); 
 
 const funcionario = ref(null); // Inicia como nulo. Só recebe valor após a chamada da API.
 const loading = ref(true);     // Inicia como verdadeiro, pois começamos carregando.
 const error = ref(null);
+const isEditingResumo = ref(false);
+const resumoEmEdicao = ref('');
+const isExperienciaModalOpen = ref(false);
+const experienciaSendoEditada = ref(null); 
+const isAddingCertificado = ref(false); // Controla se o campo de input está visível
+const novoCertificadoNome = ref('');    // Armazena o texto do novo certificado
+const inputNovoCertificado = ref(null);
 
-const fetchFuncionarioData = async (id) => {
+const fetchFuncionarioData = async () => {
   loading.value = true;
   error.value = null;
   try {
-    // IMPORTANTE: Verifique se a porta (:8080) é a mesma do seu backend Spring Boot.
-    const response = await axios.get(`http://localhost:8080/api/funcionario/${id}`);
-    funcionario.value = response.data; // Armazena os dados da API na nossa variável reativa.
+    const response = await axios.get(`http://localhost:8080/api/funcionario/${props.id}`);
+    funcionario.value = response.data;
   } catch (err) {
     console.error("Falha ao buscar dados do funcionário:", err);
     error.value = "Não foi possível carregar as informações. Tente novamente mais tarde.";
   } finally {
-    loading.value = false; // Define como falso ao final, tanto em caso de sucesso quanto de erro.
+    loading.value = false;
   }
 };
 
-onMounted(() => {
-  fetchFuncionarioData(5);
+onMounted(fetchFuncionarioData);
+
+const podeEditarPerfil = computed(() => {
+    if (!usuarioLogado.value || !funcionario.value) return false;
+    // Retorna true APENAS se o código do usuário logado for igual ao do perfil visto
+    return usuarioLogado.value.codigo === funcionario.value.codigo;
 });
+
+// Lógica 2: Dono do perfil OU superior da mesma área (Apenas para Competências)
+const podeEditarCompetencias = computed(() => {
+    if (!usuarioLogado.value || !funcionario.value) return false;
+    if (usuarioLogado.value.codigo === funcionario.value.codigo) return true;
+
+    const isSuperior = usuarioLogado.value.perfilId < funcionario.value.perfilId;
+    const isMesmaArea = usuarioLogado.value.areaId === funcionario.value.areaId;
+
+    return isSuperior && isMesmaArea;
+});
+
+const navegarParaCompetencias = () => {
+    router.push({ name: 'Competencias', params: { id: funcionario.value.codigo } });
+};
 
 const getInitials = (fullName) => {
   if (!fullName) return '';
@@ -205,6 +336,138 @@ const formatDate = (dateString) => {
   // Formata a data para o padrão brasileiro (dd/mm/aaaa)
   return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 };
+const iniciarEdicaoResumo = () => {
+  
+  resumoEmEdicao.value = funcionario.value.resumo;
+  
+  isEditingResumo.value = true;
+};
+const cancelarEdicaoResumo = () => {
+  isEditingResumo.value = false;
+};
+const salvarResumo = async () => {
+  
+  if (resumoEmEdicao.value === funcionario.value.resumo) {
+    cancelarEdicaoResumo(); 
+    return;
+  }
+  const payload = {
+    ...funcionario.value, // Usamos os dados atuais como base
+    resumo: resumoEmEdicao.value, // Sobrescrevemos com o resumo editado
+  };
+
+  try {
+    const response = await axios.put(`http://localhost:8080/api/funcionario/${funcionario.value.codigo}`, payload);
+    
+    funcionario.value = response.data;
+    isEditingResumo.value = false;
+    alert('Resumo atualizado com sucesso!');
+
+  } catch (err) {
+    console.error("Falha ao atualizar resumo:", err);
+    alert("Ocorreu um erro ao salvar.");
+  }
+};
+
+const abrirModalParaNovaExperiencia = () => {
+  experienciaSendoEditada.value = null; // Garante que o formulário estará vazio
+  isExperienciaModalOpen.value = true;
+};
+
+const abrirModalParaEditarExperiencia = (experiencia) => {
+  experienciaSendoEditada.value = experiencia; // Passa a experiência clicada para o modal
+  isExperienciaModalOpen.value = true;
+};
+
+const fecharExperienciaModal = () => {
+  isExperienciaModalOpen.value = false;
+};
+
+const salvarExperiencia = async (experienciaData) => {
+  try {
+    let response;
+    // Se a experiência tem um 'codigo', significa que estamos EDITANDO (PUT)
+    if (experienciaData.codigo) {
+      // Usamos o novo endpoint para ATUALIZAR
+      response = await axios.put(`http://localhost:8080/api/funcionario/experiencias/${experienciaData.codigo}`, experienciaData);
+    } else {
+      // Se não tem 'codigo', estamos CRIANDO (POST)
+      // Usamos o novo endpoint para CRIAR
+      const funcionarioId = funcionario.value.codigo;
+      response = await axios.post(`http://localhost:8080/api/funcionario/${funcionarioId}/experiencias`, experienciaData);
+    }
+
+    alert('Experiência salva com sucesso!');
+    fecharExperienciaModal();
+
+    // ESSENCIAL: Recarrega os dados do funcionário para mostrar a lista atualizada!
+    await fetchFuncionarioData();
+
+  } catch (err) {
+    console.error("Falha ao salvar experiência:", err);
+    alert("Ocorreu um erro ao salvar a experiência.");
+  }
+};
+const removerCertificado = async (certificadoId) => {
+  // 1. Pede confirmação antes de apagar
+  if (!confirm("Tem certeza que deseja remover esta certificação?")) {
+    return;
+  }
+
+  try {
+    // 2. Faz a chamada DELETE para a API, passando o ID do certificado a ser removido
+    await axios.delete(`http://localhost:8080/api/funcionario/certificados/${certificadoId}`);
+
+    alert('Certificação removida com sucesso!');
+
+    // 3. ESSENCIAL: Recarrega os dados do funcionário para atualizar a lista na tela
+    await fetchFuncionarioData();
+
+  } catch (err) {
+    console.error("Falha ao remover certificação:", err);
+    alert("Ocorreu um erro ao remover a certificação.");
+  }
+};
+
+const iniciarAdicao = async () => {
+  isAddingCertificado.value = true;
+  // Aguarda o Vue atualizar o DOM para mostrar o input
+  await nextTick();
+  // Foca no campo de input para o usuário já poder digitar
+  inputNovoCertificado.value?.focus();
+};
+const cancelarAdicao = () => {
+  isAddingCertificado.value = false;
+  novoCertificadoNome.value = '';
+};
+const salvarNovoCertificado = async () => {
+  const nomeLimpo = novoCertificadoNome.value.trim();
+  if (nomeLimpo === '') {
+    // Se o campo estiver vazio, apenas cancela a adição
+    cancelarAdicao();
+    return;
+  }
+
+  const payload = { nome: nomeLimpo };
+
+  try {
+    const funcionarioId = funcionario.value.codigo;
+    // A chamada para a API continua a mesma de antes
+    await axios.post(`http://localhost:8080/api/funcionario/${funcionarioId}/certificados`, payload);
+    
+    // Recarrega os dados para mostrar o novo item na lista
+    await fetchFuncionarioData();
+    
+  } catch (err) {
+    console.error("Falha ao adicionar certificação:", err);
+    alert("Ocorreu um erro ao salvar a certificação.");
+  } finally {
+    // Esconde o campo de input após salvar (ou falhar)
+    cancelarAdicao();
+  }
+};
+
+
 </script>
 
 <!-- Reusable Tag component (local) -->

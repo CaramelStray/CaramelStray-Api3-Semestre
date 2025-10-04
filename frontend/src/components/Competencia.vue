@@ -7,14 +7,14 @@
       <img src="@/assets/target-svgrepo-com.svg" alt="Ícone de alvo" width="40" height="40" />
     </div>
     <div>
-      <h1 class="header__title">Insira suas Competências</h1>
-      <p class="header__subtitle">Selecione e gerencie suas habilidades profissionais</p>
+      <h1 class="header__title">{{ pageTitle }}</h1>
+      <p class="header__subtitle">{{pageSubtitle}}</p>
     </div>
   </div>
 
   <div class="header__user">
     <img src="@/assets/user-circle-svgrepo-com.svg" alt="Ícone de usuário" width="40" height="40" />
-    <span class="user__name">Usuário Teste</span>
+    <span class="user__name">{{nomeUsuarioLogado}}</span>
   </div>
 </header>
 
@@ -26,8 +26,8 @@
         @drop="onDropToSelected"
       >
         <div class="selected__icon"> <img src="@/assets/target-svgrepo-com.svg" alt="Ícone de alvo" width="40" height="40" /></div>
-        <h2 class="selected__title">Suas Competências Selecionadas</h2>
-        <p class="selected__hint">Arraste competências da lista abaixo para adicioná-las</p>
+        <h2 class="selected__title">Competências Selecionadas</h2>
+        <p class="selected__hint">Clique nas competências da lista abaixo para adicioná-las</p>
 
         <div v-if="selected.length" class="selected__chips">
           <div
@@ -130,14 +130,22 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, onMounted} from 'vue'
+import { computed, watch, ref, onMounted} from 'vue'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
+import { useAuth } from '../auth'
 
-const FUNCIONARIO_ID = 1
-const API_BASE_URL= 'http://localhost:8080/api/competencia'
-const API_FUNCIONARIO_COMP_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;
-const API_FUNCIONARIO_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID}/competencias`;
-const all = ref([]) 
+const route = useRoute();
+const { usuarioLogado } = useAuth();
+
+const FUNCIONARIO_ID_ALVO = route.params.id; 
+const USUARIO_LOGADO_ID = computed(() => usuarioLogado.value?.codigo);
+
+const API_BASE_URL = 'http://localhost:8080/api/competencia'
+const API_FUNCIONARIO_COMP_URL = `http://localhost:8080/api/funcionario/${FUNCIONARIO_ID_ALVO}/competencias`;
+const perfilAlvo = ref(null);
+
+const all = ref([])
 
 /** Dados base – ajuste/expanda conforme necessário */
 
@@ -159,11 +167,11 @@ async function loadCompetencias() {
         
         
         const allCompetencias = allResponse.data.map(comp => ({
-            id: comp.codigo, 
+            id: comp.id, 
             nome: comp.nome,
             descricao: `Detalhe temporário da competência: ${comp.nome}`, 
             // Mapeamento de categoria
-            categoria: categorias[(comp.codigo % categorias.length)], 
+            categoria: categorias[(comp.id % categorias.length)], 
             extras: []
         }));
 
@@ -197,6 +205,15 @@ async function loadCompetencias() {
     }
 }
 
+async function loadPerfilAlvo() {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/funcionario/${FUNCIONARIO_ID_ALVO}`);
+    perfilAlvo.value = response.data;
+  } catch (error) {
+    console.error('Falha ao carregar dados do perfil alvo:', error);
+  }
+}
+
 async function saveCompetencias() {
     isSaving.value = true;
     const codigosCompetencia = selected.value.map(item => item.id);
@@ -204,9 +221,10 @@ async function saveCompetencias() {
         codigosCompetencia: codigosCompetencia
     };
     try {
-        await axios.put(API_FUNCIONARIO_URL, body, {
+        await axios.put(API_FUNCIONARIO_COMP_URL, body, { // <-- Usando a URL correta
             headers: {
-                'X-Usuario-Logado-Id': 1
+                // <-- Usando o ID dinâmico do usuário logado
+                'X-Usuario-Logado-Id': USUARIO_LOGADO_ID.value 
             }
         });
         alert('Competências salvas com sucesso!');
@@ -215,7 +233,7 @@ async function saveCompetencias() {
         let message = 'Erro desconhecido ao salvar competências.';
         if (error.response) {
             if (error.response.status === 403) {
-                message = 'Ação não autorizada. Você só pode alterar suas próprias competências.';
+                message = 'Ação não autorizada. Você só pode alterar suas próprias competências ou de subordinados na mesma área.';
             } else if (error.response.status === 404) {
                 message = 'Funcionário ou Competência não encontrados.';
             }
@@ -227,8 +245,37 @@ async function saveCompetencias() {
 }
 
 
-onMounted(loadCompetencias)
+onMounted(() => {
+    // Chama as duas funções em paralelo para carregar tudo mais rápido
+    Promise.all([
+        loadCompetencias(),
+        loadPerfilAlvo()
+    ]);
+});
+const isSelfEdit = computed(() => {
+    if (!usuarioLogado.value || !perfilAlvo.value) return false;
+    return usuarioLogado.value.codigo === perfilAlvo.value.codigo;
+});
 
+const pageTitle = computed(() => {
+    if (isSelfEdit.value) {
+        return "Insira suas Competências";
+    }
+    if (perfilAlvo.value) {
+        return `Editando Competências de ${perfilAlvo.value.nomeCompleto}`;
+    }
+    return "Carregando Competências...";
+});
+const pageSubtitle = computed(() => {
+    if (isSelfEdit.value) {
+        return "Selecione e gerencie suas habilidades profissionais";
+    }
+    return `Modifique as habilidades profissionais do perfil selecionado`;
+});
+
+const nomeUsuarioLogado = computed(() => {
+    return usuarioLogado.value?.nomeCompleto || "Usuário";
+});
 
 const dragPayload = ref(null)
 function onDragStart(item, from) {

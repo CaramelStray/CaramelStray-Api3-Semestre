@@ -3,8 +3,8 @@ package br.com.AllTallent.controller;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpStatus; // <- Importante
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity; // <- Importante
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.AllTallent.dto.CertificadoDTO;
 import br.com.AllTallent.dto.CertificadoRequestDTO;
+import br.com.AllTallent.dto.ExperienciaDTO;
+import br.com.AllTallent.dto.ExperienciaRequestDTO;
 import br.com.AllTallent.dto.FuncionarioCompetenciaUpdateDTO;
 import br.com.AllTallent.dto.FuncionarioCompetenciasResponseDTO;
 import br.com.AllTallent.dto.FuncionarioExperienciasResponseDTO;
@@ -28,6 +30,7 @@ import br.com.AllTallent.exception.ResourceNotFoundException;
 import br.com.AllTallent.exception.UnauthorizedActionException;
 import br.com.AllTallent.model.Funcionario;
 import br.com.AllTallent.service.FuncionarioService; 
+import jakarta.validation.Valid; 
 @RestController
 @RequestMapping("/api/funcionario")
 public class FuncionarioController {
@@ -76,14 +79,23 @@ public class FuncionarioController {
     FuncionarioPerfilDTO perfilDTO = funcionarioService.buscarPerfilPorId(id);
     return ResponseEntity.ok(perfilDTO);
     }
+    
+    
     @PostMapping("/{id}/certificados")
     public ResponseEntity<CertificadoDTO> adicionarCertificado(
-            @PathVariable Integer funcionarioId,
+            @PathVariable Integer id,
             @RequestBody CertificadoRequestDTO dto) {
 
-        CertificadoDTO novoCertificado = funcionarioService.adicionarCertificado(funcionarioId, dto);
+        CertificadoDTO novoCertificado = funcionarioService.adicionarCertificado(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoCertificado);
     }
+
+    @DeleteMapping("/certificados/{certificadoId}")
+    public ResponseEntity<Void> removerCertificado(@PathVariable Integer certificadoId) {
+    funcionarioService.removerCertificado(certificadoId);
+    return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{id}/competencias")
     public ResponseEntity<Void> atualizarCompetencias(
             // Recebe o ID do usuário que está logado
@@ -118,5 +130,22 @@ public class FuncionarioController {
     public ResponseEntity<FuncionarioExperienciasResponseDTO> listarExperienciasPorFuncionario(@PathVariable Integer id) {
         FuncionarioExperienciasResponseDTO experienciasDTO = funcionarioService.listarExperienciasPorFuncionario(id);
         return ResponseEntity.ok(experienciasDTO);
+    }
+    @PostMapping("/{id}/experiencias")
+    public ResponseEntity<ExperienciaDTO> adicionarExperiencia(
+            @PathVariable Integer id,
+            @Valid @RequestBody ExperienciaRequestDTO dto) {
+        
+        ExperienciaDTO novaExperiencia = funcionarioService.adicionarExperiencia(id, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaExperiencia);
+    }
+
+    @PutMapping("/experiencias/{experienciaId}")
+    public ResponseEntity<ExperienciaDTO> atualizarExperiencia(
+            @PathVariable Integer experienciaId,
+            @Valid @RequestBody ExperienciaRequestDTO dto) {
+        
+        ExperienciaDTO experienciaAtualizada = funcionarioService.atualizarExperiencia(experienciaId, dto);
+        return ResponseEntity.ok(experienciaAtualizada);
     }
 }

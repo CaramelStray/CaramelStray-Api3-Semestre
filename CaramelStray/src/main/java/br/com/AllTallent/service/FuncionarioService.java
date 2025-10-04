@@ -2,14 +2,16 @@ package br.com.AllTallent.service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors; 
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.AllTallent.dto.CertificadoDTO;
 import br.com.AllTallent.dto.CertificadoRequestDTO;
+import br.com.AllTallent.dto.ExperienciaDTO;
+import br.com.AllTallent.dto.ExperienciaRequestDTO;
 import br.com.AllTallent.dto.FuncionarioExperienciasResponseDTO;
 import br.com.AllTallent.dto.FuncionarioPerfilDTO;
 import br.com.AllTallent.dto.FuncionarioRequestDTO;
@@ -18,11 +20,14 @@ import br.com.AllTallent.exception.ResourceNotFoundException;
 import br.com.AllTallent.exception.UnauthorizedActionException;
 import br.com.AllTallent.model.Area;
 import br.com.AllTallent.model.Competencia;
-import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.model.Experiencia;
+import br.com.AllTallent.model.Funcionario; 
 import br.com.AllTallent.model.FuncionarioCertificado;
 import br.com.AllTallent.model.Perfil;
 import br.com.AllTallent.repository.AreaRepository;
+import br.com.AllTallent.repository.CertificadoRepository;
 import br.com.AllTallent.repository.CompetenciaRepository;
+import br.com.AllTallent.repository.ExperienciaRepository;
 import br.com.AllTallent.repository.FuncionarioRepository;
 import br.com.AllTallent.repository.PerfilRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,22 +40,27 @@ public class FuncionarioService {
     private final AreaRepository areaRepository;
     private final PerfilRepository perfilRepository;
     private final CompetenciaRepository competenciaRepository;
-
-
+    private final ExperienciaRepository experienciaRepository; 
+    private final CertificadoRepository certificadoRepository; 
+    
 
    public FuncionarioService(
         FuncionarioRepository funcionarioRepository, 
         AreaRepository areaRepository, 
         PerfilRepository perfilRepository, 
-        CompetenciaRepository competenciaRepository // <-- NOVO
+        CompetenciaRepository competenciaRepository,
+        ExperienciaRepository experienciaRepository,
+        CertificadoRepository certificadoRepository // <-- NOVO
     ) {
         this.funcionarioRepository = funcionarioRepository;
         this.areaRepository = areaRepository;
         this.perfilRepository = perfilRepository;
-        this.competenciaRepository = competenciaRepository; // <-- NOVO
+        this.competenciaRepository = competenciaRepository;
+        this.experienciaRepository = experienciaRepository;
+        this.certificadoRepository = certificadoRepository;
     }
 
-    // Retorna a lista de funcionários já convertida para DTOs
+    
     @Transactional(readOnly = true)
     public List<FuncionarioResponseDTO> listarTodos() {
         return funcionarioRepository.findAll().stream()
@@ -98,32 +108,34 @@ public class FuncionarioService {
     // Método auxiliar privado para converter o DTO de requisição para a Entidade
     private void mapearDtoParaEntidade(FuncionarioRequestDTO dto, Funcionario entidade) {
         // Busca as entidades relacionadas a partir dos IDs
-        Area area = areaRepository.findById(dto.areaId())
-                .orElseThrow(() -> new ResourceNotFoundException("Área não encontrada com o ID: " + dto.areaId()));
-        Perfil perfil = perfilRepository.findById(dto.perfilId())
-                .orElseThrow(() -> new ResourceNotFoundException("Perfil não encontrado com o ID: " + dto.perfilId()));
+        Optional.ofNullable(dto.nomeCompleto()).ifPresent(entidade::setNomeCompleto);
+        Optional.ofNullable(dto.telefone()).ifPresent(entidade::setTelefone);
+        Optional.ofNullable(dto.tituloProfissional()).ifPresent(entidade::setTituloProfissional);
+        Optional.ofNullable(dto.localizacao()).ifPresent(entidade::setLocalizacao);
+        Optional.ofNullable(dto.resumo()).ifPresent(entidade::setResumo);
+        Optional.ofNullable(dto.email()).ifPresent(entidade::setEmail);
 
-        entidade.setNomeCompleto(dto.nomeCompleto());
-        entidade.setEmail(dto.email());
-        entidade.setTelefone(dto.telefone());
-        entidade.setSenhaHash(dto.senhaHash());
-        entidade.setTituloProfissional(dto.tituloProfissional());
-        entidade.setLocalizacao(dto.localizacao());
-        entidade.setResumo(dto.resumo()); // ✅ ATUALIZA O RESUMO
-        entidade.setArea(area);
-        entidade.setPerfil(perfil);
+        Optional.ofNullable(dto.areaId()).ifPresent(areaId -> {
+            Area area = areaRepository.findById(areaId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Área não encontrada com o ID: " + areaId));
+            entidade.setArea(area);
+        });
 
-        
-        if (dto.gestorId() != null) {
-            Funcionario gestor = funcionarioRepository.findById(dto.gestorId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Gestor não encontrado com o ID: " + dto.gestorId()));
-            entidade.setGestor(gestor);
-        } else {
-            entidade.setGestor(null);
-        }
+        Optional.ofNullable(dto.perfilId()).ifPresent(perfilId -> {
+            Perfil perfil = perfilRepository.findById(perfilId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Perfil não encontrado com o ID: " + perfilId));
+            entidade.setPerfil(perfil);
+        });
+
+        Optional.ofNullable(dto.gestorId())
+            .map(gestorId -> funcionarioRepository.findById(gestorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Gestor não encontrado com o ID: " + gestorId)))
+            .ifPresentOrElse(entidade::setGestor, () -> entidade.setGestor(null));
     }
+
+    
     @Transactional(readOnly = true)
-public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
+    public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
     return funcionarioRepository.findByIdCompleto(id)
             .map(FuncionarioPerfilDTO::new) 
             .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
@@ -143,7 +155,7 @@ public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
         return new CertificadoDTO(novoCertificado);
     }
     @Transactional
-    public void associarCompetencias(Integer idLogado, Integer idAlvo, Set<Integer> codigosCompetencia) {
+    public void associarCompetencias(Integer idLogado, Integer idAlvo, List<Integer> codigosCompetencia) {
         
         if (!podeAssociarCompetencias(idLogado, idAlvo)) {
             
@@ -206,4 +218,50 @@ public FuncionarioPerfilDTO buscarPerfilPorId(Integer id) {
         // O construtor do DTO faz toda a "mágica" da conversão
         return new FuncionarioExperienciasResponseDTO(funcionario);
     }
+    @Transactional
+    public ExperienciaDTO adicionarExperiencia(Integer funcionarioId, ExperienciaRequestDTO dto) {
+        Funcionario funcionario = funcionarioRepository.findById(funcionarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + funcionarioId));
+
+        Experiencia novaExperiencia = new Experiencia();
+        novaExperiencia.setCargo(dto.cargo());
+        novaExperiencia.setEmpresa(dto.empresa());
+        novaExperiencia.setDataInicio(dto.dataInicio());
+        novaExperiencia.setDataFim(dto.dataFim());
+        novaExperiencia.setDescricao(dto.descricao());
+        novaExperiencia.setFuncionario(funcionario);
+
+        Experiencia experienciaSalva = experienciaRepository.save(novaExperiencia);
+        return new ExperienciaDTO(experienciaSalva);
+    }
+
+    @Transactional
+    public ExperienciaDTO atualizarExperiencia(Integer experienciaId, ExperienciaRequestDTO dto) {
+        Experiencia experienciaExistente = experienciaRepository.findById(experienciaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Experiência não encontrada com o ID: " + experienciaId));
+        
+        // No futuro, aqui você pode adicionar uma verificação de permissão
+        // para garantir que o usuário logado pode editar esta experiência.
+
+        experienciaExistente.setCargo(dto.cargo());
+        experienciaExistente.setEmpresa(dto.empresa());
+        experienciaExistente.setDataInicio(dto.dataInicio());
+        experienciaExistente.setDataFim(dto.dataFim());
+        experienciaExistente.setDescricao(dto.descricao());
+
+        Experiencia experienciaAtualizada = experienciaRepository.save(experienciaExistente);
+        return new ExperienciaDTO(experienciaAtualizada);
+    }
+    @Transactional
+    public void removerCertificado(Integer certificadoId) {
+        // Verifica se o certificado realmente existe antes de tentar deletar
+        if (!certificadoRepository.existsById(certificadoId)) {
+            // Lança uma exceção se não for encontrado, o que resultará em um erro 404 Not Found
+            throw new ResourceNotFoundException("Certificado não encontrado com o ID: " + certificadoId);
+        }
+        
+        // Se existir, deleta pelo ID
+        certificadoRepository.deleteById(certificadoId);
+    }
+   
 }

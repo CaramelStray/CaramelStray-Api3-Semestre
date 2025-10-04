@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Areas: typeof import('./components/Areas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
+    ExperienciaModal: typeof import('./components/ExperienciaModal.vue')['default']
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Inicio: typeof import('./components/Inicio.vue')['default']

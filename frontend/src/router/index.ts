@@ -23,9 +23,10 @@ const router = createRouter({
       component: Perfilbase,
     },
     {
-      path: '/perfil',
+      path: '/perfil/:id',
       name: 'perfilfun',
       component: Perfilfun,
+      props:true
     },
     {
       path: '/inicio',
@@ -33,9 +34,10 @@ const router = createRouter({
       component: Inicio,
     },
     {
-      path: '/competencia',
-      name: 'Competencia',
+      path: '/perfil/:id/competencia',
+      name: 'Competencias',
       component: Competencia,
+      props:true
     },
   ],
 });

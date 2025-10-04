@@ -1,7 +1,7 @@
 package br.com.AllTallent.dto;
 
-import java.util.Set;
+import java.util.List;
 
 public record FuncionarioCompetenciaUpdateDTO(
-    Set<Integer> codigosCompetencia 
+    List<Integer> codigosCompetencia 
 ) {}
