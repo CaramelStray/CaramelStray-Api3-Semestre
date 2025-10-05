@@ -4,6 +4,7 @@ import Perfilbase from '../components/perfilBase.vue';
 import Perfilfun from '../components/perfilFun.vue';
 import Inicio from '../components/Inicio.vue';
 import Competencia from '../components/Competencia.vue';
+import Perguntas from '../components/CadastroPerguntas.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,6 +39,12 @@ const router = createRouter({
       name: 'Competencias',
       component: Competencia,
       props:true
+    },
+    {
+      path: '/perguntas/:id',
+      name: 'CadastroPerguntas',
+      component: Perguntas,
+      props: true
     },
   ],
 });
