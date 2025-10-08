@@ -15,6 +15,7 @@ declare module 'vue' {
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Inicio: typeof import('./components/Inicio.vue')['default']
+    Lista: typeof import('./components/Lista.vue')['default']
     PerfilBase: typeof import('./components/perfilBase.vue')['default']
     PerfilFun: typeof import('./components/perfilFun.vue')['default']
     Perguntas: typeof import('./components/Perguntas.vue')['default']
