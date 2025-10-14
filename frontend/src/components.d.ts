@@ -18,7 +18,6 @@ declare module 'vue' {
     Lista: typeof import('./components/Lista.vue')['default']
     PerfilBase: typeof import('./components/perfilBase.vue')['default']
     PerfilFun: typeof import('./components/perfilFun.vue')['default']
-    Perguntas: typeof import('./components/Perguntas.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -86,9 +86,11 @@
         </div>
       </div>
     </section>
-
+    <div v-if="isLoading" class="loading-state">
+      Carregando lista de colaboradores...
+    </div>
     <!-- Cards -->
-    <main class="cards">
+    <main v-else class="cards">
       <article v-for="c in filtered" :key="c.email" class="card">
         <div class="card__left">
           <div class="avatar" :style="{ background: c.avatarColor }">
@@ -110,34 +112,41 @@
           </ul>
         </div>
       </article>
+      <div v-if="!filtered.length && !isLoading" class="no-results">
+        Nenhum colaborador encontrado com os filtros selecionados.
+      </div>
     </main>
 
-    <footer class="pager">
+    <footer v-if="!isLoading" class="pager">
       Página 1 de 2 • {{ filtered.length }} colaboradores encontrados
     </footer>
   </div>
 </template>
 
 <script>
+
+import axios from 'axios';
+
+const AVATAR_COLORS = [
+  "#e57373", "#f06292", "#ba68c8", "#9575cd", "#7986cb", 
+  "#64b5f6", "#4fc3f7", "#4dd0e1", "#4db6ac", "#81c784",
+  "#aed581", "#dce775", "#fff176", "#ffd54f", "#ffb74d", 
+  "#ff8a65", "#a1887f", "#90a4ae"
+];
+
 export default {
   name: "Colaboradores",
   data() {
     return {
+      isLoading: true,
       deptSelected: "",
       roleSelected: "",
       statusSelected: "",
       searchQuery: "", // <-- NOVO
-      depts: ["Recursos Humanos", "Tecnologia", "Marketing", "Financeiro", "Vendas", "Comercial", "Design"],
-      roles: ["Analista", "Desenvolvedor Frontend", "Gerente", "Designer UX/UI", "Coordenador", "Analista Financeiro"],
+      depts:[],
+      roles:[],
       statuses: ["Ativo", "Férias", "Inativo"],
-      collaborators: [
-        { name: "Ana Silva Santos", role: "Analista de Recursos Humanos", department: "Recursos Humanos", email: "ana.santos@empresa.com", phone: "(11) 99999-0001", status: "Ativo", avatarColor: "#63c7c5" },
-        { name: "Carlos Eduardo Lima", role: "Desenvolvedor Frontend", department: "Tecnologia", email: "carlos.lima@empresa.com", phone: "(11) 99999-0002", status: "Ativo", avatarColor: "#5bb7c8" },
-        { name: "Mariana Costa Ferreira", role: "Gerente de Marketing", department: "Marketing", email: "mariana.ferreira@empresa.com", phone: "(11) 99999-0003", status: "Ativo", avatarColor: "#7cc0cb" },
-        { name: "João Pedro Oliveira", role: "Analista Financeiro", department: "Financeiro", email: "joao.oliveira@empresa.com", phone: "(11) 99999-0004", status: "Ativo", avatarColor: "#61b2c0" },
-        { name: "Fernanda Ribeiro Cruz", role: "Designer UX/UI", department: "Tecnologia", email: "fernanda.cruz@empresa.com", phone: "(11) 99999-0005", status: "Ativo", avatarColor: "#60c0b4" },
-        { name: "Ricardo Almeida Souza", role: "Coordenador de Vendas", department: "Vendas", email: "ricardo.souza@empresa.com", phone: "(11) 99999-0006", status: "Ativo", avatarColor: "#7db5b9" }
-      ]
+      collaborators: []
     };
   },
   computed: {
@@ -162,11 +171,57 @@ export default {
       });
     }
   },
+  async mounted() {
+    await this.fetchData();
+  },
   methods: {
-    initials(name) {
-      const p = name.trim().split(" ");
-      return (p[0][0] + p[p.length - 1][0]).toUpperCase();
+    mapToCollaborator(dto, index) {
+        return {
+            name: dto.nomeCompleto,
+            role: dto.tituloProfissional || dto.nomePerfil || "Não Definido", 
+            department: dto.nomeArea || "Não Definido",
+            email: dto.email,
+            phone: dto.telefone,
+            status: "Ativo",
+            badge: dto.nomePerfil || null,
+            avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length] 
+        };
     },
+    
+    // ALTERADO: Função de busca agora usa Axios
+    async fetchData() {
+        this.isLoading = true;
+        try {
+            // Chamada com Axios: É mais concisa e já retorna o corpo da resposta em .data
+            const response = await axios.get("/api/funcionario");
+            
+            // Axios não precisa de response.json(), os dados já estão em response.data
+            const data = response.data; 
+            console.log("Resposta bruta da API:", response);
+            console.log("Array de Dados recebido (data):", data);
+            this.collaborators = Array.isArray(data) 
+            ? data.map(dto => this.mapToCollaborator(dto, data.indexOf(dto)))
+            : [];
+            // Popula os filtros de Departamento e Cargo
+            this.depts = [...new Set(this.collaborators.map(c => c.department))].sort();
+            this.roles = [...new Set(this.collaborators.map(c => c.role))].sort();
+
+        } catch (error) {
+            // A manipulação de erros com Axios é mais robusta
+            console.error("Falha ao buscar dados da API com Axios:", error);
+            // Se o erro tiver uma resposta, você pode acessar: error.response.status
+        } finally {
+            this.isLoading = false;
+        }
+    },  
+
+initials(name) {
+    const p = name.trim().split(" ");
+    if (p.length === 0) return '';
+    const first = p[0][0];
+    const last = p.length > 1 ? p[p.length - 1][0] : '';
+    return (first + last).toUpperCase();
+},
     normalize(str) {
       return (str || "")
         .toString()
