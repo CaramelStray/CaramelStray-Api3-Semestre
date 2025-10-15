@@ -11,6 +11,7 @@ declare module 'vue' {
     Areas: typeof import('./components/Areas.vue')['default']
     CadastroPerguntas: typeof import('./components/CadastroPerguntas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
+    copia: typeof import('./components/Lista - copia.vue')['default']
     Copia: typeof import('./components/perfilBase - Copia.vue')['default']
     ExperienciaModal: typeof import('./components/ExperienciaModal.vue')['default']
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']

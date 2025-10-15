@@ -23,7 +23,13 @@
     <!-- Filtros -->
     <section class="filters">
       <div class="filters__container">
-        <button class="round-btn" aria-label="Anterior">
+        <!-- ALTERADO: seta esquerda com paginação -->
+        <button
+          class="round-btn"
+          aria-label="Anterior"
+          @click="prevPage"
+          :disabled="currentPage === 1 || isLoading || !filtered.length"
+        >
           <svg viewBox="0 0 24 24" width="18" height="18">
             <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -61,7 +67,13 @@
           </div>
         </div>
 
-        <button class="round-btn" aria-label="Próximo">
+        <!-- ALTERADO: seta direita com paginação -->
+        <button
+          class="round-btn"
+          aria-label="Próximo"
+          @click="nextPage"
+          :disabled="currentPage >= totalPages || isLoading || !filtered.length"
+        >
           <svg viewBox="0 0 24 24" width="18" height="18">
             <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -86,12 +98,15 @@
         </div>
       </div>
     </section>
+
     <div v-if="isLoading" class="loading-state">
       Carregando lista de colaboradores...
     </div>
+
     <!-- Cards -->
+    <!-- ALTERADO: usa 'paginated' em vez de 'filtered' -->
     <main v-else class="cards">
-      <article v-for="c in filtered" :key="c.email" class="card">
+      <article v-for="c in paginated" :key="c.email" class="card">
         <div class="card__left">
           <div class="avatar" :style="{ background: c.avatarColor }">
             <span>{{ initials(c.name) }}</span>
@@ -105,26 +120,28 @@
           </div>
 
           <ul class="meta">
-            <li><i class="ico"></i><span class="line">{{ c.role }}</span></li>
-            <li><i class="ico"></i><span class="line">{{ c.department }}</span></li>
-            <li><i class="ico"></i><span class="line email">{{ c.email }}</span></li>
-            <li><i class="ico"></i><span class="line">{{ c.phone }}</span></li>
+            <li><img class="ico" src="@/assets/task-svgrepo-com.svg" alt="cargo" /><span class="line">{{ c.role }}</span></li>
+            <li><img class="ico" src="@/assets/job-search-symbol-of-suitcase-and-curriculum-paper-svgrepo-com.svg" alt="departamento" /><span class="line">{{ c.department }}</span></li>
+            <li><img class="ico" src="@/assets/telephone-svgrepo-com.svg" alt="telefone" /><span class="line email">{{ c.email }}</span></li>
+            <li><img class="ico" src="@/assets/email-1-svgrepo-com.svg" alt="email" /><span class="line">{{ c.phone }}</span></li>
           </ul>
         </div>
       </article>
+
       <div v-if="!filtered.length && !isLoading" class="no-results">
         Nenhum colaborador encontrado com os filtros selecionados.
       </div>
     </main>
 
+    <!-- ALTERADO: rodapé com info de página e intervalo -->
     <footer v-if="!isLoading" class="pager">
-      Página 1 de 2 • {{ filtered.length }} colaboradores encontrados
+      Página {{ currentPage }} de {{ totalPages }} •
+      Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ filtered.length }} colaboradores
     </footer>
   </div>
 </template>
 
 <script>
-
 import axios from 'axios';
 
 const AVATAR_COLORS = [
@@ -142,11 +159,14 @@ export default {
       deptSelected: "",
       roleSelected: "",
       statusSelected: "",
-      searchQuery: "", // <-- NOVO
-      depts:[],
-      roles:[],
+      searchQuery: "",
+      depts: [],
+      roles: [],
       statuses: ["Ativo", "Férias", "Inativo"],
-      collaborators: []
+      collaborators: [],
+      // NOVO: estado da paginação
+      currentPage: 1,
+      pageSize: 6
     };
   },
   computed: {
@@ -169,65 +189,90 @@ export default {
         ].map(this.normalize).join(" ");
         return haystack.includes(q);
       });
+    },
+    // NOVO: total de páginas
+    totalPages() {
+      const t = Math.ceil(this.filtered.length / this.pageSize);
+      return Math.max(1, t || 1);
+    },
+    // NOVO: items da página atual
+    paginated() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      return this.filtered.slice(start, start + this.pageSize);
+    },
+    // NOVO: intervalo exibido no rodapé
+    rangeStart() {
+      if (!this.filtered.length) return 0;
+      return (this.currentPage - 1) * this.pageSize + 1;
+    },
+    rangeEnd() {
+      return Math.min(this.currentPage * this.pageSize, this.filtered.length);
     }
   },
   async mounted() {
     await this.fetchData();
   },
+  watch: {
+    // NOVO: sempre que filtros/busca/dados mudarem, volta para a página 1
+    deptSelected() { this.currentPage = 1; },
+    roleSelected() { this.currentPage = 1; },
+    statusSelected() { this.currentPage = 1; },
+    searchQuery() { this.currentPage = 1; },
+    collaborators() { this.currentPage = 1; },
+    // Se o total de páginas diminuir e a página atual ficar fora do limite, ajusta
+    filtered() {
+      if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    }
+  },
   methods: {
     mapToCollaborator(dto, index) {
-        return {
-            name: dto.nomeCompleto,
-            role: dto.tituloProfissional || dto.nomePerfil || "Não Definido", 
-            department: dto.nomeArea || "Não Definido",
-            email: dto.email,
-            phone: dto.telefone,
-            status: "Ativo",
-            badge: dto.nomePerfil || null,
-            avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length] 
-        };
+      return {
+        name: dto.nomeCompleto,
+        role: dto.tituloProfissional || dto.nomePerfil || "Não Definido", 
+        department: dto.nomeArea || "Não Definido",
+        email: dto.email,
+        phone: dto.telefone,
+        status: "Ativo",
+        badge: dto.nomePerfil || null,
+        avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length] 
+      };
     },
-    
-    // ALTERADO: Função de busca agora usa Axios
     async fetchData() {
-        this.isLoading = true;
-        try {
-            // Chamada com Axios: É mais concisa e já retorna o corpo da resposta em .data
-            const response = await axios.get("/api/funcionario");
-            
-            // Axios não precisa de response.json(), os dados já estão em response.data
-            const data = response.data; 
-            console.log("Resposta bruta da API:", response);
-            console.log("Array de Dados recebido (data):", data);
-            this.collaborators = Array.isArray(data) 
-            ? data.map(dto => this.mapToCollaborator(dto, data.indexOf(dto)))
-            : [];
-            // Popula os filtros de Departamento e Cargo
-            this.depts = [...new Set(this.collaborators.map(c => c.department))].sort();
-            this.roles = [...new Set(this.collaborators.map(c => c.role))].sort();
-
-        } catch (error) {
-            // A manipulação de erros com Axios é mais robusta
-            console.error("Falha ao buscar dados da API com Axios:", error);
-            // Se o erro tiver uma resposta, você pode acessar: error.response.status
-        } finally {
-            this.isLoading = false;
-        }
-    },  
-
-initials(name) {
-    const p = name.trim().split(" ");
-    if (p.length === 0) return '';
-    const first = p[0][0];
-    const last = p.length > 1 ? p[p.length - 1][0] : '';
-    return (first + last).toUpperCase();
-},
+      this.isLoading = true;
+      try {
+        const response = await axios.get("/api/funcionario");
+        const data = response.data;
+        this.collaborators = Array.isArray(data) 
+          ? data.map((dto, i) => this.mapToCollaborator(dto, i))
+          : [];
+        this.depts = [...new Set(this.collaborators.map(c => c.department))].sort();
+        this.roles = [...new Set(this.collaborators.map(c => c.role))].sort();
+      } catch (error) {
+        console.error("Falha ao buscar dados da API com Axios:", error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    initials(name) {
+      const p = (name || "").trim().split(" ");
+      if (!p.length) return '';
+      const first = p[0][0] || '';
+      const last = p.length > 1 ? (p[p.length - 1][0] || '') : '';
+      return (first + last).toUpperCase();
+    },
     normalize(str) {
       return (str || "")
         .toString()
         .toLowerCase()
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, ""); // remove acentos
+        .replace(/[\u0300-\u036f]/g, "");
+    },
+    // NOVO: ações de paginação
+    prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) this.currentPage++;
     }
   }
 };
@@ -235,15 +280,14 @@ initials(name) {
 
 <style scoped>
 .page {
-  /* variáveis locais */
   --bg: #f3f9f9;
   --card: #ffffff;
   --border: #e3eeee;
   --shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   --title: #274b57;
   --subtitle: #6e7f89;
-  --primary: #5cc2c1;
-  --primary-600: #3fb2b2;
+  --primary: #382eceff;
+  --primary-600: #382eceff;
   --pill-bg: #f0f7f7;
   --pill-border: #d8e9e9;
   --pill-text: #4a626b;
@@ -292,7 +336,7 @@ initials(name) {
   margin: 0 auto;
   padding: 0 16px;
   display: grid;
-  grid-template-columns: 36px 1fr 36px; /* seta esquerda | filtros | seta direita */
+  grid-template-columns: 36px 1fr 36px;
   align-items: center;
   gap: 12px;
 }
@@ -310,6 +354,11 @@ initials(name) {
   color: var(--pill-text);
   display: grid; place-items: center;
   cursor: pointer;
+}
+/* NOVO: estado disabled nas setas */
+.round-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 
 .pill-select {
@@ -342,7 +391,7 @@ initials(name) {
   border-radius: 12px;
   height: 40px;
   display: grid;
-  grid-template-columns: 30px 1fr 30px; /* ícone | input | limpar */
+  grid-template-columns: 30px 1fr 30px;
   align-items: center;
   gap: 6px;
   padding: 0 8px;
@@ -356,10 +405,7 @@ initials(name) {
   font-size: 14px;
   color: var(--pill-text);
 }
-.search-ico {
-  display: grid; place-items: center;
-  color: var(--pill-text);
-}
+.search-ico { display: grid; place-items: center; color: var(--pill-text); }
 .clear-btn {
   border: none; background: transparent; color: var(--pill-text);
   font-size: 20px; line-height: 1; cursor: pointer;
@@ -394,7 +440,7 @@ initials(name) {
 .badge { background: var(--badge-bg); color: var(--badge-text); border: 1px solid #bfece5; padding: 4px 8px; border-radius: 999px; font-size: 11px; }
 .meta { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .meta li { display: grid; grid-template-columns: 16px 1fr; align-items: center; column-gap: 8px; color: var(--subtitle); font-size: 13px; }
-.ico { width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-600) 100%); }
+.ico { width: 16px; height: 16px; display: block; object-fit: contain; }
 
 .pager { text-align: center; color: var(--subtitle); font-size: 13px; margin: 8px 0 22px; }
 </style>
