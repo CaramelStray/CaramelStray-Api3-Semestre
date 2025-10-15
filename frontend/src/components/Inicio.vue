@@ -4,10 +4,9 @@
     <header class="topbar">
       <div class="brand">
         <div class="brand__logo">
-          <!-- ícone placeholder -->
           <svg viewBox="0 0 24 24" width="18" height="18">
-            <circle cx="12" cy="8" r="3" fill="currentColor"/>
-            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="8" r="3" fill="#382eceff"/>
+            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="#382eceff" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
         <div class="brand__text">
@@ -46,13 +45,9 @@
 
       <article class="card">
         <div class="card__icon">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24" width="28" height="28">
-              <rect x="7" y="3" width="10" height="14" rx="2" ry="2" fill="#fff" />
-              <path d="M7 7h10" stroke="#fff" stroke-width="2"/>
-              <path d="M9 12l2 2 4-4" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
+            <div class="icon-circle">
+              <img src="@/assets/pencil-svgrepo-com.svg" alt="ícone de lápis" width="28" height="28" />
+            </div>
         </div>
         <h3 class="card__title">Status das Avaliações</h3>
         <p class="card__desc">Monitore o progresso e status das avaliações dos colaboradores</p>
@@ -72,13 +67,6 @@
         <button class="btn-primary">Acessar</button>
       </article>
     </main>
-
-    <!-- Box inferior -->
-    <section class="help-box">
-      <div class="help-card">
-        <div class="help-title">Precisa de Ajuda?</div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -178,7 +166,7 @@ export default {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: var(--primary-600); /* azul forte */
+  background: #382eceff;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -210,36 +198,18 @@ export default {
 .btn-primary {
   width: 90%;
   height: 42px;
-  border: 2px solid var(--primary-600);
+  border: 2px solid #382eceff;
   border-radius: 10px;
   background: transparent;
-  color: var(--primary-600);
+  color: #382eceff;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .btn-primary:hover {
-  background: var(--primary-600);
+  background: #382eceff;
   color: #fff;
 }
-
-/* Help box */
-.help-box{
-  max-width:1100px;
-  margin:6px auto 40px;
-  padding:0 16px;
-}
-.help-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:12px;
-  box-shadow:var(--shadow);
-  height:70px;
-  display:grid;
-  place-items:center;
-  color:#6d7e87;
-}
-.help-title{ font-weight:600; }
 
 /* Responsivo */
 @media (max-width:1024px){

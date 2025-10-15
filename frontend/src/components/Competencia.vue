@@ -320,13 +320,13 @@ const disponiveisFiltradas = computed(() => {
 <style scoped>
 /* Layout base */
 .page {
-  --bg: #eaf7fb;
+  --bg: #f3f9f9;
   --surface: #ffffff;
   --muted: #6b7785;
   --text: #142032;
-  --primary: #2aa6a1;        /* tom agradável turquesa */
-  --outline: #d7e6ea;
-  --ring: #bfe7e5;
+  --primary: #382eceff;
+  --outline: #ccdeecff;
+  --ring: #d5e7f8ff;
   --shadow: 0 8px 24px rgba(18, 53, 70, 0.05);
   background: var(--bg);
   color: var(--text);
@@ -462,7 +462,7 @@ const disponiveisFiltradas = computed(() => {
   padding: 12px 14px 12px 36px;
   border: 1px solid var(--outline);
   border-radius: 10px;
-  background: #f7fbfc;
+  background: #eef3fcff;
 }
 .filters {
   display: flex; flex-wrap: wrap; gap: 8px;

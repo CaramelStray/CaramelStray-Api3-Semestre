@@ -37,7 +37,7 @@ const router = createRouter({
       component: Inicio,
     },
     {
-      path: '/perfil/:id/competencia',
+      path: '/competencia',
       name: 'Competencias',
       component: Competencia,
       props:true
