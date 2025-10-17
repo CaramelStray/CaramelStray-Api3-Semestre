@@ -6,7 +6,7 @@ import Inicio from '../components/Inicio.vue';
 import Competencia from '../components/Competencia.vue';
 import Perguntas from '../components/CadastroPerguntas.vue';
 import Lista from '../components/Lista.vue';
-
+import Avaliacao from '../components/Avaliacao.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,6 +40,12 @@ const router = createRouter({
       path: '/perfil/:id/competencia',
       name: 'Competencias',
       component: Competencia,
+      props:true
+    },
+    {
+      path: '/avaliacao',
+      name: 'Avaliacao',
+      component: Avaliacao,
       props:true
     },
     {
