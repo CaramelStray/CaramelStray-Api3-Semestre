@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-800">
-    <header class="bg-white border-b border-slate-200">
+    <header class="bg-white border border-slate-200 border-t-0 border-x-0">
       <div class="mx-auto max-w-7xl px-4 py-4 flex items-center gap-3">
         <button 
           @click="handleVoltar"
@@ -79,6 +79,133 @@
           </div>
         </div>
 
+        <!-- ====== Card Filtros ====== -->
+        <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <div class="flex items-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.586a2 2 0 0 1-.586 1.414l-5.121 5.121a2 2 0 0 0-.586 1.414V18l-4 2v-4.465a2 2 0 0 0-.586-1.414L3.586 8A2 2 0 0 1 3 6.586V5z"/>
+            </svg>
+            <h3 class="text-base font-semibold text-slate-800">Filtros de Avaliação</h3>
+          </div>
+          <p class="text-sm text-slate-600 mb-4">
+            Selecione os filtros para definir quais colaboradores receberão esta avaliação
+          </p>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <!-- Colaboradores (typeahead) -->
+            <div>
+              <label class="block mb-1 text-sm font-medium text-slate-700">Colaboradores</label>
+              <div class="search-select" ref="wrapColab">
+                <input
+                  v-model="qColab"
+                  @focus="open.colab = true"
+                  type="text"
+                  class="search-input"
+                  placeholder="Digite para buscar colaboradores..."
+                  aria-label="Buscar colaboradores"
+                />
+                <ul v-if="open.colab && filteredColabs.length" class="search-list">
+                  <li
+                    v-for="c in filteredColabs"
+                    :key="c.id"
+                    class="search-item"
+                    @mousedown.prevent="addColab(c)"
+                  >
+                    <span class="item-title">{{ c.nome }}</span>
+                    <span class="item-sub">{{ c.cargo }}</span>
+                  </li>
+                </ul>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Digite e clique para adicionar</p>
+            </div>
+
+            <!-- Competências (typeahead) -->
+            <div>
+              <label class="block mb-1 text-sm font-medium text-slate-700">Competências</label>
+              <div class="search-select" ref="wrapComp">
+                <input
+                  v-model="qComp"
+                  @focus="open.comp = true"
+                  type="text"
+                  class="search-input"
+                  placeholder="Digite para buscar competências..."
+                  aria-label="Buscar competências"
+                />
+                <ul v-if="open.comp && filteredComps.length" class="search-list">
+                  <li
+                    v-for="comp in filteredComps"
+                    :key="comp.codigo"
+                    class="search-item"
+                    @mousedown.prevent="addComp(comp)"
+                  >
+                    <span class="item-title">{{ comp.nome }}</span>
+                  </li>
+                </ul>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Digite e clique para adicionar</p>
+            </div>
+
+            <!-- Equipes (typeahead) -->
+            <div>
+              <label class="block mb-1 text-sm font-medium text-slate-700">Equipes</label>
+              <div class="search-select" ref="wrapEquipe">
+                <input
+                  v-model="qEquipe"
+                  @focus="open.equipe = true"
+                  type="text"
+                  class="search-input"
+                  placeholder="Digite para buscar equipes..."
+                  aria-label="Buscar equipes"
+                />
+                <ul v-if="open.equipe && filteredEquipes.length" class="search-list">
+                  <li
+                    v-for="e in filteredEquipes"
+                    :key="e.id"
+                    class="search-item"
+                    @mousedown.prevent="addEquipe(e)"
+                  >
+                    <span class="item-title">{{ e.nome }}</span>
+                  </li>
+                </ul>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">Digite e clique para adicionar</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selecionados -->
+        <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <p class="text-sm font-medium text-slate-700 mb-3">Colaboradores selecionados:</p>
+
+          <div class="flex flex-wrap gap-3 mb-5">
+            <div v-for="c in filtros.colaboradores" :key="c.id" class="chip">
+              <span class="chip__avatar">{{ getInitials(c.nome) }}</span>
+              <span class="chip__content">
+                <span class="chip__title">{{ c.nome }}</span>
+                <span class="chip__subtitle">{{ c.cargo }}</span>
+              </span>
+            </div>
+            <p v-if="filtros.colaboradores.length === 0" class="text-sm text-slate-500">
+              Nenhum colaborador selecionado
+            </p>
+          </div>
+
+          <p class="text-sm font-medium text-slate-700 mb-1">Competências selecionadas:</p>
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="comp in filtros.competencias"
+              :key="comp.codigo"
+              class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
+            >
+              {{ comp.nome }}
+            </span>
+
+            <p v-if="filtros.competencias.length === 0" class="text-sm text-slate-500">
+              Nenhuma competência selecionada
+            </p>
+          </div>
+        </div>
+
         <!-- Card Nova Pergunta -->
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6">
           <h3 class="text-base font-semibold text-slate-800 mb-4">Nova Pergunta</h3>
@@ -126,7 +253,7 @@
                   v-model="opcoes[index]"
                   :placeholder="`Opção ${index + 1}`"
                   style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; color: black;"
-                  @focus="$event.target.style.borderColor = '#3b82f6'; $event.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.3)';"
+                  @focus="$event.target.style.borderColor = '#3b82f6'; $event.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.3)';"
                   @blur="$event.target.style.borderColor = '#cbd5e1'; $event.target.style.boxShadow = 'none';"
                 />
                 <button
@@ -166,7 +293,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -184,6 +311,33 @@ const pergunta = ref('');
 const opcoes = ref(['']);
 const competenciaSelecionada = ref('');
 
+// ---- estados dos filtros (mock simples) ----
+const filtros = ref({
+  colaboradores: [],   // [{id, nome, cargo}]
+  competencias: [],    // [{codigo, nome}]
+  equipes: []          // [{id, nome}]
+});
+
+// listinhas exemplo; troque quando integrar sua API
+const colaboradoresOptions = ref([
+  { id: '1', nome: 'Ana Silva Santos', cargo: 'Analista de Recursos Humanos' },
+  { id: '2', nome: 'Carlos Eduardo Lima', cargo: 'Desenvolvedor Frontend' },
+  { id: '3', nome: 'Mariana Costa Ferreira', cargo: 'Diretora de Marketing' },
+  { id: '4', nome: 'João Pedro Oliveira', cargo: 'Analista Financeiro' },
+  { id: '5', nome: 'Fernanda Ribeiro Cruz', cargo: 'Designer UX/UI' },
+  { id: '6', nome: 'Ricardo Almeida Souza', cargo: 'Supervisor de Vendas' },
+  { id: '7', nome: 'Patrícia Martins Silva', cargo: 'Analista de Qualidade' },
+  { id: '8', nome: 'Lucas Fernando Santos', cargo: 'Supervisor de Backend' }
+]);
+
+const equipesOptions = ref([
+  { id: 'e1', nome: 'Marketing' },
+  { id: 'e2', nome: 'Financeiro' },
+  { id: 'e3', nome: 'Tecnologia' },
+  { id: 'e4', nome: 'Qualidade' }
+]);
+
+// ---------- BUSCA DO FUNCIONÁRIO ----------
 const fetchFuncionarioData = async () => {
   loading.value = true;
   error.value = null;
@@ -201,13 +355,18 @@ const fetchFuncionarioData = async () => {
 
 onMounted(fetchFuncionarioData);
 
+// ---------- UTIL ---------- 
 const getInitials = (fullName) => {
   if (!fullName) return '';
-  const names = fullName.split(' ');
+  const names = fullName.trim().split(/\s+/);
   const initials = names.length > 1
     ? `${names[0][0]}${names[names.length - 1][0]}`
     : names[0].substring(0, 2);
   return initials.toUpperCase();
+};
+
+const handleVoltar = () => {
+  router.back();
 };
 
 const handleAdicionarOpcao = () => {
@@ -255,6 +414,78 @@ const handleSalvarPergunta = async () => {
   }
 };
 
+// ================== TYPEAHEAD (NOVO) ==================
+const qColab  = ref('');
+const qComp   = ref('');
+const qEquipe = ref('');
+const open    = ref({ colab: false, comp: false, equipe: false });
+
+const wrapColab  = ref(null);
+const wrapComp   = ref(null);
+const wrapEquipe = ref(null);
+
+const normaliza = (s) =>
+  (s || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase();
+
+const jaTemColab = (id) => filtros.value.colaboradores.some((x) => x.id === id);
+const jaTemComp = (codigo) => filtros.value.competencias.some((x) => x.codigo === codigo);
+const jaTemEquipe = (id) => filtros.value.equipes.some((x) => x.id === id);
+
+const filteredColabs = computed(() => {
+  const q = normaliza(qColab.value);
+  return colaboradoresOptions.value
+    .filter((c) => !jaTemColab(c.id))
+    .filter((c) => !q || normaliza(c.nome).includes(q) || normaliza(c.cargo).includes(q))
+    .slice(0, 8);
+});
+
+const filteredComps = computed(() => {
+  const lista = funcionario.value?.competencias || [];
+  const q = normaliza(qComp.value);
+  return lista
+    .filter((c) => !jaTemComp(c.codigo))
+    .filter((c) => !q || normaliza(c.nome).includes(q))
+    .slice(0, 8);
+});
+
+const filteredEquipes = computed(() => {
+  const q = normaliza(qEquipe.value);
+  return equipesOptions.value
+    .filter((e) => !jaTemEquipe(e.id))
+    .filter((e) => !q || normaliza(e.nome).includes(q))
+    .slice(0, 8);
+});
+
+const addColab = (c) => {
+  if (!jaTemColab(c.id)) filtros.value.colaboradores.push(c);
+  qColab.value = '';
+};
+const addComp = (comp) => {
+  if (!jaTemComp(comp.codigo)) filtros.value.competencias.push(comp);
+  qComp.value = '';
+};
+const addEquipe = (e) => {
+  if (!jaTemEquipe(e.id)) filtros.value.equipes.push(e);
+  qEquipe.value = '';
+};
+
+const handleClickOutside = (ev) => {
+  const t = ev.target;
+  if (wrapColab.value && !wrapColab.value.contains(t)) open.value.colab = false;
+  if (wrapComp.value && !wrapComp.value.contains(t)) open.value.comp = false;
+  if (wrapEquipe.value && !wrapEquipe.value.contains(t)) open.value.equipe = false;
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>
 
 <style scoped>
@@ -381,8 +612,71 @@ const handleSalvarPergunta = async () => {
 @media (min-width: 768px) {
   .md\:p-6 { padding: 1.5rem; }
 }
-
 @media (min-width: 1024px) {
   .lg\:p-8 { padding: 2rem; }
 }
+
+/* ====== estilos extras para os cards ====== */
+
+/* Chips de colaboradores */
+.chip {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border: 1px solid #dbeafe; background: #f8fbff;
+  border-radius: 12px; box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+.chip__avatar {
+  height: 36px; width: 36px; display: grid; place-items: center;
+  border-radius: 9999px; background: #e5efff; color: #1d4ed8;
+  font-weight: 700; font-size: 0.875rem;
+  box-shadow: inset 0 0 0 4px #f2f6ff;
+}
+.chip__content { display: grid; }
+.chip__title { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
+.chip__subtitle { font-size: 0.75rem; color: #6b7280; margin-top: -2px; }
+
+/* ---- Typeahead simples (NOVO) ---- */
+.search-select { position: relative; }
+.search-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #0f172a;
+  min-height: 44px;
+  outline: none;
+}
+.search-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.3);
+}
+
+.search-list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  padding: 6px;
+}
+
+.search-item {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.search-item:hover {
+  background: #f1f5f9;
+}
+.item-title { font-size: 0.875rem; color: #0f172a; font-weight: 600; }
+.item-sub   { font-size: 0.75rem;  color: #64748b; }
 </style>

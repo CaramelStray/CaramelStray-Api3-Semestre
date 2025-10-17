@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Areas: typeof import('./components/Areas.vue')['default']
+    Avaliacao: typeof import('./components/Avaliacao.vue')['default']
     CadastroPerguntas: typeof import('./components/CadastroPerguntas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
     copia: typeof import('./components/Lista - copia.vue')['default']
