@@ -1,5 +1,68 @@
 <template>
   <div class="page">
+
+    <!-- Menu lateral -->
+    <aside class="sidebar">
+    <div class="sidebar__header">
+      <div class="sidebar__logo">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 3v18M15 3v18M3 9h18M3 15h18" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="sidebar__text">
+        <div class="sidebar__title">Sistema RH</div>
+        <div class="sidebar__subtitle">Liderança</div>
+      </div>
+    </div>
+
+      <div class="sidebar__user">
+        <div class="user-avatar">L</div>
+        <div class="user-info">
+          <div class="user-name">Líder</div>
+          <div class="user-email">lider@empresa.com</div>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a href="#" class="nav-item active">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M9 22V12h6v10" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Início</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Colaboradores</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" fill="none" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>Avaliações</span>
+        </a>
+        <a href="#" class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M4 18V6m5 12V9m5 9V12m5 6V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <button class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4m7 14l5-5-5-5m5 5H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span>Sair</span>
+        </button>
+      </div>
+    </aside>
+
     <!-- Topbar branco -->
     <header class="topbar">
       <div class="brand">
@@ -25,7 +88,6 @@
     <section class="hero">
       <h1>Bem-vindo ao Sistema de Liderança</h1>
       <p>Acesse as ferramentas de gestão e acompanhamento de equipes</p>
-    </section>
 
     <!-- Cards -->
     <main class="cards">
@@ -67,6 +129,8 @@
         <button class="btn-primary">Acessar</button>
       </article>
     </main>
+    </section>
+
   </div>
 </template>
 
@@ -87,15 +151,154 @@ export default {
   --primary:#5cc2c1;
   --primary-600:#3fb2b2;
   --muted:#eaf5f5;
+  --blue:#2563eb;
 
   min-height:100vh;
   background:var(--bg);
   color:var(--subtitle);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+    "sidebar topbar"
+    "sidebar content";
+}
+
+/* Sidebar */
+
+.sidebar {
+  grid-area: sidebar;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 20px 0;
+}
+
+.sidebar__header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar__logo {
+  width: 40px;
+  height: 40px;
+  background: var(--blue);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.sidebar__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--title);
+  margin-bottom: 2px;
+}
+
+.sidebar__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar__subtitle {
+  font-size: 12px;
+  color: var(--subtitle);
+}
+
+.sidebar__user {
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--title);
+}
+
+.user-email {
+  font-size: 12px;
+  color: var(--subtitle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__nav {
+  flex: 1;
+  padding: 8px 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--subtitle);
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 4px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.nav-item:hover {
+  background: var(--muted);
+  color: var(--title);
+}
+
+.nav-item.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.sidebar__footer {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
 }
 
 /* Topbar */
 .topbar{
+  grid-area: topbar;
   background:var(--card);
   border-bottom:1px solid var(--border);
   box-shadow:var(--shadow);
@@ -127,18 +330,29 @@ export default {
 
 /* Hero */
 .hero{
+  grid-column: 2;
   text-align:center;
-  padding:26px 16px 10px;
+  padding:24px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
 }
 .hero h1{
-  margin:8px 0 6px; font-size:28px; color:var(--title);
+  margin:0 0 6px; 
+  font-size:28px; 
+  color:var(--title);
 }
-.hero p{ margin:0; font-size:14px; }
+.hero p{
+  margin:0 0 20px; 
+  font-size:14px; 
+}
 
 /* Cards */
 .cards{
+  grid-column: 2;
   max-width:1100px;
-  margin:18px auto 20px;
+  margin:0 auto 20px;
   padding:0 16px;
   display:grid;
   grid-template-columns: repeat(3, 1fr);
@@ -166,7 +380,7 @@ export default {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #382eceff;
+  background: var(--blue);
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
@@ -198,22 +412,32 @@ export default {
 .btn-primary {
   width: 90%;
   height: 42px;
-  border: 2px solid #382eceff;
+  border: 2px solid var(--blue);
   border-radius: 10px;
   background: transparent;
-  color: #382eceff;
+  color: var(--blue);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .btn-primary:hover {
-  background: #382eceff;
+  background: var(--blue);
   color: #fff;
 }
 
 /* Responsivo */
 @media (max-width:1024px){
   .cards{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width:768px){
+  .page{
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "topbar"
+      "content";
+  }
+  .sidebar{ display: none; }
+  .hero, .cards{ grid-column: 1; }
 }
 @media (max-width:640px){
   .cards{ grid-template-columns: 1fr; }
