@@ -46,34 +46,69 @@
       </div>
 
       <template v-else-if="funcionario">
-        <!-- Card do Colaborador -->
-        <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
-          <div class="flex items-start gap-4">
-            <div class="h-12 w-12 rounded-full bg-blue-100 text-blue-600 grid place-items-center text-lg font-semibold shrink-0">
-              {{ getInitials(funcionario.nomeCompleto) }}
-            </div>
-            <div class="flex-1">
-              <h2 class="text-lg font-semibold text-slate-800">{{ funcionario.nomeCompleto }}</h2>
-              <p class="text-sm text-slate-500">{{ funcionario.tituloProfissional }}</p>
-              
-              <div class="mt-4">
-                <p class="text-sm font-medium text-slate-700 mb-2">Competências do colaborador:</p>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="comp in funcionario.competencias"
-                    :key="comp.codigo"
-                    @click="competenciaSelecionada = comp.codigo"
-                    :class="[
-                      'px-3 py-1 rounded-md text-xs font-medium border transition-colors',
-                      competenciaSelecionada === comp.codigo
-                        ? 'bg-blue-50 text-blue-700 border-blue-300'
-                        : 'bg-white text-slate-600 border-slate-300 hover:border-blue-300 hover:bg-blue-50'
-                    ]"
-                  >
-                    {{ comp.nome }}
-                  </button>
-                </div>
-                <p class="text-xs text-slate-500 mt-2">Clique em uma competência para adicionar a pergunta</p>
+        <!-- ====== PERGUNTAS CADASTRADAS ====== -->
+        <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <h3 class="text-base font-semibold text-slate-800 mb-4">
+            Perguntas Cadastradas ({{ perguntas.length }})
+          </h3>
+
+          <div class="space-y-4">
+            <div 
+              v-for="(p, index) in perguntas" 
+              :key="index"
+              class="border border-slate-200 rounded-lg p-4 bg-slate-50"
+            >
+              <!-- Cabeçalho com competência e tipo -->
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700">
+                  {{ obterNomeCompetencia(p.competenciaId) }}
+                </span>
+                <span v-if="p.tipoPergunta === 'multipla escolha'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                    <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
+                  </svg>
+                  Múltipla Escolha
+                </span>
+                <span v-else-if="p.tipoPergunta === 'escala/nota'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  Escala/Nota
+                </span>
+                <span v-else class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  Texto
+                </span>
+                <span class="ml-auto text-xs text-slate-500">Pergunta {{ index + 1 }}</span>
+              </div>
+
+              <!-- Texto da pergunta -->
+              <p class="text-sm font-medium text-slate-800 mb-3">{{ p.pergunta }}</p>
+
+              <!-- Opções (se houver) -->
+              <div v-if="p.tipoPergunta === 'multipla escolha' && p.opcoes && p.opcoes.length">
+                <p class="text-xs font-medium text-slate-600 mb-2">Opções (seleção múltipla):</p>
+                <ul class="list-disc list-inside space-y-1">
+                  <li v-for="(opcao, idx) in p.opcoes" :key="idx" class="text-sm text-slate-700">
+                    {{ opcao }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Botão deletar -->
+              <div class="mt-4 flex justify-end">
+                <button
+                  @click="handleDeletarPergunta(index)"
+                  class="h-9 w-9 grid place-items-center rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                  aria-label="Deletar pergunta"
+                  title="Deletar pergunta"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -119,7 +154,7 @@
               <p class="text-xs text-slate-500 mt-1">Digite e clique para adicionar</p>
             </div>
 
-            <!-- Competências (typeahead) -->
+            <!-- Competências (typeahead + seleção) -->
             <div>
               <label class="block mb-1 text-sm font-medium text-slate-700">Competências</label>
               <div class="search-select" ref="wrapComp">
@@ -190,7 +225,7 @@
             </p>
           </div>
 
-          <p class="text-sm font-medium text-slate-700 mb-1">Competências selecionadas:</p>
+          <p class="text-sm font-medium text-slate-700 mb-1">Competências selecionadas (filtro):</p>
           <div class="flex flex-wrap gap-2">
             <span
               v-for="comp in filtros.competencias"
@@ -201,7 +236,7 @@
             </span>
 
             <p v-if="filtros.competencias.length === 0" class="text-sm text-slate-500">
-              Nenhuma competência selecionada
+              Nenhuma competência adicionada ao filtro
             </p>
           </div>
         </div>
@@ -210,17 +245,37 @@
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6">
           <h3 class="text-base font-semibold text-slate-800 mb-4">Nova Pergunta</h3>
 
-          <!-- Competência Selecionada (sempre visível) -->
+          <!-- Competência Selecionada (visível) -->
           <div class="mb-4">
-            <label class="text-sm font-medium text-slate-700 mb-2 block">Competência Selecionada</label>
-            <div v-if="competenciaSelecionada" style="padding: 0.625rem 1rem; border-radius: 0.5rem; border: 1px solid #93c5fd; background-color: #eff6ff;">
-              <span class="text-sm font-medium text-blue-700">
-                {{ funcionario.competencias.find(c => c.codigo === competenciaSelecionada)?.nome }}
-              </span>
-            </div>
-            <div v-else style="padding: 0.625rem 1rem; border-radius: 0.5rem; border: 1px solid #cbd5e1; background-color: #f8fafc;">
-              <span class="text-sm text-slate-500">Selecione uma competência acima</span>
-            </div>
+            <p class="text-sm text-slate-600">
+              <span class="font-medium">Competência vinculada:</span>
+              <span v-if="competenciaSelecionadaNome" class="text-slate-800"> {{ competenciaSelecionadaNome }}</span>
+              <span v-else class="text-slate-500"> nenhuma selecionada</span>
+            </p>
+          </div>
+
+          <!-- Tipo de Pergunta -->
+          <div class="mb-4">
+            <label class="text-sm font-medium text-slate-700 mb-2 block">Tipo de Resposta</label>
+            <select
+              v-model="tipoPergunta"
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-800 appearance-none cursor-pointer"
+              style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23334155%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25rem; padding-right: 2.5rem;"
+              aria-label="Selecionar tipo de pergunta"
+            >
+              <option value="texto">
+                <span>T</span> Texto
+              </option>
+              <option value="multipla escolha">
+                <span>≡</span> Múltipla Escolha
+              </option>
+              <option value="escala/nota">
+                <span>#</span> Escala/Nota
+              </option>
+            </select>
+            <p class="text-xs text-slate-500 mt-1">
+              Escolha como o colaborador irá responder.
+            </p>
           </div>
 
           <!-- Campo Pergunta -->
@@ -236,10 +291,10 @@
             />
           </div>
 
-          <!-- Opções de Resposta -->
-          <div>
+          <!-- Opções de Resposta (só quando múltipla escolha) -->
+          <div v-if="tipoPergunta === 'multipla escolha'">
             <label class="text-sm font-medium text-slate-700 mb-2 block">
-              Opções de Resposta <span class="text-slate-500 font-normal">(Opcional)</span>
+              Opções de Resposta <span class="text-slate-500 font-normal">(Obrigatórias para múltipla escolha)</span>
             </label>
             
             <div class="space-y-2">
@@ -308,17 +363,18 @@ const funcionario = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const pergunta = ref('');
+const tipoPergunta = ref('texto');
 const opcoes = ref(['']);
 const competenciaSelecionada = ref('');
+const perguntas = ref([]);
 
 // ---- estados dos filtros (mock simples) ----
 const filtros = ref({
-  colaboradores: [],   // [{id, nome, cargo}]
-  competencias: [],    // [{codigo, nome}]
-  equipes: []          // [{id, nome}]
+  colaboradores: [],
+  competencias: [],
+  equipes: []
 });
 
-// listinhas exemplo; troque quando integrar sua API
 const colaboradoresOptions = ref([
   { id: '1', nome: 'Ana Silva Santos', cargo: 'Analista de Recursos Humanos' },
   { id: '2', nome: 'Carlos Eduardo Lima', cargo: 'Desenvolvedor Frontend' },
@@ -337,13 +393,22 @@ const equipesOptions = ref([
   { id: 'e4', nome: 'Qualidade' }
 ]);
 
+const competenciasMock = ref([
+  { codigo: 'C1', nome: 'Comunicação' },
+  { codigo: 'C2', nome: 'Trabalho em Equipe' },
+  { codigo: 'C3', nome: 'Resolução de Problemas' },
+  { codigo: 'C4', nome: 'Pensamento Analítico' },
+  { codigo: 'C5', nome: 'Liderança' },
+  { codigo: 'C6', nome: 'Organização' },
+]);
+
 // ---------- BUSCA DO FUNCIONÁRIO ----------
 const fetchFuncionarioData = async () => {
   loading.value = true;
   error.value = null;
   try {
     const funcionarioId = props.id || route.params.id;
-    const response = await axios.get(`http://localhost:8080/api/funcionario/${funcionarioId}`);
+    const response = await axios.get(`http://localhost:8080/api/funcionario`);
     funcionario.value = response.data;
   } catch (err) {
     console.error("Falha ao buscar dados do funcionário:", err);
@@ -365,6 +430,12 @@ const getInitials = (fullName) => {
   return initials.toUpperCase();
 };
 
+const obterNomeCompetencia = (codigo) => {
+  const lista = listaCompetenciasBase.value;
+  const found = lista.find(c => c.codigo === codigo);
+  return found?.nome || codigo;
+};
+
 const handleVoltar = () => {
   router.back();
 };
@@ -379,6 +450,12 @@ const handleRemoverOpcao = (index) => {
   }
 };
 
+const competenciaSelecionadaNome = computed(() => {
+  const lista = listaCompetenciasParaSelecao.value;
+  const found = lista.find(c => c.codigo === competenciaSelecionada.value);
+  return found?.nome || '';
+});
+
 const handleSalvarPergunta = async () => {
   if (!pergunta.value.trim()) {
     alert('Por favor, digite a pergunta.');
@@ -390,31 +467,82 @@ const handleSalvarPergunta = async () => {
     return;
   }
 
-  const opcoesValidas = opcoes.value.filter(op => op.trim() !== '');
+  const opcoesValidas = opcoes.value
+    .map(op => op.trim())
+    .filter(op => op !== '');
 
-  const payload = {
+  if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
+    alert('Para múltipla escolha, informe ao menos 2 opções.');
+    return;
+  }
+
+  const novaPergunta = {
     pergunta: pergunta.value.trim(),
     competenciaId: competenciaSelecionada.value,
-    opcoes: opcoesValidas.length > 0 ? opcoesValidas : null
+    tipoPergunta: tipoPergunta.value,
+    opcoes: (tipoPergunta.value === 'multipla escolha') ? opcoesValidas : null
   };
 
   try {
     const funcionarioId = props.id || route.params.id;
-    await axios.post(`http://localhost:8080/api/funcionario/${funcionarioId}/perguntas`, payload);
+    
+    console.log("Enviando pergunta:", novaPergunta);
+    console.log("URL:", `http://localhost:8080/api/perguntas`);
+    
+    // Tenta primeiro com o novo endpoint
+    try {
+      const response = await axios.post(`http://localhost:8080/api/perguntas`, {
+        ...novaPergunta,
+        funcionarioId: funcionarioId
+      });
+      console.log("Resposta do servidor:", response.data);
+    } catch (err) {
+      // Se falhar, tenta o endpoint antigo
+      if (err.response?.status === 404) {
+        console.log("Tentando endpoint alternativo...");
+        const response = await axios.post(`http://localhost:8080/api/funcionario/${funcionarioId}/perguntas`, novaPergunta);
+        console.log("Resposta do servidor:", response.data);
+      } else {
+        throw err;
+      }
+    }
+    
+    // Adiciona à lista local
+    perguntas.value.push(novaPergunta);
     
     alert('Pergunta cadastrada com sucesso!');
     
     // Limpa o formulário
     pergunta.value = '';
+    tipoPergunta.value = 'texto';
     opcoes.value = [''];
-    competenciaSelecionada.value = '';
   } catch (err) {
-    console.error("Falha ao salvar pergunta:", err);
-    alert("Ocorreu um erro ao salvar a pergunta.");
+    console.error("Erro completo:", err);
+    console.error("Mensagem:", err.message);
+    console.error("Response:", err.response);
+    
+    let mensagem = "Ocorreu um erro ao salvar a pergunta.";
+    if (err.response?.status === 404) {
+      mensagem = "Endpoint não encontrado. Verifique qual é o endpoint correto no backend para salvar perguntas.";
+    } else if (err.response?.status === 400) {
+      mensagem = `Erro na requisição: ${err.response.data?.message || 'Dados inválidos'}`;
+    } else if (err.response?.status === 500) {
+      mensagem = `Erro no servidor: ${err.response.data?.message || 'Erro interno'}`;
+    } else if (err.code === 'ERR_NETWORK') {
+      mensagem = "Não foi possível conectar ao servidor. Verifique se localhost:8080 está ativo.";
+    }
+    
+    alert(mensagem);
   }
 };
 
-// ================== TYPEAHEAD (NOVO) ==================
+const handleDeletarPergunta = (index) => {
+  if (confirm('Tem certeza que deseja deletar esta pergunta?')) {
+    perguntas.value.splice(index, 1);
+  }
+};
+
+// ================== TYPEAHEAD ==================
 const qColab  = ref('');
 const qComp   = ref('');
 const qEquipe = ref('');
@@ -435,6 +563,17 @@ const jaTemColab = (id) => filtros.value.colaboradores.some((x) => x.id === id);
 const jaTemComp = (codigo) => filtros.value.competencias.some((x) => x.codigo === codigo);
 const jaTemEquipe = (id) => filtros.value.equipes.some((x) => x.id === id);
 
+const listaCompetenciasBase = computed(() => {
+  const lista = funcionario.value?.competencias;
+  return Array.isArray(lista) && lista.length ? lista : competenciasMock.value;
+});
+
+const listaCompetenciasParaSelecao = computed(() => {
+  return filtros.value.competencias.length
+    ? filtros.value.competencias
+    : listaCompetenciasBase.value;
+});
+
 const filteredColabs = computed(() => {
   const q = normaliza(qColab.value);
   return colaboradoresOptions.value
@@ -444,7 +583,7 @@ const filteredColabs = computed(() => {
 });
 
 const filteredComps = computed(() => {
-  const lista = funcionario.value?.competencias || [];
+  const lista = listaCompetenciasBase.value;
   const q = normaliza(qComp.value);
   return lista
     .filter((c) => !jaTemComp(c.codigo))
@@ -464,10 +603,13 @@ const addColab = (c) => {
   if (!jaTemColab(c.id)) filtros.value.colaboradores.push(c);
   qColab.value = '';
 };
+
 const addComp = (comp) => {
   if (!jaTemComp(comp.codigo)) filtros.value.competencias.push(comp);
   qComp.value = '';
+  if (!competenciaSelecionada.value) competenciaSelecionada.value = comp.codigo;
 };
+
 const addEquipe = (e) => {
   if (!jaTemEquipe(e.id)) filtros.value.equipes.push(e);
   qEquipe.value = '';
@@ -483,6 +625,7 @@ const handleClickOutside = (ev) => {
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
 });
+
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
@@ -544,12 +687,14 @@ onUnmounted(() => {
 .pt-6 { padding-top: 1.5rem; }
 
 /* Margin */
+.mt-1 { margin-top: 0.25rem; }
 .mt-2 { margin-top: 0.5rem; }
 .mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1rem; }
 .mt-6 { margin-top: 1.5rem; }
 .mb-1 { margin-bottom: 0.25rem; }
 .mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
 .mb-4 { margin-bottom: 1rem; }
 .mb-6 { margin-bottom: 1.5rem; }
 .ml-auto { margin-left: auto; }
@@ -571,16 +716,16 @@ onUnmounted(() => {
 .place-items-center { place-items: center; }
 
 /* Tamanhos */
+.h-3 { height: 0.75rem; }
 .h-4 { height: 1rem; }
 .h-5 { height: 1.25rem; }
 .h-8 { height: 2rem; }
 .h-9 { height: 2.25rem; }
-.h-12 { height: 3rem; }
+.w-3 { width: 0.75rem; }
 .w-4 { width: 1rem; }
 .w-5 { width: 1.25rem; }
 .w-8 { width: 2rem; }
 .w-9 { width: 2.25rem; }
-.w-12 { width: 3rem; }
 .w-full { width: 100%; }
 
 /* Tipografia */
@@ -594,13 +739,18 @@ onUnmounted(() => {
 /* Misc */
 .block { display: block; }
 .inline-block { display: inline-block; }
+.inline-flex { display: inline-flex; }
 .shrink-0 { flex-shrink: 0; }
 .resize-none { resize: none; }
 .text-center { text-align: center; }
 .transition-colors { transition-property: color, background-color, border-color; transition-duration: 150ms; }
+.space-y-1 > * + * { margin-top: 0.25rem; }
 .space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.list-disc { list-style-type: disc; }
+.list-inside { list-style-position: inside; }
 
-/* Hover states */
+/* Hovers */
 .hover\:bg-slate-100:hover { background: #f1f5f9; }
 .hover\:bg-blue-50:hover { background: #eff6ff; }
 .hover\:bg-blue-700:hover { background: #1d4ed8; }
@@ -610,10 +760,9 @@ onUnmounted(() => {
 
 /* Responsive */
 @media (min-width: 768px) {
-  .md\:p-6 { padding: 1.5rem; }
-}
-@media (min-width: 1024px) {
-  .lg\:p-8 { padding: 2rem; }
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 /* ====== estilos extras para os cards ====== */
@@ -634,7 +783,7 @@ onUnmounted(() => {
 .chip__title { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
 .chip__subtitle { font-size: 0.75rem; color: #6b7280; margin-top: -2px; }
 
-/* ---- Typeahead simples (NOVO) ---- */
+/* ---- Typeahead simples ---- */
 .search-select { position: relative; }
 .search-input {
   width: 100%;
@@ -679,4 +828,9 @@ onUnmounted(() => {
 }
 .item-title { font-size: 0.875rem; color: #0f172a; font-weight: 600; }
 .item-sub   { font-size: 0.75rem;  color: #64748b; }
+
+/* Lista de perguntas */
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
 </style>

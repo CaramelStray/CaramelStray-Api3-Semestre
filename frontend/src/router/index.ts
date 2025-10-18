@@ -49,7 +49,7 @@ const router = createRouter({
       props:true
     },
     {
-      path: '/perguntas/:id',
+      path: '/perguntas',
       name: 'CadastroPerguntas',
       component: Perguntas,
       props: true
