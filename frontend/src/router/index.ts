@@ -7,7 +7,7 @@ import Competencia from '../components/Competencia.vue';
 import Perguntas from '../components/CadastroPerguntas.vue';
 import Lista from '../components/Lista.vue';
 import Avaliacao from '../components/Avaliacao.vue';
-
+import Teste from '../components/Teste.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -19,6 +19,12 @@ const router = createRouter({
       path: '/funcionarios',
       name: 'Funcionarios',
       component: Funcionarios,
+    },
+    {
+      path: '/teste',
+      name: 'Teste',
+      component: Teste,
+      props:true
     },
     {
       path: '/perfilbase',
