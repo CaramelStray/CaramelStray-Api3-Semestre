@@ -8,6 +8,7 @@ import Perguntas from '../components/CadastroPerguntas.vue';
 import Lista from '../components/Lista.vue';
 import Avaliacao from '../components/Avaliacao.vue';
 import Teste from '../components/Teste.vue';
+import Status from '../components/Status.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/funcionarios',
       name: 'Funcionarios',
       component: Funcionarios,
+    },
+    {
+      path: '/status',
+      name: 'Status',
+      component: Status,
     },
     {
       path: '/teste',

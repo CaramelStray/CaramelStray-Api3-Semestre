@@ -23,6 +23,7 @@ declare module 'vue' {
     PerfilFun: typeof import('./components/perfilFun.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Status: typeof import('./components/Status.vue')['default']
     Teste: typeof import('./components/Teste.vue')['default']
   }
 }
