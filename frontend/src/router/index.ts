@@ -9,12 +9,18 @@ import Lista from '../components/Lista.vue';
 import Avaliacao from '../components/Avaliacao.vue';
 import Teste from '../components/Teste.vue';
 import Status from '../components/Status.vue';
+import Respostas from '../components/respostaAvaliacao.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
       redirect: '/competencia',
+    },
+    {
+      path: '/respostas',
+      name: 'Respostas',
+      component: Respostas,
     },
     {
       path: '/funcionarios',
