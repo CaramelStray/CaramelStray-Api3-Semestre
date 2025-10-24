@@ -5,7 +5,7 @@ const usuarioLogado = ref<any>(null); // Usamos 'any' por simplicidade por enqua
 
 export function useAuth() {
 
-    // Adicionamos o tipo ': number' para o parâmetro 'id'
+    
     const carregarUsuarioLogado = async (id: number) => { 
         try {
             const response = await axios.get(`http://localhost:8080/api/funcionario/${id}`);

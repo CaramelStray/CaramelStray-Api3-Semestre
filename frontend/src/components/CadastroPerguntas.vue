@@ -20,7 +20,7 @@
           </div>
           <div>
             <h1 class="text-base font-semibold text-slate-800">Cadastro de Perguntas</h1>
-            <p class="text-xs text-slate-500">Para {{ funcionario?.nomeCompleto || 'Colaborador' }}</p>
+            <p class="text-xs text-slate-500">Avaliador {{ usuarioLogado?.nomeCompleto || 'Carregando...' }}</p>
           </div>
         </div>
 
@@ -45,7 +45,7 @@
         <p class="text-sm">{{ error }}</p>
       </div>
 
-      <template v-else-if="funcionario">
+      <template v-else-if="usuarioLogado">
         <!-- ====== PERGUNTAS CADASTRADAS ====== -->
         <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
           <h3 class="text-base font-semibold text-slate-800 mb-4">
@@ -351,6 +351,8 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import {useAuth} from '../auth';
+
 
 const route = useRoute();
 const router = useRouter();
@@ -359,7 +361,9 @@ const props = defineProps({
   id: String 
 });
 
-const funcionario = ref(null);
+
+
+const { usuarioLogado, carregarUsuarioLogado } = useAuth();
 const loading = ref(true);
 const error = ref(null);
 const pergunta = ref('');
@@ -367,7 +371,9 @@ const tipoPergunta = ref('texto');
 const opcoes = ref(['']);
 const competenciaSelecionada = ref('');
 const perguntas = ref([]);
-
+const allColaboradores = ref([]);
+const allCompetencias = ref([]);
+const allAreas = ref([]); // "Equipes" vêm da tabela "Area"
 // ---- estados dos filtros (mock simples) ----
 const filtros = ref({
   colaboradores: [],
@@ -375,35 +381,9 @@ const filtros = ref({
   equipes: []
 });
 
-const colaboradoresOptions = ref([
-  { id: '1', nome: 'Ana Silva Santos', cargo: 'Analista de Recursos Humanos' },
-  { id: '2', nome: 'Carlos Eduardo Lima', cargo: 'Desenvolvedor Frontend' },
-  { id: '3', nome: 'Mariana Costa Ferreira', cargo: 'Diretora de Marketing' },
-  { id: '4', nome: 'João Pedro Oliveira', cargo: 'Analista Financeiro' },
-  { id: '5', nome: 'Fernanda Ribeiro Cruz', cargo: 'Designer UX/UI' },
-  { id: '6', nome: 'Ricardo Almeida Souza', cargo: 'Supervisor de Vendas' },
-  { id: '7', nome: 'Patrícia Martins Silva', cargo: 'Analista de Qualidade' },
-  { id: '8', nome: 'Lucas Fernando Santos', cargo: 'Supervisor de Backend' }
-]);
-
-const equipesOptions = ref([
-  { id: 'e1', nome: 'Marketing' },
-  { id: 'e2', nome: 'Financeiro' },
-  { id: 'e3', nome: 'Tecnologia' },
-  { id: 'e4', nome: 'Qualidade' }
-]);
-
-const competenciasMock = ref([
-  { codigo: 'C1', nome: 'Comunicação' },
-  { codigo: 'C2', nome: 'Trabalho em Equipe' },
-  { codigo: 'C3', nome: 'Resolução de Problemas' },
-  { codigo: 'C4', nome: 'Pensamento Analítico' },
-  { codigo: 'C5', nome: 'Liderança' },
-  { codigo: 'C6', nome: 'Organização' },
-]);
 
 // ---------- BUSCA DO FUNCIONÁRIO ----------
-const fetchFuncionarioData = async () => {
+/*const fetchFuncionarioData = async () => {
   loading.value = true;
   error.value = null;
   try {
@@ -418,7 +398,69 @@ const fetchFuncionarioData = async () => {
   }
 };
 
-onMounted(fetchFuncionarioData);
+onMounted(fetchFuncionarioData);*/
+
+onMounted(async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    // Pega o ID da prop (vindo da rota)
+    const idUsuario = props.id; 
+    if (!idUsuario) {
+      throw new Error("ID do usuário logado não fornecido via props/rota.");
+    }
+
+    // 1. PRIMEIRO, carrega o usuário logado usando o ID da prop
+    await carregarUsuarioLogado(Number(idUsuario)); 
+
+    // VERIFICA se o usuário foi carregado com sucesso ANTES de prosseguir
+    if (!usuarioLogado.value) {
+        throw new Error("Falha ao carregar dados do usuário logado.");
+    }
+
+    // 2. DEPOIS, busca os dados dos filtros
+    await fetchFilterData();
+    
+  } catch (err) {
+    console.error("Falha ao carregar dados iniciais:", err);
+    error.value = "Não foi possível carregar os dados. " + (err.message || '');
+  } finally {
+    loading.value = false;
+  }
+
+  // Adiciona o listener para fechar dropdowns
+  document.addEventListener('click', handleClickOutside);
+});
+
+const fetchFilterData = async () => {
+  try {
+    // Busca simultânea dos 3 endpoints
+    const [colabRes, compRes, areaRes] = await Promise.all([
+      axios.get('http://localhost:8080/api/funcionario'), 
+      axios.get('http://localhost:8080/api/competencia'), // Ajuste se a rota for plural
+      axios.get('http://localhost:8080/api/area')      // Ajuste se a rota for diferente
+    ]);
+
+    // Mapeia a resposta de /api/funcionario para o formato do filtro
+    allColaboradores.value = colabRes.data.map(c => ({
+      codigo: c.codigo,
+      nome: c.nomeCompleto,
+      cargo: c.tituloProfissional || 'Cargo não informado',
+      areaId: c.areaId,     
+      perfilId: c.perfilId   
+    }));
+    
+    // Assume que /api/competencia retorna { codigo, nome }
+    allCompetencias.value = compRes.data; 
+    
+    // Assume que /api/areas retorna { codigo, nome }
+    allAreas.value = areaRes.data; 
+
+  } catch (err) {
+    console.error("Falha ao buscar dados dos filtros:", err);
+    throw new Error("Falha ao carregar listas de filtros. Verifique os endpoints da API.");
+  }
+};
 
 // ---------- UTIL ---------- 
 const getInitials = (fullName) => {
@@ -431,7 +473,7 @@ const getInitials = (fullName) => {
 };
 
 const obterNomeCompetencia = (codigo) => {
-  const lista = listaCompetenciasBase.value;
+  //const lista = listaCompetenciasBase.value;
   const found = lista.find(c => c.codigo === codigo);
   return found?.nome || codigo;
 };
@@ -450,11 +492,11 @@ const handleRemoverOpcao = (index) => {
   }
 };
 
-const competenciaSelecionadaNome = computed(() => {
+/*const competenciaSelecionadaNome = computed(() => {
   const lista = listaCompetenciasParaSelecao.value;
   const found = lista.find(c => c.codigo === competenciaSelecionada.value);
   return found?.nome || '';
-});
+});*/
 
 const handleSalvarPergunta = async () => {
   if (!pergunta.value.trim()) {
@@ -559,11 +601,11 @@ const normaliza = (s) =>
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase();
 
-const jaTemColab = (id) => filtros.value.colaboradores.some((x) => x.id === id);
+const jaTemColab = (codigo) => filtros.value.colaboradores.some((x) => x.codigo === codigo);
 const jaTemComp = (codigo) => filtros.value.competencias.some((x) => x.codigo === codigo);
-const jaTemEquipe = (id) => filtros.value.equipes.some((x) => x.id === id);
+const jaTemEquipe = (codigo) => filtros.value.equipes.some((x) => x.codigo === codigo);
 
-const listaCompetenciasBase = computed(() => {
+/*const listaCompetenciasBase = computed(() => {
   const lista = funcionario.value?.competencias;
   return Array.isArray(lista) && lista.length ? lista : competenciasMock.value;
 });
@@ -598,9 +640,56 @@ const filteredEquipes = computed(() => {
     .filter((e) => !q || normaliza(e.nome).includes(q))
     .slice(0, 8);
 });
+*/
+
+const listaCompetenciasParaSelecao = computed(() => {
+  if (filtros.value.competencias.length) {
+    return filtros.value.competencias;
+  }
+  if (usuarioLogado.value?.competencias?.length) { 
+    return usuarioLogado.value.competencias;
+  }
+  return allCompetencias.value;
+});
+
+const filteredColabs = computed(() => {
+  const userLogado = usuarioLogado.value;
+  if (!userLogado || !userLogado.perfilId || !userLogado.areaId) return [];
+
+  const userPerfilId = userLogado.perfilId;
+  const userAreaId = userLogado.areaId;
+  const q = normaliza(qColab.value);
+
+  return allColaboradores.value
+    .filter((colab) => !jaTemColab(colab.codigo))
+    .filter((colab) => {
+        if (colab.codigo === userLogado.codigo) return false; // Auto-avaliação
+        const podeAvaliarNivel = userPerfilId < colab.perfilId; // Permissão
+        const mesmaArea = colab.areaId === userAreaId;          // Área
+        return podeAvaliarNivel && mesmaArea;
+    })
+    .filter((colab) => !q || normaliza(colab.nome).includes(q) || normaliza(colab.cargo).includes(q))
+    .slice(0, 30);
+});
+
+const filteredComps = computed(() => {
+  const q = normaliza(qComp.value);
+  return allCompetencias.value 
+    .filter((c) => !jaTemComp(c.codigo))
+    .filter((c) => !q || normaliza(c.nome).includes(q))
+    .slice(0, 30);
+});
+
+const filteredEquipes = computed(() => {
+  const q = normaliza(qEquipe.value);
+  return allAreas.value 
+    .filter((e) => !jaTemEquipe(e.codigo))
+    .filter((e) => !q || normaliza(e.nome).includes(q))
+    .slice(0, 30);
+});
 
 const addColab = (c) => {
-  if (!jaTemColab(c.id)) filtros.value.colaboradores.push(c);
+  if (!jaTemColab(c.codigo)) filtros.value.colaboradores.push(c);
   qColab.value = '';
 };
 
@@ -611,7 +700,7 @@ const addComp = (comp) => {
 };
 
 const addEquipe = (e) => {
-  if (!jaTemEquipe(e.id)) filtros.value.equipes.push(e);
+  if (!jaTemEquipe(e.codigo)) filtros.value.equipes.push(e);
   qEquipe.value = '';
 };
 
@@ -622,9 +711,9 @@ const handleClickOutside = (ev) => {
   if (wrapEquipe.value && !wrapEquipe.value.contains(t)) open.value.equipe = false;
 };
 
-onMounted(() => {
+/*onMounted(() => {
   document.addEventListener('click', handleClickOutside);
-});
+});*/
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
