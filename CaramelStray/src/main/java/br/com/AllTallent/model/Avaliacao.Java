@@ -1,5 +1,4 @@
-package br.com.AllTallent.model;
-
+/*
 // --- Imports Essenciais ---
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -82,4 +81,4 @@ public class Avaliacao {
             this.status = "Rascunho"; // Define um status padrão
         }
     }
-}
+}*/

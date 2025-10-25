@@ -33,12 +33,12 @@ public class RespostaColaborador {
     // Ligação com a instância da avaliação do funcionário
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_funcionario_avaliacao", nullable = false)
-    private FuncionarioAvaliacao funcionarioAvaliacao;
+    private AvaliacaoFuncionario funcionarioAvaliacao;
 
     // Ligação com a pergunta que está sendo respondida
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_pergunta", nullable = false)
-    private Pergunta pergunta;
+    private Pergunta2 pergunta2;
 
     @Column(name = "resposta_texto", columnDefinition = "TEXT")
     private String respostaTexto; // Usado para perguntas tipo 'texto' ou 'escala/nota'
@@ -46,5 +46,5 @@ public class RespostaColaborador {
     // Ligação com a opção selecionada (apenas para múltipla escolha)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_pergunta_opcao_selecionada") // Permite nulo
-    private PerguntaOpcao opcaoSelecionada;
+    private OpcaoPergunta2 opcaoSelecionada2;
 }

@@ -1,4 +1,4 @@
-package br.com.AllTallent.model; // Ou o pacote onde seus modelos estão
+/*package br.com.AllTallent.model; // Ou o pacote onde seus modelos estão
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,4 +50,4 @@ public class Pergunta {
     // orphanRemoval = true: Se remover uma Opcao da lista 'opcoes', ela é deletada do banco
     @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<PerguntaOpcao> opcoes;
-}
+}*/
