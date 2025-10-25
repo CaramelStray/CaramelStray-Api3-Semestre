@@ -33,7 +33,7 @@ public class RespostaColaborador {
     // Ligação com a instância da avaliação do funcionário
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_funcionario_avaliacao", nullable = false)
-    private FuncionarioAvaliacao funcionarioAvaliacao;
+    private AvaliacaoFuncionario avaliacaoFuncionario;
 
     // Ligação com a pergunta que está sendo respondida
     @ManyToOne(fetch = FetchType.LAZY)

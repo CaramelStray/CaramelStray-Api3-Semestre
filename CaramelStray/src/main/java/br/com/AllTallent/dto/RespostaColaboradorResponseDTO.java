@@ -12,7 +12,7 @@ public record RespostaColaboradorResponseDTO(
     public RespostaColaboradorResponseDTO(RespostaColaborador entidade) {
         this(
             entidade.getCodigo(),
-            entidade.getFuncionarioAvaliacao() != null ? entidade.getFuncionarioAvaliacao().getCodigo() : null,
+            entidade.getAvaliacaoFuncionario() != null ? entidade.getAvaliacaoFuncionario().getCodigo() : null,
             entidade.getPergunta() != null ? entidade.getPergunta().getCodigo() : null,
             entidade.getRespostaTexto(),
             entidade.getOpcaoSelecionada() != null ? entidade.getOpcaoSelecionada().getCodigo() : null
