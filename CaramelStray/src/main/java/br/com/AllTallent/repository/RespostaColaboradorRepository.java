@@ -16,5 +16,5 @@ public interface RespostaColaboradorRepository extends JpaRepository<RespostaCol
     Optional<RespostaColaborador> findByFuncionarioAvaliacaoCodigoAndPerguntaCodigo(Long funcionarioAvaliacaoCodigo, Long perguntaCodigo);
 
     // Método útil para buscar todas as respostas de uma instância de avaliação
-    List<RespostaColaborador> findByFuncionarioAvaliacaoCodigo(Long funcionarioAvaliacaoCodigo);
+    List<RespostaColaborador> findByAvaliacaoFuncionarioCodigo(Long avaliacaoFuncionarioCodigo);
 }
