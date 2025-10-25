@@ -1,4 +1,4 @@
-/*package br.com.AllTallent.model; // Ou o pacote onde seus modelos estão
+package br.com.AllTallent.model; // Ou o pacote onde seus modelos estão
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,4 +43,4 @@ public class PerguntaOpcao {
     // descomente a linha abaixo:
     // @Column(name = "is_correta", nullable = false)
     // private boolean isCorreta = false; // Valor padrão false
-}*/
+}

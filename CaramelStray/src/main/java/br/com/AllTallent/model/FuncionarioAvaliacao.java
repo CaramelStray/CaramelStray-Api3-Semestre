@@ -1,4 +1,4 @@
-/*package br.com.AllTallent.model;
+package br.com.AllTallent.model;
 
 // --- Imports Essenciais ---
 import jakarta.persistence.CascadeType;
@@ -78,4 +78,4 @@ public class FuncionarioAvaliacao {
     // Nota: Se remover @EqualsAndHashCode(of = "codigo"),
     // o Lombok pode gerar um padrão. Se precisar de lógica customizada
     // para equals/hashCode, implemente manualmente. Por enquanto, remover é mais seguro.
-}*/
+}
