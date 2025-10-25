@@ -1,4 +1,4 @@
-package br.com.AllTallent.model;
+/*package br.com.AllTallent.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +10,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 @Table(name = "tb_cad_avaliacao") // A tabela que você criou no passo A
 public class Avaliacao {
 
@@ -46,4 +47,4 @@ public class Avaliacao {
             status = "Rascunho";
         }
     }
-}
+}*/
