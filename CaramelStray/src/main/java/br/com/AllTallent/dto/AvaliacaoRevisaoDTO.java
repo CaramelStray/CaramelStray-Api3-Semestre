@@ -1,6 +1,6 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Avaliacao2;
+import br.com.AllTallent.model.Avaliacao;
 import br.com.AllTallent.model.AvaliacaoFuncionario;
 //import br.com.AllTallent.model.Funcionario;
 import br.com.AllTallent.model.RespostaColaborador; // Importar RespostaColaborador
@@ -19,7 +19,7 @@ public record AvaliacaoRevisaoDTO(
 ) {
     // Construtor que recebe a instância e a avaliação base
     // Assumimos que perguntas (com opções) e respostas foram carregadas
-    public AvaliacaoRevisaoDTO(AvaliacaoFuncionario instancia, Avaliacao2 avaliacaoBase) {
+    public AvaliacaoRevisaoDTO(AvaliacaoFuncionario instancia, Avaliacao avaliacaoBase) {
         this(
             instancia.getCodigo(),
             (instancia.getFuncionario() != null) ? instancia.getFuncionario().getNomeCompleto() : null,

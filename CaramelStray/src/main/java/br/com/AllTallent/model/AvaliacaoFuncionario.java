@@ -43,7 +43,7 @@ public class AvaliacaoFuncionario { // Mantendo o nome AvaliacaoFuncionario
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_avalicacao", nullable = false) // Nome da coluna no banco
-    private Avaliacao2 avaliacao; // Nome da classe Java correspondente
+    private Avaliacao avaliacao; // Nome da classe Java correspondente
 
     @Column(name = "comentario_colaborador", columnDefinition = "TEXT")
     private String comentarioColaborador;
@@ -68,7 +68,7 @@ public class AvaliacaoFuncionario { // Mantendo o nome AvaliacaoFuncionario
 
     // --- Construtor ---
     // (Pode remover se @AllArgsConstructor e @NoArgsConstructor forem suficientes)
-    public AvaliacaoFuncionario(Funcionario funcionario, Avaliacao2 avaliacao) {
+    public AvaliacaoFuncionario(Funcionario funcionario, Avaliacao avaliacao) {
         this.funcionario = funcionario;
         this.avaliacao = avaliacao;
         this.resultadoStatus = "PENDENTE";

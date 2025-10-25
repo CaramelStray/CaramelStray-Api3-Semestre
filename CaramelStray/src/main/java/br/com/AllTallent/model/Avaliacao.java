@@ -34,7 +34,7 @@ import java.util.Set; // Import para Set
 @EqualsAndHashCode(of = "codigo")
 @Entity
 @Table(name = "tb_cad_avaliacao") // Mapeia para a tabela correta
-public class Avaliacao2 { // Mantendo o nome Avaliacao2 por enquanto
+public class Avaliacao { // Mantendo o nome Avaliacao2 por enquanto
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_cad_avaliacao_codigo_seq")

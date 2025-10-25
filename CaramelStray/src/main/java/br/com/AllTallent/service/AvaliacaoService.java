@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Hibernate; // Import para inicializar coleções LAZY
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +50,7 @@ public class AvaliacaoService {
     @Transactional
     public AvaliacaoResponseDTO criarAvaliacaoCompleta(AvaliacaoRequestDTO dto) {
 
-        Avaliacao2 novaAvaliacao = new Avaliacao2();
+        Avaliacao novaAvaliacao = new Avaliacao();
         novaAvaliacao.setTitulo(dto.titulo());
         // Assumindo que AvaliacaoRequestDTO PODE ter dataPrazo (opcional)
         // if (dto.dataPrazo() != null) {
@@ -66,7 +65,7 @@ public class AvaliacaoService {
         }
         novaAvaliacao.setPerguntas(perguntas);
 
-        Avaliacao2 avaliacaoSalva = avaliacaoRepository.save(novaAvaliacao);
+        Avaliacao avaliacaoSalva = avaliacaoRepository.save(novaAvaliacao);
 
         List<Funcionario> funcionarios = funcionarioRepository.findAllById(dto.codigosFuncionarios());
         if (funcionarios.size() != dto.codigosFuncionarios().size()) {
@@ -129,7 +128,7 @@ public class AvaliacaoService {
 
     @Transactional(readOnly = true)
     public AvaliacaoDetalhadaDTO buscarAvaliacaoDetalhada(Integer id) { // Precisa criar AvaliacaoDetalhadaDTO
-        Avaliacao2 avaliacao = avaliacaoRepository.findById(id)
+        Avaliacao avaliacao = avaliacaoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Avaliação não encontrada: " + id));
 
         // Força a inicialização das coleções LAZY
@@ -200,7 +199,7 @@ public class AvaliacaoService {
             .orElseThrow(() -> new EntityNotFoundException("Instância de avaliação não encontrada: " + instanciaId));
 
          // Garante que a avaliação base e suas perguntas/opções sejam carregadas
-         Avaliacao2 avaliacaoBase = instancia.getAvaliacao();
+         Avaliacao avaliacaoBase = instancia.getAvaliacao();
          if (avaliacaoBase == null) {
               throw new IllegalStateException("Instância de avaliação está sem avaliação base associada.");
          }
@@ -235,7 +234,7 @@ public class AvaliacaoService {
 
           // Garante que tudo necessário para o DTO seja carregado
           Hibernate.initialize(instancia.getFuncionario());
-          Avaliacao2 avaliacaoBase = instancia.getAvaliacao();
+          Avaliacao avaliacaoBase = instancia.getAvaliacao();
           Hibernate.initialize(avaliacaoBase); // Carrega dados da avaliação base
           Hibernate.initialize(avaliacaoBase.getPerguntas());
           avaliacaoBase.getPerguntas().forEach(p -> Hibernate.initialize(p.getOpcoes()));

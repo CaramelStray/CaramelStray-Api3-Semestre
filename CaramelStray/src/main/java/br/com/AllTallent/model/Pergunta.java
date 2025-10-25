@@ -11,11 +11,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -50,4 +48,9 @@ public class Pergunta {
     // orphanRemoval = true: Se remover uma Opcao da lista 'opcoes', ela é deletada do banco
     @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<PerguntaOpcao> opcoes;
+
+    @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<AvaliacaoPergunta> avaliacoesVinculadas;
+
 }

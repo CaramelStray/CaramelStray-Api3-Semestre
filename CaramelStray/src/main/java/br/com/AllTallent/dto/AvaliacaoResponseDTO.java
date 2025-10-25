@@ -1,6 +1,6 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Avaliacao2; // Use o nome correto da sua classe de Avaliação
+import br.com.AllTallent.model.Avaliacao; // Use o nome correto da sua classe de Avaliação
 import java.time.LocalDate;
 // Importe outros DTOs se precisar aninhar (ex: PerguntaDTO)
 
@@ -13,7 +13,7 @@ public record AvaliacaoResponseDTO(
     // Adicione outros campos se necessário (ex: lista de perguntas simplificada)
 ) {
     // Construtor pAara conversão
-    public AvaliacaoResponseDTO(Avaliacao2 avaliacao) {
+    public AvaliacaoResponseDTO(Avaliacao avaliacao) {
         this(
             avaliacao.getCodigo(),
             avaliacao.getTitulo(),

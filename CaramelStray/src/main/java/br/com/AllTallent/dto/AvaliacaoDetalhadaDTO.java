@@ -1,6 +1,6 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Avaliacao2; 
+import br.com.AllTallent.model.Avaliacao;
 import java.time.LocalDate;
 import java.util.Collections; 
 import java.util.List;
@@ -17,7 +17,7 @@ public record AvaliacaoDetalhadaDTO(
     List<AvaliacaoFuncionarioResponseDTO> instancias 
 ) {
     
-    public AvaliacaoDetalhadaDTO(Avaliacao2 avaliacao) {
+    public AvaliacaoDetalhadaDTO(Avaliacao avaliacao) {
         this(
             avaliacao.getCodigo(),
             avaliacao.getTitulo(),

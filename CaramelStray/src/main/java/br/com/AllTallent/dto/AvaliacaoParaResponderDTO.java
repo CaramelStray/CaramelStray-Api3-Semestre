@@ -1,6 +1,6 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Avaliacao2; // Importar modelos
+import br.com.AllTallent.model.Avaliacao; // Importar modelos
 import br.com.AllTallent.model.AvaliacaoFuncionario;
 
 
@@ -16,7 +16,7 @@ public record AvaliacaoParaResponderDTO(
     List<PerguntaParaResponderDTO> perguntas 
 ) {
     
-    public AvaliacaoParaResponderDTO(AvaliacaoFuncionario instancia, Avaliacao2 avaliacaoBase) {
+    public AvaliacaoParaResponderDTO(AvaliacaoFuncionario instancia, Avaliacao avaliacaoBase) {
         this(
             instancia.getCodigo(),
             avaliacaoBase.getTitulo(),

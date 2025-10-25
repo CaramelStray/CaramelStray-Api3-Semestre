@@ -10,13 +10,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 //@EqualsAndHashCode(of = "codigo")
@@ -31,7 +29,8 @@ public class PerguntaOpcao {
 
     // Relacionamento inverso: Muitas Opcoes pertencem a UMA Pergunta
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_pergunta", nullable = false) // FK para tb_cad_pergunta
+    @JoinColumn(name = "codigo_pergunta", referencedColumnName = "codigo", nullable = false)
+    @ToString.Exclude
     private Pergunta pergunta;
 
     @Column(name = "descricao_opcao", nullable = false, columnDefinition = "TEXT")
