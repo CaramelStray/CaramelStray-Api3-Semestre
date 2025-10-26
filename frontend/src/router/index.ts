@@ -10,6 +10,9 @@ import Avaliacao from '../components/Avaliacao.vue';
 import Teste from '../components/Teste.vue';
 import Status from '../components/Status.vue';
 import Respostas from '../components/respostaAvaliacao.vue';
+
+console.log('Router Config Loaded');
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -33,7 +36,7 @@ const router = createRouter({
       component: Status,
     },
     {
-      path: '/teste',
+      path: '/teste/:instanciaid',
       name: 'Teste',
       component: Teste,
       props:true
@@ -67,7 +70,7 @@ const router = createRouter({
       props:true
     },
     {
-      path: '/perguntas',
+      path: '/perguntas/:id',
       name: 'CadastroPerguntas',
       component: Perguntas,
       props: true

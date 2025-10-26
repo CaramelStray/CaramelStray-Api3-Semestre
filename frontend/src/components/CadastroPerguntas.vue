@@ -113,6 +113,23 @@
             </div>
           </div>
         </div>
+        
+        <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <label for="tituloAvaliacao" class="block mb-2 text-base font-semibold text-slate-800">
+            Título da Avaliação <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="tituloAvaliacao"
+            v-model="tituloAvaliacao"
+            placeholder="Ex: Avaliação de Desempenho - Q3 2025"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-800 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          />
+        </div>
+
+    <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+      </div>
+
 
         <!-- ====== Card Filtros ====== -->
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
@@ -169,7 +186,7 @@
                 <ul v-if="open.comp && filteredComps.length" class="search-list">
                   <li
                     v-for="comp in filteredComps"
-                    :key="comp.codigo"
+                    :key="comp.id"
                     class="search-item"
                     @mousedown.prevent="addComp(comp)"
                   >
@@ -229,7 +246,7 @@
           <div class="flex flex-wrap gap-2">
             <span
               v-for="comp in filtros.competencias"
-              :key="comp.codigo"
+              :key="comp.id"
               class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
             >
               {{ comp.nome }}
@@ -247,10 +264,22 @@
 
           <!-- Competência Selecionada (visível) -->
           <div class="mb-4">
-            <p class="text-sm text-slate-600">
-              <span class="font-medium">Competência vinculada:</span>
-              <span v-if="competenciaSelecionadaNome" class="text-slate-800"> {{ competenciaSelecionadaNome }}</span>
-              <span v-else class="text-slate-500"> nenhuma selecionada</span>
+            <label class="text-sm font-medium text-slate-700 mb-2 block">
+              Competência Vinculada <span class="text-red-500">*</span>
+            </label>
+            <select
+              v-model="competenciaSelecionada"
+              class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-800 appearance-none cursor-pointer"
+              style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23334155%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25rem; padding-right: 2.5rem;"
+              aria-label="Selecionar competência"
+            >
+              <option disabled value="">-- Selecione a Competência --</option>
+              <option v-for="comp in competenciasParaDropdown" :key="comp.id" :value="comp.id">
+                {{ comp.nome }}
+              </option>
+            </select>
+            <p class="text-xs text-slate-500 mt-1">
+              {{ filtros.competencias.length > 0 ? 'Apenas competências selecionadas no filtro são mostradas.' : 'Esta pergunta será associada a esta competência.' }}
             </p>
           </div>
 
@@ -341,14 +370,29 @@
               + Adicionar Pergunta
             </button>
           </div>
+          <div class="mt-8 pt-6 border-t border-slate-200">
+              <button
+                @click="handleCriarAvaliacao"
+                class="w-full rounded-lg bg-green-600 px-4 py-3 text-base font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                :disabled="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()"
+              >
+                Criar Avaliação para {{ filtros.colaboradores.length }} Colaborador(es)
+              </button>
+              <p v-if="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()" class="text-xs text-center text-red-600 mt-2">
+                  Preencha o título, adicione perguntas e selecione colaboradores.
+              </p>
+            </div>
+          
+
         </div>
+
       </template>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch,nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import {useAuth} from '../auth';
@@ -373,8 +417,9 @@ const competenciaSelecionada = ref('');
 const perguntas = ref([]);
 const allColaboradores = ref([]);
 const allCompetencias = ref([]);
-const allAreas = ref([]); // "Equipes" vêm da tabela "Area"
-// ---- estados dos filtros (mock simples) ----
+const allAreas = ref([]);
+const tituloAvaliacao = ref('');
+
 const filtros = ref({
   colaboradores: [],
   competencias: [],
@@ -472,10 +517,11 @@ const getInitials = (fullName) => {
   return initials.toUpperCase();
 };
 
-const obterNomeCompetencia = (codigo) => {
-  //const lista = listaCompetenciasBase.value;
-  const found = lista.find(c => c.codigo === codigo);
-  return found?.nome || codigo;
+const obterNomeCompetencia = (id) => { // Recebe o ID da competência
+  // === CORREÇÃO AQUI: Procurar em allCompetencias.value usando o 'id' ===
+  const found = allCompetencias.value.find(c => c.id === id);
+  // ======================================================================
+  return found?.nome || `Competência #${id}`; // Retorna o nome ou o ID como fallback
 };
 
 const handleVoltar = () => {
@@ -498,12 +544,13 @@ const handleRemoverOpcao = (index) => {
   return found?.nome || '';
 });*/
 
-const handleSalvarPergunta = async () => {
+const handleSalvarPergunta = () => { // Removido o async, pois não chama API
+  // 1. Validações (como antes)
+  console.log('Adicionar Pergunta Local: Valor de competenciaSelecionada:', competenciaSelecionada.value);
   if (!pergunta.value.trim()) {
     alert('Por favor, digite a pergunta.');
     return;
   }
-
   if (!competenciaSelecionada.value) {
     alert('Por favor, selecione uma competência.');
     return;
@@ -514,68 +561,32 @@ const handleSalvarPergunta = async () => {
     .filter(op => op !== '');
 
   if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
-    alert('Para múltipla escolha, informe ao menos 2 opções.');
+    alert('Para múltipla escolha, informe ao menos 2 opções válidas.');
     return;
   }
 
-  const novaPergunta = {
+  // 2. Cria o objeto da pergunta LOCALMENTE
+  //    Usamos 'competenciaId' aqui para ser consistente com o que obterNomeCompetencia espera
+  const novaPerguntaLocal = {
     pergunta: pergunta.value.trim(),
-    competenciaId: competenciaSelecionada.value,
+    competenciaId: competenciaSelecionada.value, // Guarda o ID selecionado
     tipoPergunta: tipoPergunta.value,
-    opcoes: (tipoPergunta.value === 'multipla escolha') ? opcoesValidas : null
+    opcoes: (tipoPergunta.value === 'multipla escolha') ? opcoesValidas : null,
+    // NÃO TEM 'codigo' AINDA, pois não foi salvo no backend
   };
 
-  try {
-    const funcionarioId = props.id || route.params.id;
-    
-    console.log("Enviando pergunta:", novaPergunta);
-    console.log("URL:", `http://localhost:8080/api/perguntas`);
-    
-    // Tenta primeiro com o novo endpoint
-    try {
-      const response = await axios.post(`http://localhost:8080/api/perguntas`, {
-        ...novaPergunta,
-        funcionarioId: funcionarioId
-      });
-      console.log("Resposta do servidor:", response.data);
-    } catch (err) {
-      // Se falhar, tenta o endpoint antigo
-      if (err.response?.status === 404) {
-        console.log("Tentando endpoint alternativo...");
-        const response = await axios.post(`http://localhost:8080/api/funcionario/${funcionarioId}/perguntas`, novaPergunta);
-        console.log("Resposta do servidor:", response.data);
-      } else {
-        throw err;
-      }
-    }
-    
-    // Adiciona à lista local
-    perguntas.value.push(novaPergunta);
-    
-    alert('Pergunta cadastrada com sucesso!');
-    
-    // Limpa o formulário
-    pergunta.value = '';
-    tipoPergunta.value = 'texto';
-    opcoes.value = [''];
-  } catch (err) {
-    console.error("Erro completo:", err);
-    console.error("Mensagem:", err.message);
-    console.error("Response:", err.response);
-    
-    let mensagem = "Ocorreu um erro ao salvar a pergunta.";
-    if (err.response?.status === 404) {
-      mensagem = "Endpoint não encontrado. Verifique qual é o endpoint correto no backend para salvar perguntas.";
-    } else if (err.response?.status === 400) {
-      mensagem = `Erro na requisição: ${err.response.data?.message || 'Dados inválidos'}`;
-    } else if (err.response?.status === 500) {
-      mensagem = `Erro no servidor: ${err.response.data?.message || 'Erro interno'}`;
-    } else if (err.code === 'ERR_NETWORK') {
-      mensagem = "Não foi possível conectar ao servidor. Verifique se localhost:8080 está ativo.";
-    }
-    
-    alert(mensagem);
-  }
+  console.log("Adicionando pergunta localmente:", novaPerguntaLocal);
+
+  // 3. Adiciona ao array local 'perguntas.value'
+  perguntas.value.push(novaPerguntaLocal);
+
+  // 4. Limpa APENAS os campos do formulário de nova pergunta
+  pergunta.value = '';
+  tipoPergunta.value = 'texto';
+  opcoes.value = [''];
+  //competenciaSelecionada.value = ''; // Limpa a seleção da competência
+
+  // Não mostra alerta de sucesso aqui, apenas adiciona à lista
 };
 
 const handleDeletarPergunta = (index) => {
@@ -602,7 +613,7 @@ const normaliza = (s) =>
     .toLowerCase();
 
 const jaTemColab = (codigo) => filtros.value.colaboradores.some((x) => x.codigo === codigo);
-const jaTemComp = (codigo) => filtros.value.competencias.some((x) => x.codigo === codigo);
+const jaTemComp = (id) => filtros.value.competencias.some((x) => x.id === id);
 const jaTemEquipe = (codigo) => filtros.value.equipes.some((x) => x.codigo === codigo);
 
 /*const listaCompetenciasBase = computed(() => {
@@ -675,9 +686,11 @@ const filteredColabs = computed(() => {
 const filteredComps = computed(() => {
   const q = normaliza(qComp.value);
   return allCompetencias.value 
-    .filter((c) => !jaTemComp(c.codigo))
+    .filter((c) => !jaTemComp(c.id))
     .filter((c) => !q || normaliza(c.nome).includes(q))
     .slice(0, 30);
+    console.log('Competências Filtradas para Dropdown:', result.map(c => c.nome));
+  return result;
 });
 
 const filteredEquipes = computed(() => {
@@ -689,14 +702,29 @@ const filteredEquipes = computed(() => {
 });
 
 const addColab = (c) => {
+  console.log('Tentando adicionar:', c.nome,c.codigo);
   if (!jaTemColab(c.codigo)) filtros.value.colaboradores.push(c);
   qColab.value = '';
+  open.value.colab = false;
 };
 
 const addComp = (comp) => {
-  if (!jaTemComp(comp.codigo)) filtros.value.competencias.push(comp);
-  qComp.value = '';
-  if (!competenciaSelecionada.value) competenciaSelecionada.value = comp.codigo;
+  // === LOG ADICIONADO ===
+  console.log('Tentando adicionar:', comp.nome);
+  if (!jaTemComp(comp.id)) {
+    filtros.value.competencias.push(comp);
+    // === LOG ADICIONADO ===
+    console.log('Competências no Filtro AGORA:', filtros.value.competencias.map(c => c.nome));
+  } else {
+     // === LOG ADICIONADO ===
+    console.log(comp.nome, 'já está no filtro.');
+    nextTick(()=>{
+      open.value.comp = false;
+      console.log('Dropdown de competências fechado via nextTick (item já existia)');
+    });
+  }
+  qComp.value = ''; // Limpa o input
+
 };
 
 const addEquipe = (e) => {
@@ -710,10 +738,141 @@ const handleClickOutside = (ev) => {
   if (wrapComp.value && !wrapComp.value.contains(t)) open.value.comp = false;
   if (wrapEquipe.value && !wrapEquipe.value.contains(t)) open.value.equipe = false;
 };
+const competenciasParaDropdown = computed(() => {
+  // Se houver competências selecionadas no filtro, usa elas
+  if (filtros.value.competencias.length > 0) {
+    return filtros.value.competencias;
+  }
+  // Senão, usa todas as competências carregadas
+  return allCompetencias.value;
+});
 
-/*onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});*/
+watch(() => filtros.value.competencias, (novasCompetenciasSelecionadas) => {
+  // === NOVO LOG AQUI ===
+  console.log('WATCH: Filtro de competências mudou. Novas selecionadas:', novasCompetenciasSelecionadas);
+  if (novasCompetenciasSelecionadas.length > 0) {
+      console.log('WATCH: Primeiro item selecionado:', novasCompetenciasSelecionadas[0]); // Veja a estrutura deste objeto
+  }
+  // ======================
+
+  if (novasCompetenciasSelecionadas.length === 1) {
+    // Tentativa de auto-seleção (com .codigo)
+    const compCodigo = novasCompetenciasSelecionadas[0]?.id; // Usar optional chaining ?. por segurança
+    if (compCodigo !== undefined) {
+         competenciaSelecionada.value = compCodigo;
+         console.log(`WATCH: Competência vinculada auto-selecionada para: ${competenciaSelecionada.value}`);
+    } else {
+         console.error('WATCH: Erro na auto-seleção - O primeiro item não tem a propriedade "codigo":', novasCompetenciasSelecionadas[0]);
+         competenciaSelecionada.value = ''; // Reseta se não encontrar o código
+    }
+
+  } else {
+    // Lógica de reset (como estava antes, usando .codigo)
+    const selecionadaAindaValida = novasCompetenciasSelecionadas.length === 0 ||
+                                 novasCompetenciasSelecionadas.some(c => c.id === competenciaSelecionada.value);
+    if (!selecionadaAindaValida) {
+      competenciaSelecionada.value = '';
+      console.log('WATCH: Competência vinculada resetada.');
+    }
+  }
+}, { deep: true });
+
+const handleCriarAvaliacao = async () => {
+  // 1. Validações (como antes)
+  if (!tituloAvaliacao.value.trim()) {
+    alert('Por favor, informe o título da avaliação.');
+    return;
+  }
+  if (perguntas.value.length === 0) {
+    alert('Adicione pelo menos uma pergunta à avaliação antes de criar.');
+    return;
+  }
+  if (filtros.value.colaboradores.length === 0) {
+    alert('Selecione pelo menos um colaborador para receber a avaliação.');
+    return;
+  }
+
+  console.log("Iniciando processo de Criar Avaliação...");
+  console.log("Perguntas locais a serem salvas:", perguntas.value);
+  console.log("Colaboradores selecionados:", filtros.value.colaboradores);
+
+  let codigosPerguntasSalvas = []; // Array para guardar os IDs das perguntas salvas
+
+  try {
+    // === PASSO 2a: Salvar cada pergunta local no backend ===
+    console.log("Salvando perguntas individuais no backend...");
+    const savePromises = perguntas.value.map(perguntaLocal => {
+      // Monta o payload para POST /api/perguntas
+      const payloadPergunta = {
+        pergunta: perguntaLocal.pergunta,
+        competenciaCodigo: perguntaLocal.competenciaId, // Nome esperado pelo backend
+        tipoPergunta: perguntaLocal.tipoPergunta,
+        opcoes: perguntaLocal.opcoes
+      };
+      console.log("Enviando para /api/perguntas:", payloadPergunta);
+      return axios.post('http://localhost:8080/api/perguntas', payloadPergunta);
+    });
+
+    // Executa todas as requisições de salvar pergunta em paralelo
+    const responses = await Promise.all(savePromises);
+
+    // Coleta os códigos das perguntas salvas
+    codigosPerguntasSalvas = responses.map(response => response.data.codigo);
+    console.log("Códigos das perguntas salvas:", codigosPerguntasSalvas);
+
+    if (codigosPerguntasSalvas.length !== perguntas.value.length || codigosPerguntasSalvas.some(code => code == null)) {
+        throw new Error("Falha ao salvar uma ou mais perguntas no backend.");
+    }
+
+    // === PASSO 2b: Montar e enviar payload para Criar Avaliação ===
+    const codigosFuncionarios = filtros.value.colaboradores.map(c => c.codigo);
+
+    const payloadAvaliacao = {
+      titulo: tituloAvaliacao.value.trim(),
+      codigosFuncionarios: codigosFuncionarios,
+      codigosPerguntas: codigosPerguntasSalvas // Usa os códigos recém-obtidos
+    };
+
+    console.log("Enviando Payload final para Criar Avaliação (/api/avaliacoes):", payloadAvaliacao);
+
+    const responseAvaliacao = await axios.post('http://localhost:8080/api/avaliacoes', payloadAvaliacao);
+    console.log('Resposta do Servidor (Criar Avaliação):', responseAvaliacao.data);
+
+    alert(`Avaliação "${responseAvaliacao.data.titulo}" criada com sucesso!`);
+
+    // Limpa tudo após o sucesso
+    tituloAvaliacao.value = '';
+    perguntas.value = [];
+    filtros.value.colaboradores = [];
+    filtros.value.competencias = [];
+    filtros.value.equipes = [];
+    // router.push('/algum-lugar');
+
+  } catch (err) {
+      console.error("Erro completo durante a criação da avaliação:", err);
+      let mensagem = "Ocorreu um erro geral ao criar a avaliação.";
+
+      // Tenta dar mensagens mais específicas
+      if (err.message && err.message.includes("Falha ao salvar uma ou mais perguntas")) {
+          mensagem = err.message + " Verifique o console do backend para detalhes.";
+      } else if (axios.isAxiosError(err) && err.response) {
+           console.error("Erro Axios:", err.response.status, err.response.data);
+           if (err.config.url.includes('/api/perguntas')) {
+               mensagem = `Erro ao salvar uma das perguntas (${err.response.status}): ${err.response.data?.message || err.response.data || 'Erro desconhecido'}`;
+           } else if (err.config.url.includes('/api/avaliacoes')) {
+               mensagem = `Erro ao criar a avaliação final (${err.response.status}): ${err.response.data?.message || err.response.data || 'Funcionário(s) ou Pergunta(s) inválido(s)'}`;
+           } else {
+               mensagem = `Erro de rede ou servidor (${err.response.status}).`;
+           }
+      } else if (err.code === 'ERR_NETWORK') {
+          mensagem = "Não foi possível conectar ao servidor (localhost:8080).";
+      } else if (err.message) {
+          mensagem = err.message;
+      }
+      alert(mensagem);
+  }
+};
+
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);

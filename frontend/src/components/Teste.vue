@@ -138,10 +138,18 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-
-const periodoTitulo = 'Q4 2024'
-
+import { computed, onMounted, reactive, ref, watch } from 'vue';
+import axios from 'axios';
+const props = defineProps({
+  instanciaid: { // Nome da prop deve bater com o parâmetro da rota (:instanciaId)
+    type: [String, Number], // Aceita string ou número
+    required: true
+  }
+});
+console.log('Teste.vue: Props object recebido:', props);
+console.log('Teste.vue: Valor de props.instanciaid:', props.instanciaid, '| Tipo:', typeof props.instanciaid);
+const periodoTitulo = ref('Carregando Título...');
+const salvandoResposta = ref(false);
 const carregando = ref(true)
 const bloqueado = ref(false)
 const enviado = ref(false)
@@ -252,92 +260,263 @@ function anterior() {
 }
 
 async function enviar() {
-  if (!validarAtual()) return
-  bloqueado.value = true
+  if (!validarAtual()) return;
+  bloqueado.value = true;
+  erro.value = '';
+  const idInstancia = Number(props.instanciaid); // <<< Corrigido aqui
+
   try {
-    await new Promise(r => setTimeout(r, 600))
-    console.log('Payload a enviar:', montarPayload())
-    enviado.value = true
+    console.log("Iniciando envio em lote das respostas...");
+    const savePromises = []; // Array para guardar as promessas de salvar
+
+    // Itera sobre as respostas locais
+    for (const perguntaIdStr in respostasLocal) {
+       // Converte a chave (que é string) para número
+       const perguntaId = parseInt(perguntaIdStr, 10);
+       if (isNaN(perguntaId)) continue; // Pula se a chave não for um ID numérico
+
+       const valorResposta = respostasLocal[perguntaIdStr];
+
+       // Encontra a pergunta correspondente para saber o tipo
+       const pergunta = perguntas.value.find(p => p.id === perguntaId);
+       if (!pergunta) {
+           console.warn(`Não foi possível encontrar detalhes da pergunta com ID ${perguntaId} para montar payload.`);
+           continue; // Pula esta resposta se não encontrar a pergunta
+       }
+
+       // Monta o payload individual (lógica similar a salvarRespostaIndividual)
+       let payload = {
+         funcionarioAvaliacaoCodigo: idInstancia,
+         perguntaCodigo: perguntaId,
+         respostaTexto: null,
+         opcaoSelecionadaCodigo: null
+       };
+
+       if (pergunta.tipo === 'texto' || pergunta.tipo === 'escala') {
+         payload.respostaTexto = String(valorResposta ?? '');
+       } else if (pergunta.tipo === 'multipla') {
+         if (pergunta.multiplas) { // Checkbox
+           if (Array.isArray(valorResposta) && valorResposta.length > 0) {
+             // *** ATENÇÃO: Ainda temos o problema de como salvar múltiplas opções ***
+             //     Esta linha salva apenas a ÚLTIMA. Você precisaria ajustar o backend
+             //     ou fazer múltiplas chamadas aqui para cada valor no array.
+             payload.opcaoSelecionadaCodigo = valorResposta[valorResposta.length - 1];
+           } else {
+             continue; // Não salva se array estiver vazio
+           }
+         } else { // Radio
+           payload.opcaoSelecionadaCodigo = valorResposta;
+         }
+       } else {
+           continue; // Pula tipo desconhecido
+       }
+
+       console.log("Adicionando promessa para salvar:", payload);
+       // Adiciona a promessa da chamada POST ao array
+       savePromises.push(axios.post('http://localhost:8080/api/avaliacoes/respostas', payload));
+    } // Fim do loop for...in
+
+    // Espera todas as chamadas de salvar resposta terminarem
+    await Promise.all(savePromises);
+    console.log("Todas as respostas foram enviadas para o backend.");
+
+    // Se chegou aqui, todas as respostas foram salvas (ou não deram erro crítico)
+    // Agora, finaliza a avaliação
+    console.log(`Finalizando avaliação para instância ID: ${idInstancia}...`);
+    await axios.put(`http://localhost:8080/api/avaliacoes/instancias/${idInstancia}/finalizar`);
+
+    console.log("Avaliação finalizada com sucesso.");
+    enviado.value = true;
+
+  } catch (err) {
+     console.error("Erro durante o envio em lote ou finalização:", err);
+     // Adapte o tratamento de erro para lidar com falhas no Promise.all ou na finalização
+     erro.value = "Ocorreu um erro ao enviar as respostas ou finalizar. Tente novamente.";
+     if (axios.isAxiosError(err) && err.response) {
+         // Tenta dar uma mensagem mais específica
+          erro.value = `Erro ${err.response.status}: ${err.response.data?.message || 'Falha no servidor'}`;
+     }
   } finally {
-    bloqueado.value = false
+    bloqueado.value = false;
   }
 }
 
-function montarPayload() {
+/*function montarPayload() {
   return perguntas.value.map(q => ({ id: q.id, resposta: respostasLocal[q.id] ?? null }))
-}
+}*/
 
 function handleVoltar() {
   window.history.back()
 }
 
 onMounted(async () => {
-  await new Promise(r => setTimeout(r, 300))
-  perguntas.value = [
-    {
-      id: 'p1',
-      categoria: 'Comunicação',
-      tipo: 'texto',
-      obrigatoria: true,
-      enunciado: 'Descreva um exemplo recente em que você comunicou uma mudança importante para o time.',
-      placeholder: 'Escreva aqui seu relato com 3–5 linhas...'
-    },
-    {
-      id: 'p2',
-      categoria: 'Colaboração',
-      tipo: 'multipla',
-      multiplas: true,
-      obrigatoria: true,
-      enunciado: 'Quais estratégias você usa para colaborar com outras equipes?',
-      opcoes: [
-        { valor: 'dailies', rotulo: 'Dailies/Semana de alinhamento' },
-        { valor: 'docs', rotulo: 'Documentação clara' },
-        { valor: 'feedback', rotulo: 'Feedbacks frequentes' },
-        { valor: 'pair', rotulo: 'Pair programming' }
-      ]
-    },
-    {
-      id: 'p3',
-      categoria: 'Qualidade',
-      tipo: 'escala',
-      obrigatoria: true,
-      enunciado: 'Avalie seu nível de atenção a detalhes no último trimestre.',
-      min: 0,
-      max: 10,
-      step: 1,
-      escalaLegenda: '0 = Baixíssimo · 10 = Altíssimo',
-      minRotulo: 'Baixo',
-      maxRotulo: 'Alto'
-    },
-    {
-      id: 'p4',
-      categoria: 'Adaptabilidade',
-      tipo: 'multipla',
-      multiplas: false,
-      obrigatoria: true,
-      enunciado: 'Como você reage a mudanças repentinas no trabalho?',
-      opcoes: [
-        { valor: 'rapido', rotulo: 'Me adapto rapidamente' },
-        { valor: 'tempo', rotulo: 'Preciso de tempo para me ajustar' },
-        { valor: 'planejamento', rotulo: 'Prefiro planejamento prévio' },
-        { valor: 'depende', rotulo: 'Depende da situação' }
-      ]
-    },
-    {
-      id: 'p5',
-      categoria: 'Resultados',
-      tipo: 'texto',
-      obrigatoria: false,
-      enunciado: 'Existe algo que gostaria de destacar sobre seus resultados?'
+  carregando.value = true;
+  erro.value = '';
+  enviado.value = false;
+
+  console.log('onMounted: props.instanciaid recebido:', props.instanciaid, '| Tipo:', typeof props.instanciaid);
+  
+  // 1. Tenta limpar e converter usando parseInt
+  let id = NaN; // Inicializa como NaN
+  const idStringOriginal = props.instanciaid?.toString(); // Garante que é string ou undefined
+
+  if (idStringOriginal) {
+      const trimmedIdString = idStringOriginal.trim();
+      console.log('onMounted: props.instanciaid após trim():', `'${trimmedIdString}'`); // Mostra com aspas para ver espaços
+      id = parseInt(trimmedIdString, 10); // Usa base 10
+      console.log('onMounted: Resultado de parseInt():', id, '| Tipo:', typeof id);
+  } else {
+      console.error('onMounted: props.instanciaid é nulo ou indefinido.');
+  }
+
+  // 2. Verifica se o resultado da conversão é NaN
+  if (isNaN(id)) {
+      console.error('onMounted: A conversão resultou em NaN. String original:', idStringOriginal);
+      erro.value = "ID da avaliação inválido na URL."; // <<< Define o erro 1
+      carregando.value = false;
+      return;
+  }
+
+  // 3. Se chegou aqui, 'id' é um número válido. Continua...
+  console.log(`Buscando dados para a instância de avaliação ID: ${id}`);
+
+  try {
+    // === FAZ A CHAMADA AXIOS (usando a variável 'id' que agora é um número) ===
+    const response = await axios.get(`http://localhost:8080/api/avaliacoes/instancias/${id}/responder`);
+    const dadosAvaliacao = response.data;
+    console.log("Dados recebidos:", dadosAvaliacao);
+    // ... (Resto do mapeamento das perguntas como estava antes) ...
+    periodoTitulo.value = dadosAvaliacao.tituloAvaliacao || 'Avaliação Sem Título';
+     perguntas.value = dadosAvaliacao.perguntas.map(p => ({
+        id: p.codigo,
+        enunciado: p.pergunta, // <<< Propriedade usada no template
+        tipo: mapTipoPergunta(p.tipoPergunta),
+        obrigatoria: true,
+        categoria: 'Competência',
+        opcoes: p.opcoes ? p.opcoes.map(op => ({
+            valor: op.codigo,
+            rotulo: op.descricaoOpcao
+        })) : [],
+        multiplas: p.tipoPergunta === 'multipla escolha' ? false : undefined,
+        min: p.tipoPergunta === 'escala/nota' ? 1 : undefined,
+        max: p.tipoPergunta === 'escala/nota' ? 5 : undefined,
+        step: p.tipoPergunta === 'escala/nota' ? 1 : undefined,
+        minRotulo: p.tipoPergunta === 'escala/nota' ? 'Discordo Totalmente' : undefined,
+        maxRotulo: p.tipoPergunta === 'escala/nota' ? 'Concordo Totalmente' : undefined,
+        escalaLegenda: p.tipoPergunta === 'escala/nota' ? 'Selecione sua avaliação' : undefined,
+     }));
+     perguntas.value.forEach(q => {
+       if (q.tipo === 'escala' && respostasLocal[q.id] == null) {
+         respostasLocal[q.id] = q.min ?? 1;
+       }
+     });
+     console.log("Perguntas mapeadas:", perguntas.value);
+     console.log("Computed perguntaAtual após mapeamento:", perguntaAtual.value);
+    if (perguntas.value.length > 0) {
+        console.log("Primeira pergunta mapeada (perguntas.value[0]):", JSON.parse(JSON.stringify(perguntas.value[0]))); // Loga uma cópia limpa
+        console.log("Primeira pergunta .enunciado:", perguntas.value[0]?.enunciado); // Verifica a propriedade específica
+    } else {
+        console.log("Array perguntas.value está vazio após mapeamento.");
     }
-  ]
-  perguntas.value.forEach(q => {
-    if (q.tipo === 'escala' && respostasLocal[q.id] == null) {
-      respostasLocal[q.id] = q.min ?? 0
+    await nextTick();
+    console.log("Computed perguntaAtual APÓS nextTick:", perguntaAtual.value);
+  } catch (err) {
+    // ... (Tratamento de erro como estava antes) ...
+     console.error("Erro ao buscar dados da avaliação:", err);
+     if (axios.isAxiosError(err) && err.response?.status === 404) {
+          erro.value = "Avaliação não encontrada. Verifique o link ou entre em contato com o suporte.";
+     } else {
+          erro.value = "Não foi possível carregar a avaliação. Tente novamente mais tarde.";
+     }
+  } finally {
+    carregando.value = false;
+  }
+});
+
+function mapTipoPergunta(tipoBackend) {
+  switch (tipoBackend?.toLowerCase()) {
+    case 'texto': return 'texto';
+    case 'multipla escolha': return 'multipla';
+    case 'escala/nota': return 'escala';
+    default:
+      console.warn(`Tipo de pergunta não mapeado: ${tipoBackend}. Usando 'texto'.`);
+      return 'texto'; // Fallback
+  }
+}
+
+watch(respostasLocal, async (novasRespostas, respostasAntigas) => {
+    // Não faz nada se estiver carregando ou já salvando
+    if (carregando.value || salvandoResposta.value || !perguntaAtual.value) {
+        return;
     }
-  })
-  carregando.value = false
-})
+
+    const perguntaId = perguntaAtual.value.id;
+    const respostaAtual = novasRespostas[perguntaId];
+    const respostaAnterior = respostasAntigas ? respostasAntigas[perguntaId] : undefined;
+
+    // Salva apenas se a resposta para a pergunta ATUAL mudou
+    if (JSON.stringify(respostaAtual) !== JSON.stringify(respostaAnterior)) {
+        console.log(`Resposta para pergunta ${perguntaId} mudou para:`, respostaAtual);
+        await salvarRespostaIndividual(perguntaId, respostaAtual);
+    }
+}, { deep: true });
+
+async function salvarRespostaIndividual(perguntaCodigo, valorResposta) {
+    salvandoResposta.value = true;
+    erro.value = ''; // Limpa erro anterior
+    console.log(`Salvando resposta para pergunta ${perguntaCodigo}... Valor:`, valorResposta);
+
+    const idInstancia = Number(props.instanciaid);
+    const tipo = perguntaAtual.value?.tipo; // Pega o tipo da pergunta atual
+
+    let payload = {
+        funcionarioAvaliacaoCodigo: idInstancia,
+        perguntaCodigo: perguntaCodigo,
+        respostaTexto: null,
+        opcaoSelecionadaCodigo: null
+    };
+
+    // Monta o payload conforme o tipo da pergunta e o valor
+    if (tipo === 'texto' || tipo === 'escala') {
+        payload.respostaTexto = String(valorResposta ?? ''); // Converte para string
+    } else if (tipo === 'multipla') {
+        if (perguntaAtual.value?.multiplas) { // Checkbox (múltiplas opções)
+            // O backend espera UMA chamada por CADA opção selecionada?
+            // Ou espera um array? A API espera apenas UMA opcaoSelecionadaCodigo.
+            // **Simplificação:** Salvar apenas a ÚLTIMA opção clicada para múltipla seleção.
+            // **Ideal:** Ajustar backend ou frontend para lidar com array de opções.
+            if (Array.isArray(valorResposta) && valorResposta.length > 0) {
+                 payload.opcaoSelecionadaCodigo = valorResposta[valorResposta.length - 1]; // Pega a última
+            } else {
+                 // Se desmarcou todas, talvez enviar uma resposta "vazia"? Ou não enviar nada?
+                 // Por enquanto, não enviaremos se estiver vazio.
+                 console.log("Nenhuma opção múltipla selecionada para salvar.");
+                 salvandoResposta.value = false;
+                 return;
+            }
+        } else { // Radio (escolha única)
+            payload.opcaoSelecionadaCodigo = valorResposta; // O valor já é o código da opção
+        }
+    } else {
+         console.error(`Tipo de pergunta desconhecido para salvar: ${tipo}`);
+         salvandoResposta.value = false;
+         return; // Não salva se o tipo for inválido
+    }
+
+    console.log("Payload para POST /api/avaliacoes/respostas:", payload);
+
+    try {
+        await axios.post('http://localhost:8080/api/avaliacoes/respostas', payload);
+        console.log(`Resposta para pergunta ${perguntaCodigo} salva com sucesso.`);
+        // Poderia adicionar um feedback visual rápido aqui (ex: um check verde)
+    } catch (err) {
+        console.error(`Erro ao salvar resposta para pergunta ${perguntaCodigo}:`, err);
+        erro.value = `Falha ao salvar a resposta. Verifique sua conexão.`;
+        // Ideal: Tratar erros específicos (400, 404, 500)
+    } finally {
+        salvandoResposta.value = false;
+    }
+}
 
 watch(indiceAtual, () => {
   erro.value = ''
