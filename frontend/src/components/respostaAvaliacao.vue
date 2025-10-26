@@ -100,8 +100,8 @@
                   <span class="escala-max">/ {{ pergunta.escalaMax }}</span>
                 </div>
                 <div class="escala-bar">
-                  <div 
-                    class="escala-fill" 
+                  <div
+                    class="escala-fill"
                     :style="{ width: (pergunta.nota / pergunta.escalaMax * 100) + '%' }"
                   />
                 </div>
