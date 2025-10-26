@@ -401,9 +401,7 @@ import {useAuth} from '../auth';
 const route = useRoute();
 const router = useRouter();
 
-const props = defineProps({ 
-  id: String 
-});
+
 
 
 
@@ -450,17 +448,16 @@ onMounted(async () => {
   error.value = null;
   try {
     // Pega o ID da prop (vindo da rota)
-    const idUsuario = props.id; 
-    if (!idUsuario) {
-      throw new Error("ID do usuário logado não fornecido via props/rota.");
-    }
-
-    // 1. PRIMEIRO, carrega o usuário logado usando o ID da prop
-    await carregarUsuarioLogado(Number(idUsuario)); 
+     
 
     // VERIFICA se o usuário foi carregado com sucesso ANTES de prosseguir
     if (!usuarioLogado.value) {
-        throw new Error("Falha ao carregar dados do usuário logado.");
+      console.warn("Usuário logado não encontrado no estado global, tentando carregar...");
+      
+           throw new Error("Falha ao obter dados do usuário logado. O estado global está vazio.");
+      
+    } else {
+        console.log("Usuário logado encontrado no estado global:", usuarioLogado.value.nomeCompleto);
     }
 
     // 2. DEPOIS, busca os dados dos filtros

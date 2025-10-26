@@ -53,7 +53,7 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'Dashboard', subtitle: 'Visão Geral' }
       },
       {
-        path: 'perguntas', // Tela de Cadastro/Gerenciamento de Perguntas
+        path: 'perguntas/', // Tela de Cadastro/Gerenciamento de Perguntas
         name: 'LiderPerguntas', component: Perguntas,
         meta: { title: 'Cadastro de Perguntas', subtitle: 'Gerenciar perguntas globais' }
       },
