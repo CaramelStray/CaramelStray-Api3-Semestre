@@ -9,7 +9,7 @@
         <div class="card__icon">
           <div class="icon-circle">
             <svg viewBox="0 0 24 24" width="28" height="28">
-              <circle cx="12" cy="8" r="3"/>
+              <circle cx="12" cy="8" r="3" fill="#fff"/>
               <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
