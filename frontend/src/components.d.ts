@@ -16,13 +16,17 @@ declare module 'vue' {
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     Inicio: typeof import('./components/Inicio.vue')['default']
+    LiderSideMenu: typeof import('./components/LiderSideMenu.vue')['default']
     Lista: typeof import('./components/Lista.vue')['default']
     PerfilBase: typeof import('./components/perfilBase.vue')['default']
     PerfilFun: typeof import('./components/perfilFun.vue')['default']
     RespostaAvaliacao: typeof import('./components/respostaAvaliacao.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SideMenu: typeof import('./components/SideMenu.vue')['default']
+    SideMenuColaborador: typeof import('./components/SideMenuColaborador.vue')['default']
     Status: typeof import('./components/Status.vue')['default']
+    Status2: typeof import('./components/Status2.vue')['default']
     Teste: typeof import('./components/Teste.vue')['default']
   }
 }
