@@ -9,7 +9,7 @@ import jakarta.validation.Valid; // Para validar DTOs de Request
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder; // <<< IMPORT ADICIONADO AQUI
 
 import java.net.URI;
 import java.util.List;
@@ -37,7 +37,7 @@ public class AvaliacaoController {
             // Cria a URI para o recurso recém-criado (Avaliacao base)
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest() // Base: /api/avaliacoes
-                    .path("/{id}")        // Adiciona /id
+                    .path("/{id}") // Adiciona /id
                     .buildAndExpand(avaliacaoCriada.codigo()) // Substitui {id} pelo código
                     .toUri();
 
@@ -47,10 +47,15 @@ public class AvaliacaoController {
         } catch (EntityNotFoundException e) {
             // Se funcionários ou perguntas não foram encontrados no Service
             // Retorna 400 Bad Request com a mensagem de erro
-            return ResponseEntity.badRequest().body(null); // Idealmente, retornar um DTO de erro com e.getMessage()
+            // Idealmente, retornar um DTO de erro com e.getMessage()
+            // Você pode criar um DTO simples como: record ErrorResponse(String message) {}
+            // return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+             return ResponseEntity.badRequest().body(null); // Simplificado por enquanto
         } catch (Exception e) {
             // Outros erros inesperados
             // Logar o erro aqui é uma boa prática: log.error("Erro ao criar avaliação", e);
+            System.err.println("Erro ao criar avaliação: " + e.getMessage()); // Log simples
+            e.printStackTrace(); // Para ver o stack trace no console
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -103,6 +108,8 @@ public class AvaliacaoController {
              return ResponseEntity.badRequest().body("Erro ao salvar resposta: " + e.getMessage());
         } catch (Exception e) {
             // Outros erros
+            System.err.println("Erro interno ao salvar resposta: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao salvar resposta.");
         }
     }
@@ -132,31 +139,30 @@ public class AvaliacaoController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
              // Outros erros
+             System.err.println("Erro interno ao salvar revisão: " + e.getMessage());
+             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao salvar revisão.");
         }
     }
 
     // --- Endpoints Adicionais (Exemplos para o fluxo do Colaborador) ---
 
-    /*
+
     // Endpoint para o colaborador ver suas avaliações pendentes
     @GetMapping("/pendentes/{funcionarioId}") // Recebe o ID do funcionário logado
     public ResponseEntity<List<AvaliacaoFuncionarioResponseDTO>> buscarAvaliacoesPendentes(@PathVariable Integer funcionarioId) {
-        // Implementar lógica no AvaliacaoService para buscar AvaliacaoFuncionario
-        // onde funcionarioCodigo = funcionarioId E resultadoStatus = 'PENDENTE' (ou similar)
-        // List<AvaliacaoFuncionarioResponseDTO> pendentes = avaliacaoService.buscarPendentesPorFuncionario(funcionarioId);
-        // return ResponseEntity.ok(pendentes);
-        return ResponseEntity.ok(List.of()); // Placeholder
+        // Busca as avaliações pendentes usando o service
+        List<AvaliacaoFuncionarioResponseDTO> pendentes = avaliacaoService.buscarPendentesPorFuncionario(funcionarioId);
+        return ResponseEntity.ok(pendentes);
     }
 
     // Endpoint para o colaborador buscar os detalhes de uma avaliação para responder
     @GetMapping("/instancias/{instanciaId}/responder") // ID da AvaliacaoFuncionario
     public ResponseEntity<?> buscarAvaliacaoParaResponder(@PathVariable Long instanciaId) {
         try {
-            // Implementar lógica no AvaliacaoService para montar o AvaliacaoParaResponderDTO
-            // AvaliacaoParaResponderDTO dto = avaliacaoService.buscarParaResponder(instanciaId);
-            // return ResponseEntity.ok(dto);
-            return ResponseEntity.ok().build(); // Placeholder
+            // Busca os detalhes da avaliação (perguntas, opções) usando o service
+            AvaliacaoParaResponderDTO dto = avaliacaoService.buscarParaResponder(instanciaId);
+            return ResponseEntity.ok(dto);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
@@ -166,14 +172,16 @@ public class AvaliacaoController {
     @PutMapping("/instancias/{instanciaId}/finalizar") // ID da AvaliacaoFuncionario
     public ResponseEntity<Void> finalizarAvaliacaoColaborador(@PathVariable Long instanciaId) {
         try {
-             // Implementar lógica no AvaliacaoService para mudar o status da AvaliacaoFuncionario
-             // para "AGUARDANDO_REVISAO" (ou similar)
-             // avaliacaoService.finalizarPeloColaborador(instanciaId);
+             // Chama o service para mudar o status da avaliação para "AGUARDANDO_REVISAO"
+             avaliacaoService.finalizarPeloColaborador(instanciaId);
              return ResponseEntity.noContent().build(); // 204 No Content
         } catch (EntityNotFoundException e) {
              return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) { // Captura o erro se tentar finalizar fora do status correto
+             // Poderia retornar um DTO de erro aqui
+             return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409 Conflict é uma opção
         }
     }
-    */
+
 
 }
