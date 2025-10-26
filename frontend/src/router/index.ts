@@ -10,7 +10,6 @@ import Avaliacao from '../components/Avaliacao.vue';
 import Teste from '../components/Teste.vue';
 import Status from '../components/Status.vue';
 import Respostas from '../components/respostaAvaliacao.vue';
-import Status2 from '../components/Status2.vue';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -22,11 +21,6 @@ const router = createRouter({
       path: '/respostas',
       name: 'Respostas',
       component: Respostas,
-    },
-    {
-      path: '/status2',
-      name: 'Status2',
-      component: Status2,
     },
     {
       path: '/funcionarios',

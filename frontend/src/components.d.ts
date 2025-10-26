@@ -12,7 +12,6 @@ declare module 'vue' {
     Avaliacao: typeof import('./components/Avaliacao.vue')['default']
     CadastroPerguntas: typeof import('./components/CadastroPerguntas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
-    copy: typeof import('./components/Status copy.vue')['default']
     ExperienciaModal: typeof import('./components/ExperienciaModal.vue')['default']
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
@@ -24,7 +23,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Status: typeof import('./components/Status.vue')['default']
-    Status2: typeof import('./components/Status2.vue')['default']
     Teste: typeof import('./components/Teste.vue')['default']
   }
 }
