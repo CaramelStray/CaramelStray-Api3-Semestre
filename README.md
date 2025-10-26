@@ -41,14 +41,70 @@ O desafio consiste basicamente em criar um sistema de gerenciamento das competê
 <b>AllTalent</b> é um sistema que facilita a visualização dos colaboradores e de suas respectivas competências, auxiliando assim o realocamento dos colaboradores para possíveis promoções e valorização do real potencial da equipe.
 </p>
 <h3>📋 Backlog do Produto</h3>
-Rank	Prioridade	User Story	Estimativa (Story Points)	Sprint
-1	Alta	Como colaborador, eu quero editar meu perfil, para que eu possa manter minhas informações profissionais atualizadas.	—	1
-2	Alta	Como diretor ou supervisor, eu quero adicionar tags aos perfis dos colaboradores, para que eu possa identificar facilmente suas competências específicas.	—	1
-3	Média	Como usuário (diretor, supervisor ou colaborador), eu quero visualizar os perfis disponíveis e suas respectivas equipes, para que eu possa acessar informações de competências e experiências.	—	2
-4	Alta	Como supervisor ou diretor, eu quero avaliar os colaboradores, para que eu possa acompanhar sua evolução profissional e identificar pontos fortes ou de melhoria.	—	2
-5	Média	Como diretor ou supervisor, eu quero poder registrar novos usuários, para que eles possam ter acesso aos recursos do sistema.	—	3
-6	Média	Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso.	—	3
-7	Média	Como diretor, eu quero gerar relatórios de competências da equipe, para que eu possa tomar decisões de alocação e treinamentos.	—	3
-8	Alta	Como diretor, eu quero acessar dashboards de competências, para que eu possa visualizar métricas da equipe de forma clara e rápida.	—	3
+<table align="center" border="1" cellspacing="0" cellpadding="8">
+  <tr>
+    <th>Rank</th>
+    <th>Prioridade</th>
+    <th>User Story</th>
+    <th>Estimativa (Story Points)</th>
+    <th>Sprint</th>
+  </tr>
+  <tr>
+    <td align="center">1</td>
+    <td>Alta</td>
+    <td>Como colaborador, eu quero editar meu perfil, para que eu possa manter minhas informações profissionais atualizadas.</td>
+    <td align="center">–</td>
+    <td align="center">1</td>
+  </tr>
+  <tr>
+    <td align="center">2</td>
+    <td>Alta</td>
+    <td>Como diretor ou supervisor, eu quero adicionar tags aos perfis dos colaboradores, para que eu possa identificar facilmente suas competências específicas.</td>
+    <td align="center">–</td>
+    <td align="center">1</td>
+  </tr>
+  <tr>
+    <td align="center">3</td>
+    <td>Média</td>
+    <td>Como usuário (diretor, supervisor ou colaborador), eu quero visualizar os perfis disponíveis e suas respectivas equipes, para que eu possa acessar informações de competências e experiências.</td>
+    <td align="center">–</td>
+    <td align="center">2</td>
+  </tr>
+  <tr>
+    <td align="center">4</td>
+    <td>Alta</td>
+    <td>Como supervisor ou diretor, eu quero avaliar os colaboradores, para que eu possa acompanhar sua evolução profissional e identificar pontos fortes ou de melhoria.</td>
+    <td align="center">–</td>
+    <td align="center">2</td>
+  </tr>
+  <tr>
+    <td align="center">5</td>
+    <td>Média</td>
+    <td>Como diretor ou supervisor, eu quero poder registrar novos usuários, para que eles possam ter acesso aos recursos do sistema.</td>
+    <td align="center">–</td>
+    <td align="center">3</td>
+  </tr>
+  <tr>
+    <td align="center">6</td>
+    <td>Média</td>
+    <td>Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso.</td>
+    <td align="center">–</td>
+    <td align="center">3</td>
+  </tr>
+  <tr>
+    <td align="center">7</td>
+    <td>Média</td>
+    <td>Como diretor, eu quero gerar relatórios de competências da equipe, para que eu possa tomar decisões de alocação e treinamentos.</td>
+    <td align="center">–</td>
+    <td align="center">3</td>
+  </tr>
+  <tr>
+    <td align="center">8</td>
+    <td>Alta</td>
+    <td>Como diretor, eu quero acessar dashboards de competências, para que eu possa visualizar métricas da equipe de forma clara e rápida.</td>
+    <td align="center">–</td>
+    <td align="center">3</td>
+  </tr>
+</table>
 
 
