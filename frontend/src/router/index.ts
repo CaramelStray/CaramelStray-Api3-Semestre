@@ -123,7 +123,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'responder/:avaliacaoId', // Tela para o Colaborador RESPONDER
-        name: 'ColaboradorResponderAvaliacao', component: Respostas, props: true,
+        name: 'ColaboradorResponderAvaliacao', component: Teste, props: true,
         meta: { title: 'Responder Avaliação', subtitle: 'Forneça suas respostas' }
       },
     ]
@@ -146,7 +146,18 @@ const routes: RouteRecordRaw[] = [
   // Rota antiga de perguntas com ID, redireciona para a nova sem ID
   { path: '/perguntas/:id', redirect: { name: 'LiderPerguntas' } },
   // Rota antiga de teste com ID, redireciona para a nova
-  { path: '/teste/:instanciaid', redirect: { name: 'LiderTeste' } }, 
+  {
+  path: '/teste/:instanciaid',
+  // Usa uma função que recebe a rota original (to)
+  redirect: (to) => {
+    // Retorna um objeto de localização para a rota 'LiderTeste'
+    // Passando o parâmetro 'instanciaid' adiante, se a rota 'LiderTeste' o esperar
+    // Se 'LiderTeste' NÃO espera o parâmetro, você pode omitir 'params'
+    return { name: 'LiderTeste', params: { instanciaid: to.params.instanciaid } };
+    // Ou, se LiderTeste não precisar do ID:
+    // return { name: 'LiderTeste' };
+  }
+}, 
   // Rota antiga de respostas
   { path: '/respostas', redirect: { name: 'LiderVerRespostas' } },
 

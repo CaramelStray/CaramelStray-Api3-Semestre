@@ -141,13 +141,13 @@
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import axios from 'axios';
 const props = defineProps({
-  instanciaid: { // Nome da prop deve bater com o parâmetro da rota (:instanciaId)
+  avaliacaoId: { // Nome da prop deve bater com o parâmetro da rota (:avaliacaoId)
     type: [String, Number], // Aceita string ou número
     required: true
   }
 });
 console.log('Teste.vue: Props object recebido:', props);
-console.log('Teste.vue: Valor de props.instanciaid:', props.instanciaid, '| Tipo:', typeof props.instanciaid);
+console.log('Teste.vue: Valor de props.avaliacaoId:', props.avaliacaoId, '| Tipo:', typeof props.avaliacaoId);
 const periodoTitulo = ref('Carregando Título...');
 const salvandoResposta = ref(false);
 const carregando = ref(true)
@@ -263,7 +263,7 @@ async function enviar() {
   if (!validarAtual()) return;
   bloqueado.value = true;
   erro.value = '';
-  const idInstancia = Number(props.instanciaid); // <<< Corrigido aqui
+  const idInstancia = Number(props.avaliacaoId); // <<< Corrigido aqui
 
   try {
     console.log("Iniciando envio em lote das respostas...");
@@ -354,19 +354,19 @@ onMounted(async () => {
   erro.value = '';
   enviado.value = false;
 
-  console.log('onMounted: props.instanciaid recebido:', props.instanciaid, '| Tipo:', typeof props.instanciaid);
+  console.log('onMounted: props.avaliacaoId recebido:', props.avaliacaoId, '| Tipo:', typeof props.avaliacaoId);
   
   // 1. Tenta limpar e converter usando parseInt
   let id = NaN; // Inicializa como NaN
-  const idStringOriginal = props.instanciaid?.toString(); // Garante que é string ou undefined
+  const idStringOriginal = props.avaliacaoId?.toString(); // Garante que é string ou undefined
 
   if (idStringOriginal) {
       const trimmedIdString = idStringOriginal.trim();
-      console.log('onMounted: props.instanciaid após trim():', `'${trimmedIdString}'`); // Mostra com aspas para ver espaços
+      console.log('onMounted: props.avaliacaoId após trim():', `'${trimmedIdString}'`); // Mostra com aspas para ver espaços
       id = parseInt(trimmedIdString, 10); // Usa base 10
       console.log('onMounted: Resultado de parseInt():', id, '| Tipo:', typeof id);
   } else {
-      console.error('onMounted: props.instanciaid é nulo ou indefinido.');
+      console.error('onMounted: props.avaliacaoId é nulo ou indefinido.');
   }
 
   // 2. Verifica se o resultado da conversão é NaN
@@ -466,7 +466,7 @@ async function salvarRespostaIndividual(perguntaCodigo, valorResposta) {
     erro.value = ''; // Limpa erro anterior
     console.log(`Salvando resposta para pergunta ${perguntaCodigo}... Valor:`, valorResposta);
 
-    const idInstancia = Number(props.instanciaid);
+    const idInstancia = Number(props.avaliacaoId);
     const tipo = perguntaAtual.value?.tipo; // Pega o tipo da pergunta atual
 
     let payload = {

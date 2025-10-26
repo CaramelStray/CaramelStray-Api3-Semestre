@@ -27,17 +27,30 @@
 
       <div class="avaliacoes-container">
         <h2 class="list__title">Avaliações Atribuídas</h2>
+        <p v-if="avaliacoes.length === 0" class="text-center text-slate-500 py-5">
+            Nenhuma avaliação encontrada.
+        </p>
         <article v-for="a in avaliacoes" :key="a.id" class="card item">
           <header class="item__header">
             <div class="item__title">
               {{ a.titulo }}
-              <span :class="['badge', a.status==='pendente' ? 'badge--blue' : a.status==='atrasada' ? 'badge--red' : a.status==='concluida' ? 'badge--green' : 'badge--muted']">
+              <span :class="['badge', statusClass(a.status)]">
                 {{ labelStatus(a.status) }}
               </span>
             </div>
-            <button class="btn btn--primary btn--start" @click="iniciar(a)">
-              Iniciar
+            <button
+                v-if="a.status === 'PENDENTE' || a.status === 'AGUARDANDO_REVISAO'"
+                class="btn btn--primary btn--start"
+                @click="iniciar(a)"
+            >
+              {{ a.status === 'PENDENTE' ? 'Iniciar' : 'Continuar' }}
             </button>
+            <button
+                v-else
+                class="btn" disabled
+             >
+               Ver Resultado
+             </button>
           </header>
           <div class="item__meta"> Prazo: {{ formatarData(a.prazo) }} <span class="dot">•</span> Perguntas: {{ a.perguntas }} </div>
           <div class="item__splitter"></div>
@@ -54,47 +67,138 @@
 </template>
 
 <script setup>
+
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+import { useAuth } from '../auth'
+
+
+
 const router = useRouter()
-const avaliacoes = ref([])
+const { usuarioLogado } = useAuth();
+const avaliacoes = ref([]); // <<< Começa vazio
+const loading = ref(true); // <<< Adiciona estado de loading
+const error = ref(null);
 
-const totais = computed(() => ({
-  // CORRIGIDO: "Pendentes"
-  pendentes:  avaliacoes.value.filter(a => a.status === 'pendente').length,
-  concluidas: avaliacoes.value.filter(a => a.status === 'concluida').length,
-  atrasadas:  avaliacoes.value.filter(a => a.status === 'atrasada').length,
-}))
+const totais = computed(() => {
+    const pendentes = avaliacoes.value.filter(a => a.status === 'PENDENTE' || a.status === 'AGUARDANDO_REVISAO').length;
+    // Considera APROVADO, REPROVADO, etc. como concluídas
+    const concluidas = avaliacoes.value.filter(a => a.status !== 'PENDENTE' && a.status !== 'AGUARDANDO_REVISAO').length;
+    // Lógica de atrasadas precisaria da data de prazo, que não vem por padrão
+    const atrasadas = 0; // <<< Simplificado por enquanto
 
-function labelStatus(s){
-  if (s === 'pendente')  return 'Pendente' // CORRIGIDO
-  if (s === 'atrasada')  return 'Atrasada'
-  if (s === 'concluida') return 'Concluída'
-  return 'Status'
+    return { pendentes, concluidas, atrasadas };
+});
+
+function labelStatus(statusBackend) {
+    switch (statusBackend) {
+        case 'PENDENTE': return 'Pendente';
+        case 'AGUARDANDO_REVISAO': return 'Enviada (Aguardando Revisão)';
+        case 'APROVADO': return 'Concluída (Aprovado)';
+        case 'REPROVADO': return 'Concluída (Reprovado)';
+        // Adicione outros status se houver
+        default: return statusBackend || 'Status Desconhecido';
+    }
 }
+
+function statusClass(statusBackend) {
+    switch (statusBackend) {
+        case 'PENDENTE': return 'badge--blue';
+        case 'AGUARDANDO_REVISAO': return 'badge--yellow'; // Exemplo: Adicionar estilo para amarelo
+        case 'APROVADO': return 'badge--green';
+        case 'REPROVADO': return 'badge--red';
+        default: return 'badge--muted';
+    }
+}
+
 function formatarData(iso){
-  if (!iso) return '-'
-  const d = new Date(iso)
-  return d.toLocaleDateString('pt-BR')
+    if (!iso) return '-';
+    // Se a data já vier formatada ou for apenas Date (sem hora)
+    if (typeof iso === 'string' && iso.length === 10) {
+       try {
+         const [year, month, day] = iso.split('-');
+         return `${day}/${month}/${year}`;
+       } catch (e) {
+         return iso; // Retorna a string original se falhar
+       }
+    }
+    // Se for um objeto Date ou timestamp completo
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString('pt-BR');
+    } catch (e) {
+      return iso; // Retorna original se falhar
+    }
 }
 
-function iniciar(a){
-  // Colaborador vai para a tela de RESPONDER
-  router.push({
-    name: 'ColaboradorResponderAvaliacao',
-    params: { avaliacaoId: a.id }
-  })
+function iniciar(avaliacaoInstancia) {
+    // Redireciona para a tela de responder, passando o ID da INSTÂNCIA
+    console.log(`Iniciando avaliação com ID da instância: ${avaliacaoInstancia.id}`);
+    router.push({
+        name: 'ColaboradorResponderAvaliacao', // <<< Nome da rota para responder
+        params: { avaliacaoId: avaliacaoInstancia.id } // <<< Passa o ID da instância como parâmetro
+    });
 }
 
-onMounted(() => {
-  // Dados mocados originais
-  avaliacoes.value = [
-    { id:'a1', titulo:'Avaliação de Competências - Q4 2024', status:'pendente', prazo:'2024-12-19', perguntas:8, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a2', titulo:'Feedback Trimestral - Equipe de Tecnologia', status:'pendente', prazo:'2024-12-17', perguntas:5, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a3', titulo:'Autoavaliação de Liderança', status:'atrasada', prazo:'2024-12-01', perguntas:6, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a4', titulo:'Pesquisa de Engajamento - 2024', status:'concluida', prazo:'2024-11-05', perguntas:10, destinatarios:1, respostasRespondidas:1, respostasTotal:1 },
-  ]
-})
+onMounted(async () => {
+    loading.value = true;
+    error.value = null;
+    avaliacoes.value = []; // Limpa dados antigos
+
+    if (!usuarioLogado.value || !usuarioLogado.value.codigo) {
+        error.value = "Não foi possível identificar o usuário logado.";
+        loading.value = false;
+        return;
+    }
+
+    const userId = usuarioLogado.value.codigo;
+    console.log(`Buscando avaliações para o usuário ID: ${userId}`);
+
+    try {
+        // === CHAMA O ENDPOINT DO BACKEND ===
+        // Usamos /api/funcionario/{id}/avaliacoes (precisa criar este endpoint)
+        // OU buscamos todas as instâncias e filtramos no frontend (menos eficiente)
+        // OU usamos o endpoint /pendentes que já existe (mas só traz pendentes)
+
+        // Vamos usar o /pendentes por enquanto e adicionar os outros status manualmente se necessário
+        const response = await axios.get(`http://localhost:8080/api/avaliacoes/pendentes/${userId}`);
+        console.log("Dados recebidos de /pendentes:", response.data);
+
+        // Mapeia a resposta (AvaliacaoFuncionarioResponseDTO) para o formato do template
+        avaliacoes.value = response.data.map(dto => ({
+            id: dto.codigo, // ID da instância
+            titulo: dto.avaliacaoTitulo,
+            status: dto.resultadoStatus,
+            prazo: dto.dataPrazo || null, // <<< Pega o prazo se existir no DTO (precisa adicionar no backend DTO?)
+            perguntas: '?', // <<< Contagem de perguntas não vem neste DTO. Precisaria buscar separadamente ou adicionar ao DTO.
+            // Adicione outros campos se necessário
+        }));
+
+        // Exemplo: Se precisar buscar avaliações concluídas separadamente (requer outro endpoint)
+        // try {
+        //   const concluidasResponse = await axios.get(`http://localhost:8080/api/funcionario/${userId}/avaliacoes/concluidas`);
+        //   const concluidasMapeadas = concluidasResponse.data.map(dto => ({...}));
+        //   avaliacoes.value = [...avaliacoes.value, ...concluidasMapeadas];
+        // } catch (concluidasErr) {
+        //   console.warn("Não foi possível buscar avaliações concluídas:", concluidasErr);
+        // }
+
+        console.log("Avaliações mapeadas:", avaliacoes.value);
+
+    } catch (err) {
+        console.error("Erro ao buscar avaliações:", err);
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+            error.value = "Nenhuma avaliação pendente encontrada."; // Mensagem mais amigável
+            avaliacoes.value = []; // Garante que a lista esteja vazia
+        } else {
+            error.value = "Não foi possível carregar suas avaliações.";
+        }
+    } finally {
+        loading.value = false;
+    }
+});
+
 </script>
 
 <style scoped>
