@@ -57,10 +57,9 @@
         </div>
         <div class="card__body">
           <div class="card__header">
-            <router-link v-if="c.id === 10" :to="{ name: 'LiderVerPerfil', params: { id: c.id } }" class="emp-name-link">
+            <router-link :to="{ name: 'LiderVerPerfil', params: { id: c.id } }" class="emp-name-link">
               <h3 class="emp-name">{{ c.name }}</h3>
             </router-link>
-            <h3 v-else class="emp-name">{{ c.name }}</h3>
             <span v-if="c.badge" class="badge">{{ c.badge }}</span>
           </div>
           <ul class="meta">
