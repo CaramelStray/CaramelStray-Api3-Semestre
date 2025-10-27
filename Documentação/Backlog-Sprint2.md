@@ -1,4 +1,4 @@
-# ✅ Sprint 1 – Detalhamento de Tasks (Altallent)
+# ✅ Sprint 2 – Detalhamento de Tasks (Altallent)
 
 Esta Sprint, focada em estabelecer a base de **Perfis** e **Tags de Competências**, está **CONCLUÍDA**. Os itens **JWT**, **Swagger** e **Flyway** foram postergados para Sprints futuras, conforme acordado.
 
