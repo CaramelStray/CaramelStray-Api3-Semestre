@@ -90,7 +90,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
     <tr>
       <td>Daniel Lima</td>
       <td>Product Owner</td>
-      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://github.com/DanielLimaCpy"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/daniel-lima-637648179/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
@@ -108,7 +108,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
     <tr>
       <td>Thomas Heinrich</td>
       <td>Desenvolvedor(a)</td>
-      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://github.com/HeinrichThomas"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/thomas-g-heinrich/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
@@ -120,7 +120,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
     <tr>
       <td>Victor Miguel</td>
       <td>Desenvolvedor(a)</td>
-      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://github.com/Victorvmor"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="#"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
   </table>
