@@ -1,110 +1,127 @@
-# **API 3º Semestre Banco de Dados**
-## **Caramel Stray**
+# API 3º Semestre Banco de Dados
 
->imagem cs vai vir aqui
-
-<h2 align="center">🏗️ Projeto AllTalent</h2>
-
-<table align="center">
-  <tr>
-    <th>Desafio</th>
-    <th>Solução</th>
-    <th>Backlog do Produto</th>
-    <th>DoR</th>
-    <th>DoD</th>
-    <th>Cronograma de Sprints</th>
-    <th>Tecnologias</th>
-    <th>Manual de Instalação</th>
-    <th>Manual de Branchs</th>
-    <th>Product Backlog → DOR e DOD</th>
-    <th>Manual do Usuário</th>
-    <th>Equipe</th>
-  </tr>
-</table>
-
-<p align="center"><b>Status do Projeto:</b> Em progresso 🚧</p>
+## Caramel Stray
 
 <p align="center">
-  <b>Pasta de Documentação:</b>
-  <a href="LINK-DA-SUA-PASTA" target="_blank">📄 Acesse aqui</a>
+      <img src="./assets/logo.png" width="50" align="center">
+      <h2 align="center"> Caramel Stray</h2>
 </p>
 
-<p align="center"><b>Vídeo do Projeto:</b> Em progresso 📽️</p>
-
-<h3>🏅 Desafio</h3>
-<p>
-O desafio consiste basicamente em criar um sistema de gerenciamento das competências da equipe e de cargos e promoções na empresa.
+<p align="center">
+  | <a href ="#desafio"> Desafio</a>  |
+  <a href ="#solucao"> Solução</a>  |
+  <a href ="#backlog"> Backlog do Produto</a>  |
+  <a href ="#sprint"> Cronograma de Sprints</a>  |
+  <a href ="#tecnologias">Tecnologias</a> |
+  <a href ="#branchs">Manual de Branchs</a>  |
+  <a href ="#pb">Product backlog -> DOR e DOD</a>  |
+  <a href ="#equipe"> Equipe</a> |
 </p>
 
-<h3>🏅 Solução</h3>
-<p>
-<b>AllTalent</b> é um sistema que facilita a visualização dos colaboradores e de suas respectivas competências, auxiliando assim o realocamento dos colaboradores para possíveis promoções e valorização do real potencial da equipe.
-</p>
-<h3>📋 Backlog do Produto</h3>
-<table align="center" border="1" cellspacing="0" cellpadding="8">
-  <tr>
-    <th>Rank</th>
-    <th>Prioridade</th>
-    <th>User Story</th>
-    <th>Estimativa (Story Points)</th>
-    <th>Sprint</th>
-  </tr>
-  <tr>
-    <td align="center">1</td>
-    <td>Alta</td>
-    <td>Como colaborador, eu quero editar meu perfil, para que eu possa manter minhas informações profissionais atualizadas.</td>
-    <td align="center">–</td>
-    <td align="center">1</td>
-  </tr>
-  <tr>
-    <td align="center">2</td>
-    <td>Alta</td>
-    <td>Como diretor ou supervisor, eu quero adicionar tags aos perfis dos colaboradores, para que eu possa identificar facilmente suas competências específicas.</td>
-    <td align="center">–</td>
-    <td align="center">1</td>
-  </tr>
-  <tr>
-    <td align="center">3</td>
-    <td>Média</td>
-    <td>Como usuário (diretor, supervisor ou colaborador), eu quero visualizar os perfis disponíveis e suas respectivas equipes, para que eu possa acessar informações de competências e experiências.</td>
-    <td align="center">–</td>
-    <td align="center">2</td>
-  </tr>
-  <tr>
-    <td align="center">4</td>
-    <td>Alta</td>
-    <td>Como supervisor ou diretor, eu quero avaliar os colaboradores, para que eu possa acompanhar sua evolução profissional e identificar pontos fortes ou de melhoria.</td>
-    <td align="center">–</td>
-    <td align="center">2</td>
-  </tr>
-  <tr>
-    <td align="center">5</td>
-    <td>Média</td>
-    <td>Como diretor ou supervisor, eu quero poder registrar novos usuários, para que eles possam ter acesso aos recursos do sistema.</td>
-    <td align="center">–</td>
-    <td align="center">3</td>
-  </tr>
-  <tr>
-    <td align="center">6</td>
-    <td>Média</td>
-    <td>Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso.</td>
-    <td align="center">–</td>
-    <td align="center">3</td>
-  </tr>
-  <tr>
-    <td align="center">7</td>
-    <td>Média</td>
-    <td>Como diretor, eu quero gerar relatórios de competências da equipe, para que eu possa tomar decisões de alocação e treinamentos.</td>
-    <td align="center">–</td>
-    <td align="center">3</td>
-  </tr>
-  <tr>
-    <td align="center">8</td>
-    <td>Alta</td>
-    <td>Como diretor, eu quero acessar dashboards de competências, para que eu possa visualizar métricas da equipe de forma clara e rápida.</td>
-    <td align="center">–</td>
-    <td align="center">3</td>
-  </tr>
-</table>
+> Status do Projeto: Em progresso  🚧
+>
+>
+> Pasta de Documentação: [Link](./Documentação) 📄
+>
+> Video do Projeto:  Em progresso  📽️
 
+## 🏅 Desafio <a id="desafio"></a>
 
+O desafio consiste em criar um sistema de gerenciamento das competências da equipe e de cargos e promoções na empresa, facilitando a identificação de talentos e a tomada de decisões estratégicas sobre alocação de recursos humanos.
+
+## 🏅 Solução <a id="solucao"></a>
+
+AllTalent é um sistema que facilita a visualização dos colaboradores e de suas respectivas competências, auxiliando assim o realocamento dos colaboradores para possíveis promoções e valorização do real potencial da equipe. O objetivo é dar transparência sobre as habilidades disponíveis na organização, oferecendo dashboards detalhados e ferramentas de avaliação para diretores e supervisores.
+
+---
+
+## 📋 Backlog do Produto <a id="backlog"></a>
+
+## Backlog
+| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | Alta | Como colaborador, eu quero editar meu perfil, para que eu possa manter minhas informações profissionais atualizadas. | 5 | 1 |
+| 2 | Alta | Como diretor ou supervisor, eu quero adicionar tags aos perfis dos colaboradores, para que eu possa identificar facilmente suas competências específicas. | 3 | 1 |
+| 3 | Média | Como usuário (diretor, supervisor ou colaborador), eu quero visualizar os perfis disponíveis e suas respectivas equipes, para que eu possa acessar informações de competências e experiências. | 5 | 2 |
+| 4 | Alta | Como supervisor ou diretor, eu quero avaliar os colaboradores, para que eu possa acompanhar sua evolução profissional e identificar pontos fortes ou de melhoria. | 8 | 2 |
+| 5 | Média | Como diretor ou supervisor, eu quero poder registrar novos usuários, para que eles possam ter acesso aos recursos do sistema. | 5 | 3 |
+| 6 | Média | Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso. | 3 | 3 |
+| 7 | Média | Como diretor, eu quero gerar relatórios de competências da equipe, para que eu possa tomar decisões de alocação e treinamentos. | 8 | 3 |
+| 8 | Alta | Como diretor, eu quero acessar dashboards de competências, para que eu possa visualizar métricas da equipe de forma clara e rápida. | 8 | 3 |
+
+---
+
+## 📅 Cronograma de Sprints <a id="sprint"></a>
+| Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
+| --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
+| 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./Documentação/SprintBacklog.md) | [Sprint 1 entrega](#) |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/BackLog-Sprint-2.md) | [Sprint 2 entrega](#) |
+| 🔖 **SPRINT 3** | 03/11 - 23/11 | | |
+| ⚡️ **feira de soluções** | 04/12 |  |  |
+
+## 💻 Tecnologias <a id="tecnologias"></a>
+
+<h4 align="center">
+ <a href="https://www.java.com/"><img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"></a>
+ <a href="https://spring.io/projects/spring-boot"><img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white"></a>
+ <a href="https://vuejs.org/"><img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vue.js&logoColor=4FC08D"/></a>
+ <a href="https://www.javascript.com/"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"></a>
+ <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"></a>
+ <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"></a>
+ <a href="https://github.com/"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/></a>
+ <a href="https://git-scm.com/"><img src="https://img.shields.io/badge/Git-E34F26?style=for-the-badge&logo=git&logoColor=white"/></a>
+ <a href="https://jwt.io/"><img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white"></a>
+ <a href="https://www.figma.com/"><img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/></a>
+</h4>
+
+## 📦 Figma Projeto <a id="figma"></a>
+[Figma](https://www.figma.com/make/aSO16kJmEfupakrrjeVgRB/CaramelStray-Front?fullscreen=1) - Protótipo de alta fidelidade do sistema AllTalent.
+
+## 🎓 Equipe <a id="equipe"></a>
+
+<div align="center">
+  <table>
+    <tr>
+      <th>Membro</th>
+      <th>Função</th>
+      <th>Github</th>
+      <th>Linkedin</th>
+    </tr>
+    <tr>
+      <td>Daniel Lima</td>
+      <td>Product Owner</td>
+      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/daniel-lima-637648179/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Patricia Moraes</td>
+      <td>Scrum Master</td>
+      <td><a href="https://github.com/Patriciamvs7"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/patricia-santos-bigdata/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Giovana Zucareli</td>
+      <td>Desenvolvedor(a)</td>
+      <td><a href="https://github.com/GiovanaZucareli"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/giovana-zucareli-1aa205202/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Thomas Heinrich</td>
+      <td>Desenvolvedor(a)</td>
+      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/thomas-g-heinrich/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>William Honda</td>
+      <td>Desenvolvedor(a)</td>
+      <td><a href="https://github.com/Lunix800"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/william-honda-965138191/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Victor Miguel</td>
+      <td>Desenvolvedor(a)</td>
+      <td><a href="#"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="#"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+  </table>
+</div>
