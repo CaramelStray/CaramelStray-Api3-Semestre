@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import br.com.AllTallent.repository.AvaliacaoRepository;
-import br.com.AllTallent.dto.AvaliacaoDetalhadaDTO;
-
 // --- Fim Imports ---
 
 @Service
@@ -161,7 +158,7 @@ public class AvaliacaoService {
                 .collect(Collectors.toList());
     }
 
-    // --- Método para Salvar a Revisão do Supervisor ---
+    
     @Transactional
     public AvaliacaoFuncionarioResponseDTO salvarRevisaoSupervisor(Long instanciaId, RevisaoSupervisorRequestDTO dto) {
         AvaliacaoFuncionario instancia = avaliacaoFuncionarioRepository.findById(instanciaId)
@@ -170,8 +167,7 @@ public class AvaliacaoService {
         // Adicionar validação de permissão aqui (quem pode revisar?)
 
         instancia.setComentarioSupervisao(dto.comentarioSupervisao());
-        // Se decidir ter um campo separado para feedback público:
-        // instancia.setComentarioParaColaborador(dto.comentarioParaColaborador());
+        instancia.setComentarioColaborador(dto.comentarioParaColaborador());
         instancia.setNota(dto.nota());
         instancia.setResultadoStatus(dto.resultadoStatus());
 
@@ -180,25 +176,22 @@ public class AvaliacaoService {
         return new AvaliacaoFuncionarioResponseDTO(instanciaSalva);
     }
 
-    // --- Métodos Adicionais (Esboços) ---
-
-    // Busca avaliações pendentes para um funcionário específico
     @Transactional(readOnly = true)
     public List<AvaliacaoFuncionarioResponseDTO> buscarPendentesPorFuncionario(Integer funcionarioId) {
         return avaliacaoFuncionarioRepository.findByFuncionarioCodigo(funcionarioId).stream()
-               // Filtrar por status que indicam pendência (ex: "PENDENTE", "RASCUNHO_COLABORADOR")
-               .filter(af -> "PENDENTE".equals(af.getResultadoStatus())) // Ajuste a lógica do status
+               
+               .filter(af -> "PENDENTE".equals(af.getResultadoStatus())) 
                .map(AvaliacaoFuncionarioResponseDTO::new)
                .collect(Collectors.toList());
     }
 
-    // Busca os dados completos para um colaborador responder uma avaliação específica
+   
     @Transactional(readOnly = true)
     public AvaliacaoParaResponderDTO buscarParaResponder(Long instanciaId) {
          AvaliacaoFuncionario instancia = avaliacaoFuncionarioRepository.findById(instanciaId)
             .orElseThrow(() -> new EntityNotFoundException("Instância de avaliação não encontrada: " + instanciaId));
 
-         // Garante que a avaliação base e suas perguntas/opções sejam carregadas
+         
          Avaliacao avaliacaoBase = instancia.getAvaliacao();
          if (avaliacaoBase == null) {
               throw new IllegalStateException("Instância de avaliação está sem avaliação base associada.");
@@ -209,37 +202,36 @@ public class AvaliacaoService {
          return new AvaliacaoParaResponderDTO(instancia, avaliacaoBase);
     }
 
-    // Marca uma avaliação como finalizada pelo colaborador
+    
     @Transactional
     public void finalizarPeloColaborador(Long instanciaId) {
          AvaliacaoFuncionario instancia = avaliacaoFuncionarioRepository.findById(instanciaId)
             .orElseThrow(() -> new EntityNotFoundException("Instância de avaliação não encontrada: " + instanciaId));
 
-         // Adicionar validação: Só pode finalizar se estiver 'PENDENTE'?
+         
          if ("PENDENTE".equals(instancia.getResultadoStatus())) {
-             instancia.setResultadoStatus("AGUARDANDO_REVISAO"); // Novo status
-             // Poderia adicionar um campo dataFinalizacaoColaborador aqui
+             instancia.setResultadoStatus("AGUARDANDO_REVISAO"); 
              avaliacaoFuncionarioRepository.save(instancia);
          } else {
-             // Lançar exceção ou logar aviso se tentar finalizar algo já finalizado/revisado
+           
              throw new IllegalStateException("Avaliação não pode ser finalizada pois não está pendente. Status atual: " + instancia.getResultadoStatus());
          }
     }
 
-     // Busca os dados completos para um supervisor revisar uma avaliação específica
+     
      @Transactional(readOnly = true)
      public AvaliacaoRevisaoDTO buscarParaRevisao(Long instanciaId) {
           AvaliacaoFuncionario instancia = avaliacaoFuncionarioRepository.findById(instanciaId)
              .orElseThrow(() -> new EntityNotFoundException("Instância de avaliação não encontrada: " + instanciaId));
 
-          // Garante que tudo necessário para o DTO seja carregado
+          
           Hibernate.initialize(instancia.getFuncionario());
           Avaliacao avaliacaoBase = instancia.getAvaliacao();
-          Hibernate.initialize(avaliacaoBase); // Carrega dados da avaliação base
+          Hibernate.initialize(avaliacaoBase); 
           Hibernate.initialize(avaliacaoBase.getPerguntas());
           avaliacaoBase.getPerguntas().forEach(p -> Hibernate.initialize(p.getOpcoes()));
           Hibernate.initialize(instancia.getRespostas());
-          instancia.getRespostas().forEach(r -> Hibernate.initialize(r.getOpcaoSelecionada())); // Carrega a opção selecionada
+          instancia.getRespostas().forEach(r -> Hibernate.initialize(r.getOpcaoSelecionada())); 
 
           return new AvaliacaoRevisaoDTO(instancia, avaliacaoBase);
      }

@@ -1,92 +1,119 @@
 <template>
-  <div> <header class="topbar-local">
-    <div class="topbar-local__inner">
-      <button @click="handleVoltar" class="btn icon" aria-label="Voltar">
-        <svg viewBox="0 0 24 24" class="icon__svg"><path d="M15 18 9 12l6-6"/></svg>
-      </button>
-      <div class="title">
-        <div class="title__icon">
-          <svg viewBox="0 0 24 24" class="title__icon-svg">
-            <rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor"/>
-            <path d="M9 3v2h6V3" fill="none" stroke="currentColor"/>
-            <path d="M9 9h6" fill="none" stroke="currentColor"/>
-            <path d="M9 13h6" fill="none" stroke="currentColor"/>
-            <path d="M9 17h6" fill="none" stroke="currentColor"/>
-          </svg>
-        </div>
-        <div>
-          <h1 class="title__main">Status das Avaliações (Líder)</h1>
-          <p class="title__sub">Visualize o progresso das avaliações criadas</p>
+  <div> 
+    <header class="topbar-local">
+      <div class="topbar-local__inner">
+        <button @click="handleVoltar" class="btn icon" aria-label="Voltar">
+          <svg viewBox="0 0 24 24" class="icon__svg"><path d="M15 18 9 12l6-6"/></svg>
+        </button>
+        <div class="title">
+          <div class="title__icon">
+            <svg viewBox="0 0 24 24" class="title__icon-svg">
+              <rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor"/>
+              <path d="M9 3v2h6V3" fill="none" stroke="currentColor"/>
+              <path d="M9 9h6" fill="none" stroke="currentColor"/>
+              <path d="M9 13h6" fill="none" stroke="currentColor"/>
+              <path d="M9 17h6" fill="none" stroke="currentColor"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="title__main">Status das Avaliações (Líder)</h1>
+            <p class="title__sub">Visualize o progresso das avaliações criadas</p>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
+    
     <main class="container">
-      <section class="summary">
-        <div class="kpi">
-          <div class="kpi__row">
-            <div class="kpi__title">Pendentes</div>
-            <div class="kpi__icon icon--blue"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          </div>
-          <div class="kpi__value">{{ totais.pendentes }}</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi__row">
-            <div class="kpi__title">Concluídas</div>
-            <div class="kpi__icon icon--green"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
-          </div>
-          <div class="kpi__value">{{ totais.concluidas }}</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi__row">
-            <div class="kpi__title">Atrasadas</div>
-            <div class="kpi__icon icon--red"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg></div>
-          </div>
-          <div class="kpi__value">{{ totais.atrasadas }}</div>
-        </div>
-      </section>
-
-      <div class="avaliacoes-container">
-        <h2 class="list__title">Todas as Avaliações</h2>
-        <article v-for="a in avaliacoes" :key="a.id" class="card item">
-          <header class="item__header">
-            <div class="item__title">
-              {{ a.titulo }}
-              <span :class="['badge', a.status==='pendente' ? 'badge--blue' : a.status==='atrasada' ? 'badge--red' : a.status==='concluida' ? 'badge--green' : 'badge--muted']">
-                {{ labelStatus(a.status) }}
-              </span>
-            </div>
-            <button class="btn btn--primary btn--start" @click="verificar(a)">
-              Verificar
-            </button>
-          </header>
-          <div class="item__meta"> Prazo: {{ formatarData(a.prazo) }} <span class="dot">•</span> Perguntas: {{ a.perguntas }} </div>
-          <div class="item__splitter"></div>
-          <div class="item__stats">
-            <div class="stat">
-              <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><path d="M5 7h14M5 12h14M5 17h10"/></svg></div>
-              <div class="stat__text"><div class="stat__title">Perguntas</div><div class="stat__value">{{ a.perguntas }}</div></div>
-            </div>
-            <div class="stat">
-              <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><circle cx="12" cy="7.5" r="3.5"/><path d="M4 20a8 5 0 0 1 16 0"/></svg></div>
-              <div class="stat__text"><div class="stat__title">Destinatários</div><div class="stat__value">{{ a.destinatarios }}</div></div>
-            </div>
-            <div class="stat">
-              <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
-              <div class="stat__text"><div class="stat__title">Respostas</div><div class="stat__value">{{ a.respostasRespondidas }}/{{ a.respostasTotal }}</div></div>
-            </div>
-          </div>
-        </article>
+      
+      <div v-if="loading" class="text-center py-10 text-slate-600" style="text-align: center; padding: 2.5rem 0; color: #475569;">
+        Carregando avaliações...
       </div>
-    </main>
+
+      <div v-else-if="error" class="text-center py-10 text-red-600 bg-red-50 rounded-lg p-4" style="text-align: center; padding: 2.5rem 0; color: #dc2626; background-color: #fef2f2; border-radius: 0.5rem; padding: 1rem;">
+         {{ error }}
+      </div>
+
+      <template v-else>
+        <section class="summary">
+          <div class="kpi">
+            <div class="kpi__row">
+              <div class="kpi__title">Pendentes</div>
+              <div class="kpi__icon icon--blue"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            </div>
+            <div class="kpi__value">{{ totais.pendentes }}</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__row">
+              <div class="kpi__title">Concluídas</div>
+              <div class="kpi__icon icon--green"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
+            </div>
+            <div class="kpi__value">{{ totais.concluidas }}</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__row">
+              <div class="kpi__title">Atrasadas</div>
+              <div class="kpi__icon icon--red"><svg viewBox="0 0 24 24" class="kpi__svg"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg></div>
+            </div>
+            <div class="kpi__value">{{ totais.atrasadas }}</div>
+          </div>
+        </section>
+
+        <div class="avaliacoes-container">
+          <h2 class="list__title">Todas as Avaliações</h2>
+
+          <p v-if="avaliacoes.length === 0" class="text-center text-slate-500 py-5" style="text-align: center; color: #64748b; padding: 1.25rem 0;">
+              Nenhuma avaliação criada encontrada.
+          </p>
+          
+          <article v-else v-for="a in avaliacoes" :key="a.id" class="card item">
+            <header class="item__header">
+              <div class="item__title">
+                {{ a.titulo }}
+                
+                <span :class="['badge', statusClass(a.status)]">
+                  {{ labelStatus(a.status) }}
+                </span>
+                
+              </div>
+              <button class="btn btn--primary btn--start" @click="verificar(a)">
+                Verificar
+              </button>
+            </header>
+            
+            <div class="item__meta"> Prazo: {{ formatarData(a.prazo) }} <span class="dot">•</span> Perguntas: {{ a.perguntas }} </div>
+            <div class="item__splitter"></div>
+            <div class="item__stats">
+              <div class="stat">
+                <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><path d="M5 7h14M5 12h14M5 17h10"/></svg></div>
+                <div class="stat__text"><div class="stat__title">Perguntas</div><div class="stat__value">{{ a.perguntas }}</div></div>
+              </div>
+              <div class="stat">
+                <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><circle cx="12" cy="7.5" r="3.5"/><path d="M4 20a8 5 0 0 1 16 0"/></svg></div>
+                <div class="stat__text"><div class="stat__title">Destinatários</div><div class="stat__value">{{ a.destinatarios }}</div></div>
+              </div>
+              <div class="stat">
+                <div class="stat__icon"><svg viewBox="0 0 24 24" class="stat__svg"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
+                <div class="stat__text"><div class="stat__title">Respostas</div><div class="stat__value">{{ a.respostasRespondidas }}/{{ a.respostasTotal }}</div></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </template> </main>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios' // <<< Importe axios
+import { useAuth } from '../auth' // <<< Importe useAuth
+
+
 const router = useRouter()
 const avaliacoes = ref([])
+const { usuarioLogado } = useAuth()
+const loading = ref(true);    // <<< Adiciona estado de loading
+const error = ref(null);
 
 const totais = computed(() => ({
   pendentes:  avaliacoes.value.filter(a => a.status === 'pendente').length,
@@ -101,9 +128,12 @@ function labelStatus(s){
   return 'Status'
 }
 function formatarData(iso){
-  if (!iso) return '-'
-  const d = new Date(iso)
-  return d.toLocaleDateString('pt-BR')
+    if (!iso) return '-'
+    // ... (função formatarData como antes) ...
+    try {
+        const d = new Date(iso);
+        return d.toLocaleDateString('pt-BR');
+    } catch (e) { return iso; }
 }
 
 // Função Voltar conectada ao botão no novo header
@@ -118,15 +148,87 @@ function verificar(a){
   })
 }
 
-onMounted(() => {
-  // Dados mocados originais
-  avaliacoes.value = [
-    { id:'a1', titulo:'Avaliação de Competências - Q4 2024', status:'pendente', prazo:'2024-12-19', perguntas:8, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a2', titulo:'Feedback Trimestral - Equipe de Tecnologia', status:'pendente', prazo:'2024-12-17', perguntas:5, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a3', titulo:'Autoavaliação de Liderança', status:'atrasada', prazo:'2024-12-01', perguntas:6, destinatarios:1, respostasRespondidas:0, respostasTotal:0 },
-    { id:'a4', titulo:'Pesquisa de Engajamento - 2024', status:'concluida', prazo:'2024-11-05', perguntas:10, destinatarios:1, respostasRespondidas:1, respostasTotal:1 },
-  ]
-})
+onMounted(async () => {
+    loading.value = true;
+    error.value = null;
+
+    // Garante que o supervisor está carregado
+    if (!usuarioLogado.value || !usuarioLogado.value.codigo) {
+        error.value = "Não foi possível identificar o supervisor logado.";
+        loading.value = false;
+        return;
+    }
+    
+    
+    try {
+        const response = await axios.get('http://localhost:8080/api/avaliacoes'); //
+        const avaliacoesMestre = response.data; // Lista de AvaliacaoResponseDTO
+        console.log("Avaliações mestre recebidas:", avaliacoesMestre);
+
+        
+        const promises = avaliacoesMestre.map(async (avaliacaoMestre) => {
+            try {
+                // Chama o endpoint de detalhes
+                const detalheResponse = await axios.get(`http://localhost:8080/api/avaliacoes/${avaliacaoMestre.codigo}`);
+                const detalhes = detalheResponse.data; // AvaliacaoDetalhadaDTO
+                
+                const instancias = detalhes.instancias || []; // Array de AvaliacaoFuncionarioResponseDTO
+                const totalDestinatarios = instancias.length;
+                const totalRespondidas = instancias.filter(
+                    inst => inst.resultadoStatus === 'AGUARDANDO_REVISAO' || inst.resultadoStatus === 'APROVADO' || inst.resultadoStatus === 'REPROVADO'
+                ).length;
+                const totalPendentes = instancias.filter(
+                    inst => inst.resultadoStatus === 'PENDENTE'
+                ).length;
+
+                // Mapeia para o formato do template
+                return {
+                    id: avaliacaoMestre.codigo,
+                    titulo: avaliacaoMestre.titulo,
+                    // Status da avaliação mestre (simplificado)
+                    status: totalPendentes === 0 && totalDestinatarios > 0 ? 'concluida' : 'pendente', 
+                    prazo: avaliacaoMestre.dataPrazo,
+                    perguntas: detalhes.perguntas ? detalhes.perguntas.length : 0,
+                    destinatarios: totalDestinatarios,
+                    respostasRespondidas: totalRespondidas,
+                    respostasTotal: totalDestinatarios // Total de instâncias
+                };
+            } catch (detalheErr) {
+                console.error(`Falha ao buscar detalhes da avaliação ${avaliacaoMestre.codigo}:`, detalheErr);
+                // Retorna dados parciais se a busca de detalhes falhar
+                return {
+                    id: avaliacaoMestre.codigo,
+                    titulo: avaliacaoMestre.titulo,
+                    status: 'pendente', // Status padrão em caso de erro
+                    prazo: avaliacaoMestre.dataPrazo,
+                    perguntas: '?',
+                    destinatarios: '?',
+                    respostasRespondidas: '?',
+                    respostasTotal: '?'
+                };
+            }
+        });
+
+        // Espera todas as chamadas de detalhes terminarem
+        avaliacoes.value = await Promise.all(promises);
+        console.log("Avaliações mapeadas com detalhes:", avaliacoes.value);
+
+    } catch (err) {
+        console.error("Erro ao buscar lista de avaliações mestre:", err);
+        error.value = "Não foi possível carregar as avaliações.";
+    } finally {
+        loading.value = false;
+    }
+});
+
+function statusClass(statusBackend) {
+  // Mapeia o status GERAL da avaliação (pendente/concluida)
+  // Ajuste 'concluida' se o status do backend for diferente (ex: 'APROVADO')
+  if (statusBackend === 'pendente') return 'badge--blue';
+  if (statusBackend === 'concluida') return 'badge--green';
+  if (statusBackend === 'atrasada') return 'badge--red';
+  return 'badge--muted';
+}
 </script>
 
 <style scoped>
