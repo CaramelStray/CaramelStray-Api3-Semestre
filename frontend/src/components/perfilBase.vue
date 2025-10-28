@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-800">
     <!-- Top bar -->
-    <header class="bg-white border-b border-slate-200">
+    <header class="bg-white border-b border-slate-200 shadow-md">
       <div class="mx-auto max-w-7xl px-4 py-4 flex items-center gap-3">
         <button class="h-9 w-9 grid place-items-center rounded-lg border border-slate-200 hover:bg-slate-100" aria-label="Voltar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
@@ -27,9 +27,9 @@
       </div>
     </header>
 
-    <!-- Content -->
+    
     <main class="mx-auto max-w-7xl p-4 md:p-6 lg:p-8">
-      <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+      <section class="rounded-2xl bg-white shadow-lg ring-1 ring-slate-200 p-6">
         <div class="flex flex-col md:flex-row md:items-start gap-6">
           <!-- Avatar & status -->
           <div class="gap-1 items-center md:items-start">
@@ -40,7 +40,7 @@
             </span>
           </div>
 
-          <!-- Header info -->
+          
           <div class="flex-1">
             <div class="gap-1">
               <h2 class="text-2xl font-semibold">Ana Silva Santos</h2>
@@ -121,7 +121,7 @@
       <!-- Cards grid -->
       <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Competências -->
-        <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+        <section class="rounded-2xl bg-white ring-slate-200 p-6">
           <h3 class="text-base font-semibold">Competências</h3>
           <div class="mt-4 flex flex-wrap gap-2">
             <Tag v-for="skill in skills" :key="skill" :label="skill" />
@@ -129,7 +129,7 @@
         </section>
 
         <!-- Certificações -->
-        <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+        <section class="rounded-2xl bg-white ring-slate-200 p-6 shadow-md ring-1">
           <h3 class="text-base font-semibold">Certificações</h3>
           <ul class="mt-4 space-y-3">
             <li v-for="cert in certifications" :key="cert" class="flex items-center gap-3">
@@ -142,7 +142,7 @@
         </section>
 
         <!-- Equipe -->
-        <section class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 p-6">
+        <section class="rounded-2xl bg-white shadow-md ring-1 ring-slate-200 p-6">
           <h3 class="text-base font-semibold">Equipe</h3>
           <dl class="mt-4 space-y-4">
             <div>
@@ -194,23 +194,34 @@ export default {
 </script>
 
 <style scoped>
-/* If you don't use Tailwind, these utility-like classes below keep a similar look */
 :root {
   --ring: #e2e8f0;
 }
 
-.bg-slate-50 { background: #eaf7fb; }
+.shadow-md { 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-lg { 
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-xl { 
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.12);
+}
+
+.bg-slate-50 { background: #f3f9f9; }
 .bg-white { background: #ffffffff; }
 .text-slate-800 { color: #0f172a; }
 .text-slate-700 { color: #334155; }
 .text-slate-600 { color: #475569; }
 .text-slate-500 { color: #64748b; }
-.text-teal-600 { color: #0d9488; }
-.text-teal-700 { color: #0f766e; }
-.bg-teal-600 { background: #0d9488; }
-.bg-teal-50 { background: #f0fdfa; }
-.bg-emerald-50 { background: #ecfdf5; }
-.text-emerald-700 { color: #047857; }
+.text-teal-600 { color: #382eceff; }
+.text-teal-700 { color: #382eceff; }
+.bg-teal-600 { background: #382eceff; }
+.bg-teal-50 { background: #f3f9f9; }
+.bg-emerald-50 { background: #d1cefaff; }
+.text-emerald-700 { color: #382eceff; }
 .border { border: 1px solid var(--ring); }
 .border-slate-200 { border-color: #e2e8f0; }
 .ring-1 { box-shadow: 0 0 0 1px var(--ring); }
@@ -220,7 +231,6 @@ export default {
 .rounded-full { border-radius: 9999px; }
 .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
 
-/***** tiny utility subset for spacing & layout *****/
 .min-h-screen { min-height: 100vh; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .p-4 { padding: 1rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
@@ -246,7 +256,6 @@ export default {
 .tracking-wide { letter-spacing: .025em; }
 .rounded { border-radius: .25rem; }
 
-/***** responsive helpers *****/
 @media (min-width: 640px) { /* sm */
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -260,8 +269,7 @@ export default {
   .lg\:p-8 { padding: 2rem; }
 }
 
-/***** misc *****/
-.hover\:bg-slate-100:hover { background: #4a7eb3ff; }
+.hover\:bg-slate-100:hover { background: #2d6fb1ff; }
 .hover\:underline:hover { text-decoration: underline; }
 .ml-auto { margin-left: auto; }
 .shrink-0 { flex-shrink: 0; }
@@ -269,6 +277,6 @@ export default {
 .max-w-7xl { max-width: 80rem; }
 .max-w-3xl { max-width: 48rem; }
 
-/* simple utility for ring border on avatars */
-.ring-teal-200 { box-shadow: 0 0 0 1px #a7f3d0; }
+
+.ring-teal-200 { box-shadow: 0 0 0 1px #382eceff; }
 </style>
