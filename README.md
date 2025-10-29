@@ -4,7 +4,7 @@
 
 <p align="center">
       <img src="./assets/logo.png" width="50" align="center">
-      <h2 align="center"> Caramel Stray</h2>
+      <h2 align="center"> Alltallent</h2>
 </p>
 
 <p align="center">
@@ -55,7 +55,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 | Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./Documentação/SprintBacklog.md) | [Sprint 1 entrega](#) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/BackLog-Sprint-2.md) | [Sprint 2 entrega](#) |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/Backlog-Sprint2.md) |  |
 | 🔖 **SPRINT 3** | 03/11 - 23/11 | | |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
@@ -73,6 +73,11 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
  <a href="https://jwt.io/"><img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white"></a>
  <a href="https://www.figma.com/"><img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/></a>
 </h4>
+
+# 🪵 Estrutura de branchs
+
+[📄 Estrutura de branchs](./Documentação/estrutura_de_branchs.md)
+
 
 ## 📦 Figma Projeto <a id="figma"></a>
 [Figma](https://www.figma.com/make/aSO16kJmEfupakrrjeVgRB/CaramelStray-Front?fullscreen=1) - Protótipo de alta fidelidade do sistema AllTalent.
