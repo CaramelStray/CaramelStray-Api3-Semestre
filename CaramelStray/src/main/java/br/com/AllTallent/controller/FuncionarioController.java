@@ -4,14 +4,13 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity; // <- Importante
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -31,6 +30,9 @@ import br.com.AllTallent.exception.UnauthorizedActionException;
 import br.com.AllTallent.model.Funcionario;
 import br.com.AllTallent.service.FuncionarioService; 
 import jakarta.validation.Valid; 
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/funcionario")
 public class FuncionarioController {
@@ -41,20 +43,23 @@ public class FuncionarioController {
         this.funcionarioService = funcionarioService;
     }
 
-    // ✅ CORRETO: Retorna uma lista de DTOs
+    
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<FuncionarioResponseDTO>> listarTodos() {
         return ResponseEntity.ok(funcionarioService.listarTodos());
     }
 
-    // ✅ CORRETO: Retorna um DTO
+    
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR') or (principal.codigo == #id)")
     public ResponseEntity<FuncionarioResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(funcionarioService.buscarPorId(id));
     }
 
-    // ✅ CORRETO: Recebe um DTO de requisição e retorna um DTO de resposta
+    
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<FuncionarioResponseDTO> criar(@RequestBody FuncionarioRequestDTO dto) {
         FuncionarioResponseDTO novoFuncionario = funcionarioService.criar(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -62,26 +67,30 @@ public class FuncionarioController {
         return ResponseEntity.created(uri).body(novoFuncionario);
     }
 
-    // ✅ CORRETO: Recebe um DTO de requisição e retorna um DTO de resposta
     @PutMapping("/{id}")
+    @PreAuthorize("principal.codigo == #id")
     public ResponseEntity<FuncionarioResponseDTO> atualizar(@PathVariable Integer id, @RequestBody FuncionarioRequestDTO dto) {
         FuncionarioResponseDTO funcionarioAtualizado = funcionarioService.atualizar(id, dto);
         return ResponseEntity.ok(funcionarioAtualizado);
     }
 
+    
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         funcionarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
+    
     @GetMapping("/{id}/perfil")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR') or (principal.codigo == #id)")
     public ResponseEntity<FuncionarioPerfilDTO> buscarPerfilPorId(@PathVariable Integer id) {
     FuncionarioPerfilDTO perfilDTO = funcionarioService.buscarPerfilPorId(id);
     return ResponseEntity.ok(perfilDTO);
     }
     
-    
     @PostMapping("/{id}/certificados")
+    @PreAuthorize("hasRole('ADMIN') or (principal.codigo == #id)")
     public ResponseEntity<CertificadoDTO> adicionarCertificado(
             @PathVariable Integer id,
             @RequestBody CertificadoRequestDTO dto) {
@@ -91,47 +100,48 @@ public class FuncionarioController {
     }
 
     @DeleteMapping("/certificados/{certificadoId}")
+    @PreAuthorize("hasRole('ADMIN') or @funcionarioService.usuarioPodeRemoverCertificado(#certificadoId, principal.codigo)")
     public ResponseEntity<Void> removerCertificado(@PathVariable Integer certificadoId) {
     funcionarioService.removerCertificado(certificadoId);
     return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/competencias")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> atualizarCompetencias(
-            // Recebe o ID do usuário que está logado
-            @RequestHeader("X-Usuario-Logado-Id") Integer idUsuarioLogado, 
-            // Recebe o ID do funcionário que será alterado
             @PathVariable Integer id,
             @RequestBody FuncionarioCompetenciaUpdateDTO dto) {
 
         try {
-            funcionarioService.associarCompetencias(
-                idUsuarioLogado, 
+            funcionarioService.associarCompetencias( 
                 id, 
                 dto.codigosCompetencia()
             );
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build(); 
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.notFound().build();
         } catch (UnauthorizedActionException e) {
-            // Lançamos a exceção. O Spring vai mapear para 403 Forbidden
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
     @GetMapping("/{id}/competencias")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR') or (principal.codigo == #id)")
     public ResponseEntity<FuncionarioCompetenciasResponseDTO> listarCompetenciasPorFuncionario(@PathVariable Integer id) {
-        // Usa o service para buscar o funcionário completo
         Funcionario funcionario = funcionarioService.buscarFuncionarioCompleto(id);
         
-        // Retorna apenas as competências no formato DTO
         return ResponseEntity.ok(new FuncionarioCompetenciasResponseDTO(funcionario));
     }
+
     @GetMapping("/{id}/experiencias")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR') or (principal.codigo == #id)")
     public ResponseEntity<FuncionarioExperienciasResponseDTO> listarExperienciasPorFuncionario(@PathVariable Integer id) {
         FuncionarioExperienciasResponseDTO experienciasDTO = funcionarioService.listarExperienciasPorFuncionario(id);
         return ResponseEntity.ok(experienciasDTO);
     }
+
     @PostMapping("/{id}/experiencias")
+    @PreAuthorize("hasRole('ADMIN') or (principal.codigo == #id)")
     public ResponseEntity<ExperienciaDTO> adicionarExperiencia(
             @PathVariable Integer id,
             @Valid @RequestBody ExperienciaRequestDTO dto) {
@@ -140,7 +150,9 @@ public class FuncionarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaExperiencia);
     }
 
+
     @PutMapping("/experiencias/{experienciaId}")
+    @PreAuthorize("hasRole('ADMIN') or @funcionarioService.usuarioPodeEditarExperiencia(#experienciaId, principal.codigo)")
     public ResponseEntity<ExperienciaDTO> atualizarExperiencia(
             @PathVariable Integer experienciaId,
             @Valid @RequestBody ExperienciaRequestDTO dto) {

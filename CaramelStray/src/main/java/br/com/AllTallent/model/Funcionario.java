@@ -6,7 +6,7 @@ import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.FetchType; 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,10 +27,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// --- NOVO PADRÃO AQUI ---
-// Gera um toString() seguro, ex: "Funcionario(codigo=1, nomeCompleto=Leonardo Vianna)"
 @ToString(of = {"codigo", "nomeCompleto"}) 
-// Gera equals() e hashCode() baseados APENAS no código. É a forma correta e segura.
 @EqualsAndHashCode(of = "codigo") 
 @Entity
 @Table(name = "tb_cad_funcionario")
@@ -52,18 +49,19 @@ public class Funcionario {
 
     @Column(name = "data_cadastro", updatable = false)
     private OffsetDateTime dataCadastro;
+    
     @Column(name ="titulo_profissional")
     private String tituloProfissional;
+    
     private String localizacao;
     private String resumo;
 
-    // --- RELACIONAMENTOS (não mudam) ---
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_area")
     private Area area;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "codigo_perfil")
     private Perfil perfil;
     
@@ -78,7 +76,7 @@ public class Funcionario {
     private Set<FuncionarioCertificado> certificados;
     
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Experiencia> experiencias; // <-- NOVA LISTA
+    private Set<Experiencia> experiencias;
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

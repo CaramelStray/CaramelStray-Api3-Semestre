@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PerguntaOpcaoRepository extends JpaRepository<PerguntaOpcao, Long> {
-    // Métodos CRUD básicos são herdados
-    // Pode adicionar métodos customizados se necessário depois
+    
 }

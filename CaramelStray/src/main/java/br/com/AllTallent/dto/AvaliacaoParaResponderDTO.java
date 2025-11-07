@@ -1,6 +1,6 @@
 package br.com.AllTallent.dto;
 
-import br.com.AllTallent.model.Avaliacao; // Importar modelos
+import br.com.AllTallent.model.Avaliacao; 
 import br.com.AllTallent.model.AvaliacaoFuncionario;
 
 

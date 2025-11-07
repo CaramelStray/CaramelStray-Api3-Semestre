@@ -23,44 +23,41 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/perguntas")
 public class PerguntaController {
 
-    private final PerguntaService perguntaService; // Injetar o Service
+    private final PerguntaService perguntaService; 
 
-    public PerguntaController(PerguntaService perguntaService) { // Construtor com o Service
+    public PerguntaController(PerguntaService perguntaService) { 
         this.perguntaService = perguntaService;
     }
 
     @PostMapping
     public ResponseEntity<PerguntaResponseDTO> criarPergunta(@Valid @RequestBody PerguntaRequestDTO dto) {
         try {
-            // Delega a criação para o Service
+            
             PerguntaResponseDTO perguntaSalvaDTO = perguntaService.criarPergunta(dto);
 
-            // Cria a URI
+            
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(perguntaSalvaDTO.codigo())
                     .toUri();
 
-            // Retorna 201 Created
+            
             return ResponseEntity.created(location).body(perguntaSalvaDTO);
         } catch (EntityNotFoundException e) {
-            // Se a competência não for encontrada no Service
-            return ResponseEntity.badRequest().body(null); // Ou retornar uma mensagem de erro melhor
+            
+            return ResponseEntity.badRequest().body(null); 
         }
-        // Outros erros (como validação) serão tratados pelo Spring
     }
 
     @GetMapping
     public ResponseEntity<List<PerguntaResponseDTO>> listarTodasPerguntas() {
-        // Delega a listagem para o Service
         return ResponseEntity.ok(perguntaService.listarTodas());
     }
 
      @GetMapping("/{id}")
      public ResponseEntity<PerguntaResponseDTO> buscarPerguntaPorId(@PathVariable Long id) {
          try {
-             // Delega a busca para o Service
              return ResponseEntity.ok(perguntaService.buscarPorId(id));
          } catch (EntityNotFoundException e) {
              return ResponseEntity.notFound().build();
@@ -70,7 +67,6 @@ public class PerguntaController {
      @DeleteMapping("/{id}")
      public ResponseEntity<Void> deletarPergunta(@PathVariable Long id) {
          try {
-             // Delega a deleção para o Service
              perguntaService.deletarPergunta(id);
              return ResponseEntity.noContent().build();
          } catch (EntityNotFoundException e) {

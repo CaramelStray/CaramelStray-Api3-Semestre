@@ -13,7 +13,7 @@ public record ExperienciaDTO(
     LocalDate dataInicio,
     LocalDate dataFim
 ) {
-    // Construtor que "traduz" a entidade para o DTO
+    
     public ExperienciaDTO(Experiencia experiencia) {
         this(
             experiencia.getCodigo(),

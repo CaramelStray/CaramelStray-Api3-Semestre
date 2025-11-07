@@ -14,24 +14,23 @@ import br.com.AllTallent.model.Perfil;
 import br.com.AllTallent.repository.PerfilRepository;
 
 @RestController
-@RequestMapping("/api/perfil") // Define o endereço base para este controller
+@RequestMapping("/api/perfil")
 public class PerfilController {
 
     private final PerfilRepository perfilRepository;
 
-    // Injeção de dependência do repositório
     public PerfilController(PerfilRepository perfilRepository) {
         this.perfilRepository = perfilRepository;
     }
 
-    // Endpoint para criar um novo Perfil (ex: POST http://localhost:8080/api/perfis)
+    
     @PostMapping
     public ResponseEntity<Perfil> createPerfil(@RequestBody Perfil perfil) {
         Perfil novoPerfil = perfilRepository.save(perfil);
         return new ResponseEntity<>(novoPerfil, HttpStatus.CREATED);
     }
 
-    // Endpoint para listar todos os Perfis (ex: GET http://localhost:8080/api/perfis)
+    
     @GetMapping
     public List<Perfil> getAllPerfis() {
         return perfilRepository.findAll();

@@ -1,4 +1,4 @@
-package br.com.AllTallent.dto; // Ou o pacote de DTOs
+package br.com.AllTallent.dto; 
 
 import br.com.AllTallent.model.RespostaColaborador;
 

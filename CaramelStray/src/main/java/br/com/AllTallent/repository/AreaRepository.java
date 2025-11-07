@@ -7,5 +7,5 @@ import br.com.AllTallent.model.Area;
 
 @Repository
 public interface AreaRepository extends JpaRepository<Area, Integer> {
-    // A interface deve ficar vazia aqui dentro.
+    
 }

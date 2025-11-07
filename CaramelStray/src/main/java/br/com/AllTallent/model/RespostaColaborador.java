@@ -1,4 +1,4 @@
-package br.com.AllTallent.model; // Ou o pacote de modelos
+package br.com.AllTallent.model; 
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,23 +28,20 @@ public class RespostaColaborador {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_cad_resposta_colaborador_codigo_seq")
     @SequenceGenerator(name = "tb_cad_resposta_colaborador_codigo_seq", sequenceName = "tb_cad_resposta_colaborador_codigo_seq", allocationSize = 1)
-    private Long codigo; // bigint
+    private Long codigo;
 
-    // Ligação com a instância da avaliação do funcionário
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_funcionario_avaliacao", nullable = false)
     private AvaliacaoFuncionario avaliacaoFuncionario;
 
-    // Ligação com a pergunta que está sendo respondida
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_pergunta", nullable = false)
     private Pergunta pergunta;
 
     @Column(name = "resposta_texto", columnDefinition = "TEXT")
-    private String respostaTexto; // Usado para perguntas tipo 'texto' ou 'escala/nota'
+    private String respostaTexto; 
 
-    // Ligação com a opção selecionada (apenas para múltipla escolha)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_pergunta_opcao_selecionada") // Permite nulo
+    @JoinColumn(name = "codigo_pergunta_opcao_selecionada") 
     private PerguntaOpcao opcaoSelecionada;
 }

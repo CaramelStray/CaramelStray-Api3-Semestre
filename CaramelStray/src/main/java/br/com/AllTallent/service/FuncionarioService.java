@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,31 +20,24 @@ import br.com.AllTallent.dto.FuncionarioRequestDTO;
 import br.com.AllTallent.dto.FuncionarioResponseDTO;
 import br.com.AllTallent.exception.ResourceNotFoundException;
 import br.com.AllTallent.exception.UnauthorizedActionException;
-import br.com.AllTallent.model.Area;
-import br.com.AllTallent.model.Competencia;
-import br.com.AllTallent.model.Experiencia;
-import br.com.AllTallent.model.Funcionario; 
-import br.com.AllTallent.model.FuncionarioCertificado;
-import br.com.AllTallent.model.Perfil;
-import br.com.AllTallent.repository.AreaRepository;
-import br.com.AllTallent.repository.CertificadoRepository;
-import br.com.AllTallent.repository.CompetenciaRepository;
-import br.com.AllTallent.repository.ExperienciaRepository;
-import br.com.AllTallent.repository.FuncionarioRepository;
-import br.com.AllTallent.repository.PerfilRepository;
+import br.com.AllTallent.model.*;
+import br.com.AllTallent.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import br.com.AllTallent.config.CustomUserDetails;
 
 @Service
 public class FuncionarioService {
 
-    // Injetando todos os repositórios necessários
     private final FuncionarioRepository funcionarioRepository;
     private final AreaRepository areaRepository;
     private final PerfilRepository perfilRepository;
     private final CompetenciaRepository competenciaRepository;
     private final ExperienciaRepository experienciaRepository; 
     private final CertificadoRepository certificadoRepository; 
-    
+    private final PasswordEncoder passwordEncoder;
 
    public FuncionarioService(
         FuncionarioRepository funcionarioRepository, 
@@ -50,7 +45,8 @@ public class FuncionarioService {
         PerfilRepository perfilRepository, 
         CompetenciaRepository competenciaRepository,
         ExperienciaRepository experienciaRepository,
-        CertificadoRepository certificadoRepository // <-- NOVO
+        CertificadoRepository certificadoRepository,
+        PasswordEncoder passwordEncoder 
     ) {
         this.funcionarioRepository = funcionarioRepository;
         this.areaRepository = areaRepository;
@@ -58,6 +54,7 @@ public class FuncionarioService {
         this.competenciaRepository = competenciaRepository;
         this.experienciaRepository = experienciaRepository;
         this.certificadoRepository = certificadoRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     
@@ -68,7 +65,6 @@ public class FuncionarioService {
                 .collect(Collectors.toList());
     }
 
-    // Busca um funcionário e o retorna como DTO
     @Transactional(readOnly = true)
     public FuncionarioResponseDTO buscarPorId(Integer id) {
         return funcionarioRepository.findById(id)
@@ -76,16 +72,14 @@ public class FuncionarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
     }
 
-    // Cria um novo funcionário a partir de um DTO
     @Transactional
     public FuncionarioResponseDTO criar(FuncionarioRequestDTO dto) {
         Funcionario funcionario = new Funcionario();
-        mapearDtoParaEntidade(dto, funcionario); // Reutiliza a lógica de mapeamento
+        mapearDtoParaEntidade(dto, funcionario);
         Funcionario funcionarioSalvo = funcionarioRepository.save(funcionario);
         return new FuncionarioResponseDTO(funcionarioSalvo);
     }
 
-    // Atualiza um funcionário existente a partir de um DTO
     @Transactional
     public FuncionarioResponseDTO atualizar(Integer id, FuncionarioRequestDTO dto) {
         Funcionario funcionarioExistente = funcionarioRepository.findById(id)
@@ -96,7 +90,6 @@ public class FuncionarioService {
         return new FuncionarioResponseDTO(funcionarioSalvo);
     }
 
-    // Deleta um funcionário
     @Transactional
     public void deletar(Integer id) {
         if (!funcionarioRepository.existsById(id)) {
@@ -105,9 +98,7 @@ public class FuncionarioService {
         funcionarioRepository.deleteById(id);
     }
 
-    // Método auxiliar privado para converter o DTO de requisição para a Entidade
     private void mapearDtoParaEntidade(FuncionarioRequestDTO dto, Funcionario entidade) {
-        // Busca as entidades relacionadas a partir dos IDs
         Optional.ofNullable(dto.nomeCompleto()).ifPresent(entidade::setNomeCompleto);
         Optional.ofNullable(dto.telefone()).ifPresent(entidade::setTelefone);
         Optional.ofNullable(dto.tituloProfissional()).ifPresent(entidade::setTituloProfissional);
@@ -128,9 +119,12 @@ public class FuncionarioService {
         });
 
         Optional.ofNullable(dto.gestorId())
-            .map(gestorId -> funcionarioRepository.findById(gestorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Gestor não encontrado com o ID: " + gestorId)))
-            .ifPresentOrElse(entidade::setGestor, () -> entidade.setGestor(null));
+                .map(gestorId -> funcionarioRepository.findById(gestorId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Gestor não encontrado com o ID: " + gestorId)))
+                .ifPresentOrElse(entidade::setGestor, () -> entidade.setGestor(null));
+        if (dto.senhaHash() != null && !dto.senhaHash().isEmpty()) {
+             entidade.setSenhaHash(passwordEncoder.encode(dto.senhaHash()));
+        }
     }
 
     
@@ -148,6 +142,9 @@ public class FuncionarioService {
         novoCertificado.setCertificado(dto.nome());
         novoCertificado.setFuncionario(funcionario);
 
+        if (funcionario.getCertificados() == null) {
+            funcionario.setCertificados(new HashSet<>());
+        }
         funcionario.getCertificados().add(novoCertificado);
 
         funcionarioRepository.save(funcionario);
@@ -155,67 +152,73 @@ public class FuncionarioService {
         return new CertificadoDTO(novoCertificado);
     }
     @Transactional
-    public void associarCompetencias(Integer idLogado, Integer idAlvo, List<Integer> codigosCompetencia) {
-        
-        if (!podeAssociarCompetencias(idLogado, idAlvo)) {
-            
-            throw new UnauthorizedActionException("O usuário logado não tem permissão para alterar as competências deste funcionário ou ele pertence a outra área.");
-        }
+    public void associarCompetencias( Integer idAlvo, List<Integer> codigosCompetencia) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails usuarioLogado = (CustomUserDetails) authentication.getPrincipal();
 
-        Funcionario alvo = funcionarioRepository.findByIdCompleto(idAlvo) // Usando findByIdCompleto
+        Funcionario alvo = funcionarioRepository.findByIdCompleto(idAlvo)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário alvo não encontrado."));
-        
+
+        if (!podeAssociar(usuarioLogado, alvo)) { 
+            throw new UnauthorizedActionException("Você não tem permissão para alterar as competências deste funcionário.");
+        }
     
         List<Competencia> novasCompetencias = competenciaRepository.findAllById(codigosCompetencia);
 
         if (novasCompetencias.size() < codigosCompetencia.size()) {
         throw new ResourceNotFoundException("Um ou mais códigos de competência não foram encontrados. Certifique-se de que todos os IDs são válidos.");
         }
-      
+        
         alvo.setCompetencias(new HashSet<>(novasCompetencias)); 
         funcionarioRepository.save(alvo);
     }
-    private boolean podeAssociarCompetencias(Integer idLogado, Integer idAlvo) {
+
+    private boolean podeAssociar(CustomUserDetails logado, Funcionario alvo) {
     
-        if (idLogado.equals(idAlvo)) {
+        if (logado.getCodigo().equals(alvo.getCodigo())) {
             return true;
         }
 
-        
-        Funcionario logado = funcionarioRepository.findById(idLogado).orElse(null);
-        Funcionario alvo = funcionarioRepository.findById(idAlvo).orElse(null);
+        if (logado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")) &&
+            !logado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GESTOR"))) {
+            
+            return false;
+        }
 
-        if (logado == null || alvo == null) {
+        if (alvo.getPerfil() == null || logado.getAreaId() == null) {
             return false; 
         }
-        Integer nivelLogado = logado.getPerfil() != null ? logado.getPerfil().getCodigo() : null;
-        Integer nivelAlvo = alvo.getPerfil() != null ? alvo.getPerfil().getCodigo() : null;
         
-        
-        if (nivelLogado == null || nivelAlvo == null) {
-            return false;
+        if (alvo.getArea() == null) {
+            return false; 
         }
-        Integer areaLogado = logado.getArea() != null ? logado.getArea().getCodigo() : null;
-        Integer areaAlvo = alvo.getArea() != null ? alvo.getArea().getCodigo() : null;
+        
+        boolean mesmoSetor = logado.getAreaId().equals(alvo.getArea().getCodigo());
+        int perfilAlvoId = alvo.getPerfil().getCodigo();
+        
+        if (logado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GESTOR")) &&
+            !logado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            boolean alvoEhColaborador = (perfilAlvoId == 3);
+            return mesmoSetor && alvoEhColaborador;
+        }
 
-        if (areaLogado == null || areaAlvo == null || !areaLogado.equals(areaAlvo)) {
-            return false;
+        if (logado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            boolean alvoEhTime = (perfilAlvoId == 2 || perfilAlvoId == 3);
+            return mesmoSetor && alvoEhTime;
         }
-        return nivelLogado < nivelAlvo;
+           return false;
+        
     }
      @Transactional(readOnly = true)
     public Funcionario buscarFuncionarioCompleto(Integer id) {
-        // Usa o findByIdCompleto que já carrega as competências via FETCH
         return funcionarioRepository.findByIdCompleto(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
     }
     @Transactional(readOnly = true)
     public FuncionarioExperienciasResponseDTO listarExperienciasPorFuncionario(Integer id) {
-        // O método findByIdCompleto já carrega tudo que precisamos de forma otimizada
         Funcionario funcionario = funcionarioRepository.findByIdCompleto(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado com o ID: " + id));
         
-        // O construtor do DTO faz toda a "mágica" da conversão
         return new FuncionarioExperienciasResponseDTO(funcionario);
     }
     @Transactional
@@ -231,8 +234,14 @@ public class FuncionarioService {
         novaExperiencia.setDescricao(dto.descricao());
         novaExperiencia.setFuncionario(funcionario);
 
-        Experiencia experienciaSalva = experienciaRepository.save(novaExperiencia);
-        return new ExperienciaDTO(experienciaSalva);
+        if (funcionario.getExperiencias() == null) {
+            funcionario.setExperiencias(new HashSet<>());
+        }
+        funcionario.getExperiencias().add(novaExperiencia);
+
+        funcionarioRepository.save(funcionario);
+        
+        return new ExperienciaDTO(novaExperiencia);
     }
 
     @Transactional
@@ -240,8 +249,6 @@ public class FuncionarioService {
         Experiencia experienciaExistente = experienciaRepository.findById(experienciaId)
                 .orElseThrow(() -> new ResourceNotFoundException("Experiência não encontrada com o ID: " + experienciaId));
         
-        // No futuro, aqui você pode adicionar uma verificação de permissão
-        // para garantir que o usuário logado pode editar esta experiência.
 
         experienciaExistente.setCargo(dto.cargo());
         experienciaExistente.setEmpresa(dto.empresa());
@@ -252,16 +259,28 @@ public class FuncionarioService {
         Experiencia experienciaAtualizada = experienciaRepository.save(experienciaExistente);
         return new ExperienciaDTO(experienciaAtualizada);
     }
+
+    @Transactional(readOnly = true)
+    public boolean usuarioPodeEditarExperiencia(Integer experienciaId, Integer codigoUsuarioLogado) {
+        Experiencia exp = experienciaRepository.findById(experienciaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Experiência não encontrada"));
+        return exp.getFuncionario().getCodigo().equals(codigoUsuarioLogado);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean usuarioPodeRemoverCertificado(Integer certificadoId, Integer codigoUsuarioLogado) {
+        FuncionarioCertificado cert = certificadoRepository.findById(certificadoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Certificado não encontrado"));
+        return cert.getFuncionario().getCodigo().equals(codigoUsuarioLogado);
+    }
+
     @Transactional
     public void removerCertificado(Integer certificadoId) {
-        // Verifica se o certificado realmente existe antes de tentar deletar
         if (!certificadoRepository.existsById(certificadoId)) {
-            // Lança uma exceção se não for encontrado, o que resultará em um erro 404 Not Found
             throw new ResourceNotFoundException("Certificado não encontrado com o ID: " + certificadoId);
         }
         
-        // Se existir, deleta pelo ID
         certificadoRepository.deleteById(certificadoId);
     }
-   
+    
 }
