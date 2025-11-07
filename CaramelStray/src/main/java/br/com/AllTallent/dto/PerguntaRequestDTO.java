@@ -17,7 +17,7 @@ public record PerguntaRequestDTO(
 
     // Campos que não estão na entidade Pergunta, mas são úteis para a aplicação
     String tipoPergunta,  // Ex: "texto", "multipla escolha", "escala/nota"
-    List<String> opcoes   // Lista de opções, se tipoPergunta for "multipla escolha"
+    List<OpcaoRequest> opcoes   // Lista de opções, se tipoPergunta for "multipla escolha"
 
     // Nota: Não precisamos receber o 'codigo' da pergunta aqui, pois será gerado pelo banco.
 ) {}

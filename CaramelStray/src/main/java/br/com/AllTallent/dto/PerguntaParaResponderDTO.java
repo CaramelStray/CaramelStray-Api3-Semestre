@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 public record PerguntaParaResponderDTO(
     Long codigo,                 // ID da pergunta
     String pergunta,             // Texto da pergunta
-    String tipoPergunta,         // "texto", "multipla escolha", "escala/nota"
+    String tipoPergunta,
+    String competenciaNome,         // "texto", "multipla escolha", "escala/nota"
     List<PerguntaOpcaoDTO> opcoes // Lista de opções (vazia se não for múltipla escolha)
 ) {
     // Construtor para facilitar a conversão
@@ -17,6 +18,7 @@ public record PerguntaParaResponderDTO(
             entidade.getCodigo(),
             entidade.getPergunta(),
             entidade.getTipoPergunta(),
+            (entidade.getCompetencia() != null) ? entidade.getCompetencia().getNome() : "Sem Categoria",
             // Mapeia as opções da entidade para DTOs, se existirem
             (entidade.getOpcoes() != null) ?
                 entidade.getOpcoes().stream()

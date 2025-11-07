@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.AllTallent.dto.PerguntaRequestDTO;
 import br.com.AllTallent.dto.PerguntaResponseDTO;
+import br.com.AllTallent.dto.OpcaoRequest;
 import br.com.AllTallent.model.Competencia;
 import br.com.AllTallent.model.Pergunta; // Importante para transações
 import br.com.AllTallent.model.PerguntaOpcao;
@@ -46,20 +47,23 @@ public class PerguntaService {
             System.out.println(">>> Processando " + dto.opcoes().size() + " opções recebidas.");
             
             Set<PerguntaOpcao> opcoesSet = new HashSet<>();
-            int contador = 0;
+            
 
-            for (String descOpcao : dto.opcoes()) {
-                if (descOpcao != null && !descOpcao.trim().isEmpty()) {
-                    PerguntaOpcao opcao = new PerguntaOpcao();
-                    opcao.setDescricaoOpcao(descOpcao.trim());
-                    opcao.setPergunta(novaPergunta); // Associa a opção à pergunta que está sendo criada
-                    opcoesSet.add(opcao);
-                    System.out.println(">>> Opção " + contador + " adicionada ao Set. Tamanho atual do Set: " + opcoesSet.size());
-                }
-            }
-            System.out.println(">>> Final do loop. Total de opções no Set: " + opcoesSet.size());
-            novaPergunta.setOpcoes(opcoesSet); // Adiciona o conjunto de opções à pergunta
-        }else {
+            for (OpcaoRequest opRequest : dto.opcoes()) { 
+        if (opRequest.descricao() != null && !opRequest.descricao().trim().isEmpty()) {
+            PerguntaOpcao opcao = new PerguntaOpcao();
+            
+            // Configure os dois campos
+            opcao.setDescricaoOpcao(opRequest.descricao().trim());
+            opcao.setIsCorreta(opRequest.isCorreta()); // <--- AQUI
+            
+            opcao.setPergunta(novaPergunta);
+            opcoesSet.add(opcao);
+        }
+    }
+    
+    novaPergunta.setOpcoes(opcoesSet);
+}else {
              // -> DEBUG: Log se não for múltipla escolha ou não houver opções
              System.out.println(">>> Não é múltipla escolha ou não há opções válidas a processar.");
         }

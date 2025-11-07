@@ -36,10 +36,11 @@ public class PerguntaOpcao {
     @Column(name = "descricao_opcao", nullable = false, columnDefinition = "TEXT")
     private String descricaoOpcao;
 
-    // Não precisamos mapear is_correta explicitamente aqui se a lógica
-    // de qual opção foi selecionada fica na tabela de RespostaColaborador.
-    // Se precisar da informação de qual *deveria* ser a correta (para testes/quizzes),
-    // descomente a linha abaixo:
-    // @Column(name = "is_correta", nullable = false)
-    // private boolean isCorreta = false; // Valor padrão false
+    
+    @Column(name = "is_correta", nullable = false)
+    private boolean isCorreta = false; 
+
+    public void setIsCorreta(boolean isCorreta) {
+        this.isCorreta = isCorreta;
+    }
 }

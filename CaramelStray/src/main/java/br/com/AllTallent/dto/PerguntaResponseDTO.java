@@ -8,9 +8,7 @@ public record PerguntaResponseDTO(
     String pergunta,
     Integer competenciaCodigo,
     String competenciaNome
-    // Nota: tipoPergunta e opcoes podem ou não ser incluídos aqui,
-    // dependendo se você precisa deles de volta no frontend imediatamente.
-    // Para simplificar, não incluí por enquanto.
+    
 ) {
     // Construtor para facilitar a conversão da Entidade para DTO
     public PerguntaResponseDTO(Pergunta entidade) {
@@ -21,4 +19,6 @@ public record PerguntaResponseDTO(
             entidade.getCompetencia() != null ? entidade.getCompetencia().getNome() : null
         );
     }
+    public record OpcaoRequest(String descricao, boolean isCorreta) {}
+
 }

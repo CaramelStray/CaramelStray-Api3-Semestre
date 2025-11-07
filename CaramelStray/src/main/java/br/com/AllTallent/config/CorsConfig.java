@@ -15,5 +15,6 @@ public class CorsConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:5173") // A URL do seu frontend Vue.js
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
+                
     }
 }

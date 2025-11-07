@@ -2,16 +2,16 @@
   <div class="min-h-screen bg-slate-50 text-slate-800">
     <header class="bg-white border border-slate-200 border-t-0 border-x-0">
       <div class="mx-auto max-w-7xl px-4 py-4 flex items-center gap-3">
-        <button 
+        <button
           @click="handleVoltar"
-          class="h-9 w-9 grid place-items-center rounded-lg border border-slate-200 hover:bg-slate-100" 
+          class="h-9 w-9 grid place-items-center rounded-lg border border-slate-200 hover:bg-slate-100"
           aria-label="Voltar"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
             <path fill-rule="evenodd" d="M10.03 4.97a.75.75 0 0 1 0 1.06L5.06 11l4.97 4.97a.75.75 0 1 1-1.06 1.06l-5.5-5.5a.75.75 0 0 1 0-1.06l5.5-5.5a.75.75 0 0 1 1.06 0Zm4.94 0a.75.75 0 0 1 1.06 0l5.5 5.5a.75.75 0 0 1 0 1.06l-5.5 5.5a.75.75 0 1 1-1.06-1.06L18.94 11l-4.97-4.97a.75.75 0 0 1 1.06-1.06Z" clip-rule="evenodd"/>
           </svg>
         </button>
-        
+
         <div class="flex items-center gap-2">
           <div class="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 grid place-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="ml-auto flex items-center gap-2">
-          <button 
+          <button
             @click="handleSalvarPergunta"
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
@@ -46,74 +46,8 @@
       </div>
 
       <template v-else-if="usuarioLogado">
-        <!-- ====== PERGUNTAS CADASTRADAS ====== -->
-        <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
-          <h3 class="text-base font-semibold text-slate-800 mb-4">
-            Perguntas Cadastradas ({{ perguntas.length }})
-          </h3>
 
-          <div class="space-y-4">
-            <div 
-              v-for="(p, index) in perguntas" 
-              :key="index"
-              class="border border-slate-200 rounded-lg p-4 bg-slate-50"
-            >
-              <!-- Cabeçalho com competência e tipo -->
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700">
-                  {{ obterNomeCompetencia(p.competenciaId) }}
-                </span>
-                <span v-if="p.tipoPergunta === 'multipla escolha'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                    <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
-                  </svg>
-                  Múltipla Escolha
-                </span>
-                <span v-else-if="p.tipoPergunta === 'escala/nota'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                  </svg>
-                  Escala/Nota
-                </span>
-                <span v-else class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                  Texto
-                </span>
-                <span class="ml-auto text-xs text-slate-500">Pergunta {{ index + 1 }}</span>
-              </div>
 
-              <!-- Texto da pergunta -->
-              <p class="text-sm font-medium text-slate-800 mb-3">{{ p.pergunta }}</p>
-
-              <!-- Opções (se houver) -->
-              <div v-if="p.tipoPergunta === 'multipla escolha' && p.opcoes && p.opcoes.length">
-                <p class="text-xs font-medium text-slate-600 mb-2">Opções (seleção múltipla):</p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li v-for="(opcao, idx) in p.opcoes" :key="idx" class="text-sm text-slate-700">
-                    {{ opcao }}
-                  </li>
-                </ul>
-              </div>
-
-              <!-- Botão deletar -->
-              <div class="mt-4 flex justify-end">
-                <button
-                  @click="handleDeletarPergunta(index)"
-                  class="h-9 w-9 grid place-items-center rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                  aria-label="Deletar pergunta"
-                  title="Deletar pergunta"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
-                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
           <label for="tituloAvaliacao" class="block mb-2 text-base font-semibold text-slate-800">
             Título da Avaliação <span class="text-red-500">*</span>
@@ -323,18 +257,26 @@
           <!-- Opções de Resposta (só quando múltipla escolha) -->
           <div v-if="tipoPergunta === 'multipla escolha'">
             <label class="text-sm font-medium text-slate-700 mb-2 block">
-              Opções de Resposta <span class="text-slate-500 font-normal">(Obrigatórias para múltipla escolha)</span>
+              Opções de Resposta <span class="text-slate-500 font-normal">(Selecione a correta)</span>
             </label>
-            
+
             <div class="space-y-2">
-              <div 
-                v-for="(opcao, index) in opcoes" 
-                :key="index" 
+              <div
+                v-for="(opcao, index) in opcoes"
+                :key="index"
                 class="flex items-center gap-2"
               >
+              <input
+                  type="radio"
+                  name="opcaoCorretaRadio"
+                  :value="index"
+                  v-model.number="opcaoCorretaIndex"
+                  class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-slate-300"
+                  :aria-label="`Marcar opção ${index + 1} como correta`"
+                />
                 <input
                   type="text"
-                  v-model="opcoes[index]"
+                  v-model="opcoes[index].texto"
                   :placeholder="`Opção ${index + 1}`"
                   style="flex: 1; padding: 0.625rem 1rem; font-size: 0.875rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: #ffffff; color: black;"
                   @focus="$event.target.style.borderColor = '#3b82f6'; $event.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.3)';"
@@ -370,10 +312,83 @@
               + Adicionar Pergunta
             </button>
           </div>
+
+          <!-- ====== PERGUNTAS CADASTRADAS ====== -->
+          <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+            <h3 class="text-base font-semibold text-slate-800 mb-4">
+              Perguntas Cadastradas ({{ perguntas.length }})
+            </h3>
+
+            <div class="space-y-4">
+              <div
+                v-for="(p, index) in perguntas"
+                :key="index"
+                class="border border-slate-200 rounded-lg p-4 bg-slate-50"
+              >
+                <!-- Cabeçalho com competência e tipo -->
+                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                  <span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700">
+                    {{ obterNomeCompetencia(p.competenciaId) }}
+                  </span>
+                  <span v-if="p.tipoPergunta === 'multipla escolha'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                      <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
+                    </svg>
+                    Múltipla Escolha
+                  </span>
+                  <span v-else-if="p.tipoPergunta === 'escala/nota'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    Escala/Nota
+                  </span>
+                  <span v-else class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Texto
+                  </span>
+                  <span class="ml-auto text-xs text-slate-500">Pergunta {{ index + 1 }}</span>
+                </div>
+
+                <!-- Texto da pergunta -->
+                <p class="text-sm font-medium text-slate-800 mb-3">{{ p.pergunta }}</p>
+
+                <!-- Opções (se houver) -->
+                <div v-if="p.tipoPergunta === 'multipla escolha' && p.opcoes && p.opcoes.length">
+                  <p class="text-xs font-medium text-slate-600 mb-2">Opções (seleção múltipla):</p>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li v-for="(opcao, idx) in p.opcoes" :key="idx" class="text-sm text-slate-700">
+                      {{ opcao }}
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Botão deletar -->
+                <div class="mt-4 flex justify-end">
+                  <button
+                    @click="handleDeletarPergunta(index)"
+                    class="h-9 w-9 grid place-items-center rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
+                    aria-label="Deletar pergunta"
+                    title="Deletar pergunta"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="mt-8 pt-6 border-t border-slate-200">
               <button
                 @click="handleCriarAvaliacao"
-                class="w-full rounded-lg bg-green-600 px-4 py-3 text-base font-semibold text-white hover:bg-green-700 disabled:opacity-50"
+                :class="[
+                  'w-full rounded-lg px-4 py-3 text-base font-semibold text-white transition-colors disabled:opacity-50',
+                  perguntas.length > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                ]"
+
                 :disabled="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()"
               >
                 Criar Avaliação para {{ filtros.colaboradores.length }} Colaborador(es)
@@ -381,8 +396,8 @@
               <p v-if="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()" class="text-xs text-center text-red-600 mt-2">
                   Preencha o título, adicione perguntas e selecione colaboradores.
               </p>
-            </div>
-          
+          </div>
+
 
         </div>
 
@@ -410,13 +425,14 @@ const loading = ref(true);
 const error = ref(null);
 const pergunta = ref('');
 const tipoPergunta = ref('texto');
-const opcoes = ref(['']);
+const opcoes = ref([{texto:'', isCorreta: false}]);
 const competenciaSelecionada = ref('');
 const perguntas = ref([]);
 const allColaboradores = ref([]);
 const allCompetencias = ref([]);
 const allAreas = ref([]);
 const tituloAvaliacao = ref('');
+const opcaoCorretaIndex = ref(0);
 
 const filtros = ref({
   colaboradores: [],
@@ -448,21 +464,22 @@ onMounted(async () => {
   error.value = null;
   try {
     // Pega o ID da prop (vindo da rota)
-     
 
-    // VERIFICA se o usuário foi carregado com sucesso ANTES de prosseguir
+
+    
     if (!usuarioLogado.value) {
       console.warn("Usuário logado não encontrado no estado global, tentando carregar...");
       
+      if(!usuarioLogado.value){
            throw new Error("Falha ao obter dados do usuário logado. O estado global está vazio.");
-      
+      }
     } else {
         console.log("Usuário logado encontrado no estado global:", usuarioLogado.value.nomeCompleto);
     }
 
     // 2. DEPOIS, busca os dados dos filtros
     await fetchFilterData();
-    
+
   } catch (err) {
     console.error("Falha ao carregar dados iniciais:", err);
     error.value = "Não foi possível carregar os dados. " + (err.message || '');
@@ -478,7 +495,7 @@ const fetchFilterData = async () => {
   try {
     // Busca simultânea dos 3 endpoints
     const [colabRes, compRes, areaRes] = await Promise.all([
-      axios.get('http://localhost:8080/api/funcionario'), 
+      axios.get('http://localhost:8080/api/funcionario'),
       axios.get('http://localhost:8080/api/competencia'), // Ajuste se a rota for plural
       axios.get('http://localhost:8080/api/area')      // Ajuste se a rota for diferente
     ]);
@@ -488,15 +505,15 @@ const fetchFilterData = async () => {
       codigo: c.codigo,
       nome: c.nomeCompleto,
       cargo: c.tituloProfissional || 'Cargo não informado',
-      areaId: c.areaId,     
-      perfilId: c.perfilId   
+      areaId: c.areaId,
+      perfilId: c.perfilId
     }));
-    
+
     // Assume que /api/competencia retorna { codigo, nome }
-    allCompetencias.value = compRes.data; 
-    
+    allCompetencias.value = compRes.data;
+
     // Assume que /api/areas retorna { codigo, nome }
-    allAreas.value = areaRes.data; 
+    allAreas.value = areaRes.data;
 
   } catch (err) {
     console.error("Falha ao buscar dados dos filtros:", err);
@@ -504,7 +521,7 @@ const fetchFilterData = async () => {
   }
 };
 
-// ---------- UTIL ---------- 
+// ---------- UTIL ----------
 const getInitials = (fullName) => {
   if (!fullName) return '';
   const names = fullName.trim().split(/\s+/);
@@ -526,14 +543,21 @@ const handleVoltar = () => {
 };
 
 const handleAdicionarOpcao = () => {
-  opcoes.value.push('');
+  opcoes.value.push({texto: '', isCorreta: false});
 };
 
 const handleRemoverOpcao = (index) => {
   if (opcoes.value.length > 1) {
     opcoes.value.splice(index, 1);
-  }
+    if (opcaoCorretaIndex.value === index) {
+        opcaoCorretaIndex.value = 0;
+    }else if (opcaoCorretaIndex.value > index) {
+        // Se removemos um item ANTES do item correto,
+        // o índice do item correto diminui.
+        opcaoCorretaIndex.value--;
+    }
 };
+}
 
 /*const competenciaSelecionadaNome = computed(() => {
   const lista = listaCompetenciasParaSelecao.value;
@@ -552,15 +576,27 @@ const handleSalvarPergunta = () => { // Removido o async, pois não chama API
     alert('Por favor, selecione uma competência.');
     return;
   }
-
+  console.log('Conteúdo de opcoes.value antes do map:', JSON.stringify(opcoes.value));
   const opcoesValidas = opcoes.value
-    .map(op => op.trim())
-    .filter(op => op !== '');
+    .map((op, index) => {
+      console.log(`Mapeando opção no índice ${index}:`, op); // <-- DEBUG 2: Veja a estrutura de 'op'
+      // Adicione uma verificação defensiva antes de chamar trim()
+      const descricaoTrimmed = (op && typeof op.texto === 'string') ? op.texto.trim() : ''; // <-- DEFESA AQUI
+      console.log(`Descrição após trim (ou fallback): '${descricaoTrimmed}'`); // <-- DEBUG 3
 
-  if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
+      return {
+        descricao: descricaoTrimmed,
+        isCorreta: index === opcaoCorretaIndex.value
+      };
+    })
+    .filter(op => op.descricao !== ''); // Filtra opções vazias
+
+    console.log('opcoesValidas após map e filter:', opcoesValidas);
+
+if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
     alert('Para múltipla escolha, informe ao menos 2 opções válidas.');
     return;
-  }
+}
 
   // 2. Cria o objeto da pergunta LOCALMENTE
   //    Usamos 'competenciaId' aqui para ser consistente com o que obterNomeCompetencia espera
@@ -580,8 +616,8 @@ const handleSalvarPergunta = () => { // Removido o async, pois não chama API
   // 4. Limpa APENAS os campos do formulário de nova pergunta
   pergunta.value = '';
   tipoPergunta.value = 'texto';
-  opcoes.value = [''];
-  //competenciaSelecionada.value = ''; // Limpa a seleção da competência
+  opcoes.value = [{ texto: '', isCorreta: false }]; // <-- LINHA NOVA
+  opcaoCorretaIndex.value = 0; // <-- ADICIONAR
 
   // Não mostra alerta de sucesso aqui, apenas adiciona à lista
 };
@@ -654,7 +690,7 @@ const listaCompetenciasParaSelecao = computed(() => {
   if (filtros.value.competencias.length) {
     return filtros.value.competencias;
   }
-  if (usuarioLogado.value?.competencias?.length) { 
+  if (usuarioLogado.value?.competencias?.length) {
     return usuarioLogado.value.competencias;
   }
   return allCompetencias.value;
@@ -682,7 +718,7 @@ const filteredColabs = computed(() => {
 
 const filteredComps = computed(() => {
   const q = normaliza(qComp.value);
-  return allCompetencias.value 
+  return allCompetencias.value
     .filter((c) => !jaTemComp(c.id))
     .filter((c) => !q || normaliza(c.nome).includes(q))
     .slice(0, 30);
@@ -692,7 +728,7 @@ const filteredComps = computed(() => {
 
 const filteredEquipes = computed(() => {
   const q = normaliza(qEquipe.value);
-  return allAreas.value 
+  return allAreas.value
     .filter((e) => !jaTemEquipe(e.codigo))
     .filter((e) => !q || normaliza(e.nome).includes(q))
     .slice(0, 30);
