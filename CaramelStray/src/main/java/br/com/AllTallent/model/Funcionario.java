@@ -1,4 +1,4 @@
-package br.com.AllTallent.model;
+package br.com.AllTallent.model; // O pacote está correto
 
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -27,10 +27,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// --- NOVO PADRÃO AQUI ---
-// Gera um toString() seguro, ex: "Funcionario(codigo=1, nomeCompleto=Leonardo Vianna)"
 @ToString(of = {"codigo", "nomeCompleto"}) 
-// Gera equals() e hashCode() baseados APENAS no código. É a forma correta e segura.
 @EqualsAndHashCode(of = "codigo") 
 @Entity
 @Table(name = "tb_cad_funcionario")
@@ -43,21 +40,25 @@ public class Funcionario {
     @Column(name = "nome_completo")
     private String nomeCompleto;
 
+    @Column(name = "email") // Adicionado @Column para garantir
     private String email;
+    
     private String cpf;
     private String telefone;
 
     @Column(name = "senha_hash")
-    private String senhaHash;
+    private String senhaHash; // O @Getter do Lombok vai criar o getSenhaHash()
 
     @Column(name = "data_cadastro", updatable = false)
     private OffsetDateTime dataCadastro;
+    
     @Column(name ="titulo_profissional")
     private String tituloProfissional;
+    
     private String localizacao;
     private String resumo;
 
-    // --- RELACIONAMENTOS (não mudam) ---
+    // --- RELACIONAMENTOS ---
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_area")
@@ -78,7 +79,7 @@ public class Funcionario {
     private Set<FuncionarioCertificado> certificados;
     
     @OneToMany(mappedBy = "funcionario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Experiencia> experiencias; // <-- NOVA LISTA
+    private Set<Experiencia> experiencias;
     
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -88,4 +89,5 @@ public class Funcionario {
     )
     private Set<Competencia> competencias;
     
+    // Os campos duplicados e getters manuais foram REMOVIDOS.
 }
