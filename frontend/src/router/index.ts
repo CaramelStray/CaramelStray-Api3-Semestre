@@ -18,8 +18,11 @@ import Perfilfun from '../components/perfilFun.vue';
 import Competencia from '../components/Competencia.vue';
 import Perfilbase from '../components/perfilBase.vue';
 
+import Login from '../components/Login.vue';
+
 // Componente temporário para o dashboard
 const DashboardPage = { template: '<div><h1>Página de Dashboard</h1></div>' };
+
 
 const routes: RouteRecordRaw[] = [
   // --- ROTAS DO LÍDER ---
@@ -128,6 +131,14 @@ const routes: RouteRecordRaw[] = [
       },
     ]
   },
+
+    // --- ROTAS DE AUTENTICAÇÃO (SEM LAYOUT) ---
+  {
+    path: '/login',
+    name: 'Login', component: Login,
+    meta: { requiresAuth: false, hideForAuth: true } // Esconde para usuários já autenticados
+  },
+  
 
   // --- REDIRECIONAMENTOS INICIAIS ---
   // Esta seção cuida das rotas do seu PRIMEIRO arquivo
