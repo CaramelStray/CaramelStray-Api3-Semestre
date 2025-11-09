@@ -17,7 +17,7 @@ import Teste from '../components/Teste.vue'; // Tela antiga de 'Criar', pode ser
 import Perfilfun from '../components/perfilFun.vue';
 import Competencia from '../components/Competencia.vue';
 import Perfilbase from '../components/perfilBase.vue';
-
+import CadastroColaborador from '../components/CadastroColaborador.vue';
 import Login from '../components/Login.vue';
 
 // Componente temporário para o dashboard
@@ -54,6 +54,11 @@ const routes: RouteRecordRaw[] = [
         path: 'dashboard',
         name: 'LiderDashboard', component: DashboardPage,
         meta: { title: 'Dashboard', subtitle: 'Visão Geral' }
+      },
+      {
+        path: '/CadastroColaborador',
+        name: 'LiderCadastrarColaborador', component: CadastroColaborador,
+        meta: { title: 'Cadastro de Colaborador', subtitle: 'Adicionar novo membro' }
       },
       {
         path: 'perguntas/', // Tela de Cadastro/Gerenciamento de Perguntas
@@ -134,7 +139,7 @@ const routes: RouteRecordRaw[] = [
 
     // --- ROTAS DE AUTENTICAÇÃO (SEM LAYOUT) ---
   {
-    path: '/login',
+    path: '/Login',
     name: 'Login', component: Login,
     meta: { requiresAuth: false, hideForAuth: true } // Esconde para usuários já autenticados
   },
