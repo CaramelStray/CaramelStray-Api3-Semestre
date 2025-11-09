@@ -164,13 +164,32 @@
           <p class="text-sm font-medium text-slate-700 mb-3">Colaboradores selecionados:</p>
 
           <div class="flex flex-wrap gap-3 mb-5">
-            <div v-for="c in filtros.colaboradores" :key="c.id" class="chip">
-              <span class="chip__avatar">{{ getInitials(c.nome) }}</span>
-              <span class="chip__content">
-                <span class="chip__title">{{ c.nome }}</span>
-                <span class="chip__subtitle">{{ c.cargo }}</span>
+            <div
+              v-for="c in filtros.colaboradores"
+              :key="c.id"
+              class="flex items-center gap-3 px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 shadow-sm"
+            >
+              <!-- Avatar -->
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm">
+                {{ getInitials(c.nome) }}
               </span>
+
+              <!-- Nome e cargo (empilhados) -->
+              <div class="flex flex-col leading-tight">
+                <span class="font-medium text-slate-800 text-sm">{{ c.nome }}</span>
+                <span class="text-slate-500 text-xs">{{ c.cargo }}</span>
+              </div>
+
+              <!-- Botão remover -->
+              <button
+                @click="removerColaborador(c)"
+                class="text-slate-400 hover:text-red-500 ml-2 transition"
+                title="Remover colaborador"
+              >
+                ✕
+              </button>
             </div>
+
             <p v-if="filtros.colaboradores.length === 0" class="text-sm text-slate-500">
               Nenhum colaborador selecionado
             </p>
@@ -181,9 +200,16 @@
             <span
               v-for="comp in filtros.competencias"
               :key="comp.id"
-              class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
+              class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
             >
               {{ comp.nome }}
+              <button
+                @click="removerCompetencia(comp)"
+                class="text-blue-600 hover:text-blue-800 font-bold ml-1"
+                title="Remover competência"
+              >
+                ✕
+              </button>
             </span>
 
             <p v-if="filtros.competencias.length === 0" class="text-sm text-slate-500">
@@ -191,6 +217,7 @@
             </p>
           </div>
         </div>
+
 
         <!-- Card Nova Pergunta -->
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6">
@@ -440,6 +467,15 @@ const filtros = ref({
   equipes: []
 });
 
+const removerColaborador = (colab) => {
+  filtros.value.colaboradores = filtros.value.colaboradores.filter(c => c.codigo !== colab.codigo);
+};
+
+const removerCompetencia = (comp) => {
+  filtros.value.competencias = filtros.value.competencias.filter(c => c.id !== comp.id);
+};
+
+
 
 // ---------- BUSCA DO FUNCIONÁRIO ----------
 /*const fetchFuncionarioData = async () => {
@@ -466,10 +502,10 @@ onMounted(async () => {
     // Pega o ID da prop (vindo da rota)
 
 
-    
+
     if (!usuarioLogado.value) {
       console.warn("Usuário logado não encontrado no estado global, tentando carregar...");
-      
+
       if(!usuarioLogado.value){
            throw new Error("Falha ao obter dados do usuário logado. O estado global está vazio.");
       }

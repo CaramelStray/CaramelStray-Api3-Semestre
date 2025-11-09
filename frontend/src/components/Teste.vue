@@ -660,8 +660,14 @@ watch(indiceAtual, () => {
   border-radius: 12px;
   font-size: 14px;
   background: #f9fafb;
+  color: #111827;
   transition: all .2s;
 }
+
+.textarea::placeholder {
+  color: #9ca3af; /* <-- COR MAIS CLARA PARA PLACEHOLDER */
+}
+
 .textarea:focus {
   outline: none;
   border-color: var(--primary);
