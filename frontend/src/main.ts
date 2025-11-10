@@ -21,8 +21,7 @@ const { carregarUsuarioLogado } = useAuth()
 // ALTERE O NÚMERO PARA TESTAR DADOS DE USUÁRIO DIFERENTES:
 // 1 = Usuário Líder (provavelmente)
 // 2 = Usuário Colaborador (provavelmente - confirme no BD!)
-carregarUsuarioLogado(1
-); // <<<< Define QUEM está logado (para dados no menu)
+carregarUsuarioLogado(1); // <<<< Define QUEM está logado (para dados no menu)
 // ==========================================================
 // A URL acessada (/lider/* ou /colaborador/*) definirá QUAL layout/menu aparece.
 
