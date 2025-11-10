@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
@@ -51,6 +52,9 @@ public class Avaliacao {
     @Column(name = "data_prazo")
     private LocalDate dataPrazo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "codigo_criador")
+    private Funcionario criador;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

@@ -9,7 +9,8 @@ public record AvaliacaoResponseDTO(
     String titulo,
     String status,
     LocalDate dataCriacao,
-    LocalDate dataPrazo
+    LocalDate dataPrazo,
+    String nomeCriador
     
 ) {
     
@@ -19,7 +20,8 @@ public record AvaliacaoResponseDTO(
             avaliacao.getTitulo(),
             avaliacao.getStatus(),
             avaliacao.getDataCriacao(),
-            avaliacao.getDataPrazo()
+            avaliacao.getDataPrazo(),
+            (avaliacao.getCriador() != null) ? avaliacao.getCriador().getNomeCompleto() : "Sistema"
         );
     }
 }

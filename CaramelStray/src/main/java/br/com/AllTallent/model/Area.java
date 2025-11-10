@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "tb_cad_area")
 public class Area {
 
-    
+       
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codigo;

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder; 
 
+import org.springframework.security.access.prepost.PreAuthorize; 
+
 import java.net.URI;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class AvaliacaoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<AvaliacaoResponseDTO> criarAvaliacao(
             @Valid @RequestBody AvaliacaoRequestDTO dto) {
         try {
@@ -53,6 +56,7 @@ public class AvaliacaoController {
 
     
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<List<AvaliacaoResponseDTO>> listarTodasAvaliacoes() {
         List<AvaliacaoResponseDTO> lista = avaliacaoService.listarTodasAvaliacoes();
         return ResponseEntity.ok(lista);
@@ -60,6 +64,7 @@ public class AvaliacaoController {
 
     
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<AvaliacaoDetalhadaDTO> buscarAvaliacaoDetalhada(@PathVariable Integer id) {
         try {
             AvaliacaoDetalhadaDTO detalhadaDTO = avaliacaoService.buscarAvaliacaoDetalhada(id);
@@ -71,6 +76,7 @@ public class AvaliacaoController {
 
     
     @GetMapping("/{id}/instancias")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<List<AvaliacaoFuncionarioResponseDTO>> buscarInstanciasPorAvaliacao(@PathVariable Integer id) {
          try {
              
@@ -83,7 +89,8 @@ public class AvaliacaoController {
 
     
     
-    @PostMapping("/respostas") 
+    @PostMapping("/respostas")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> salvarResposta( 
             @Valid @RequestBody RespostaColaboradorRequestDTO respostaDTO) {
         try {
@@ -105,6 +112,7 @@ public class AvaliacaoController {
 
     
     @GetMapping("/instancias/{instanciaId}/respostas")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<?> buscarRespostasPorInstancia(@PathVariable Long instanciaId) {
         try {
             List<RespostaColaboradorResponseDTO> respostas = avaliacaoService.buscarRespostasPorInstancia(instanciaId);
@@ -115,6 +123,7 @@ public class AvaliacaoController {
     }
 
     @PutMapping("/instancias/{instanciaId}/revisar") 
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<?> salvarRevisaoSupervisor(
             @PathVariable Long instanciaId,
             @Valid @RequestBody RevisaoSupervisorRequestDTO revisaoDTO) {
@@ -133,7 +142,8 @@ public class AvaliacaoController {
     }
 
   
-    @GetMapping("/pendentes/{funcionarioId}") 
+    @GetMapping("/pendentes/{funcionarioId}")
+    @PreAuthorize("principal.codigo == #funcionarioId")
     public ResponseEntity<List<AvaliacaoFuncionarioResponseDTO>> buscarAvaliacoesPendentes(@PathVariable Integer funcionarioId) {
         
         List<AvaliacaoFuncionarioResponseDTO> pendentes = avaliacaoService.buscarPendentesPorFuncionario(funcionarioId);
@@ -141,7 +151,8 @@ public class AvaliacaoController {
     }
 
     
-    @GetMapping("/instancias/{instanciaId}/responder") 
+    @GetMapping("/instancias/{instanciaId}/responder")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> buscarAvaliacaoParaResponder(@PathVariable Long instanciaId) {
         try {
             
@@ -153,7 +164,8 @@ public class AvaliacaoController {
     }
 
     
-    @PutMapping("/instancias/{instanciaId}/finalizar") 
+    @PutMapping("/instancias/{instanciaId}/finalizar")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> finalizarAvaliacaoColaborador(@PathVariable Long instanciaId) {
         try {
              

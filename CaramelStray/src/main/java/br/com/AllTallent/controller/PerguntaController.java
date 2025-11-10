@@ -3,7 +3,8 @@ package br.com.AllTallent.controller;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity; // Importar o Service
+import org.springframework.http.ResponseEntity; 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import br.com.AllTallent.dto.PerguntaRequestDTO;
 import br.com.AllTallent.dto.PerguntaResponseDTO;
@@ -30,6 +32,7 @@ public class PerguntaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<PerguntaResponseDTO> criarPergunta(@Valid @RequestBody PerguntaRequestDTO dto) {
         try {
             
@@ -51,11 +54,13 @@ public class PerguntaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
     public ResponseEntity<List<PerguntaResponseDTO>> listarTodasPerguntas() {
         return ResponseEntity.ok(perguntaService.listarTodas());
     }
 
      @GetMapping("/{id}")
+     @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
      public ResponseEntity<PerguntaResponseDTO> buscarPerguntaPorId(@PathVariable Long id) {
          try {
              return ResponseEntity.ok(perguntaService.buscarPorId(id));
@@ -65,6 +70,7 @@ public class PerguntaController {
      }
 
      @DeleteMapping("/{id}")
+     @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR')")
      public ResponseEntity<Void> deletarPergunta(@PathVariable Long id) {
          try {
              perguntaService.deletarPergunta(id);

@@ -13,6 +13,7 @@ public record AvaliacaoDetalhadaDTO(
     String status,
     LocalDate dataCriacao,
     LocalDate dataPrazo,
+    String nomeCriador,
     List<PerguntaResponseDTO> perguntas,             
     List<AvaliacaoFuncionarioResponseDTO> instancias 
 ) {
@@ -24,7 +25,7 @@ public record AvaliacaoDetalhadaDTO(
             avaliacao.getStatus(),
             avaliacao.getDataCriacao(),
             avaliacao.getDataPrazo(),
-
+            (avaliacao.getCriador() != null) ? avaliacao.getCriador().getNomeCompleto() : "Sistema",
             (avaliacao.getPerguntas() != null) ?
                 avaliacao.getPerguntas().stream()
                     .map(PerguntaResponseDTO::new) 
