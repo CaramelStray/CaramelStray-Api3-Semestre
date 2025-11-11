@@ -1,4 +1,4 @@
-package br.com.AllTallent.config;
+/*package br.com.AllTallent.config;
 
 
 
@@ -18,3 +18,4 @@ public class CorsConfig implements WebMvcConfigurer {
                 
     }
 }
+*/

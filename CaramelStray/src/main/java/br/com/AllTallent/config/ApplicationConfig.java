@@ -23,7 +23,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> { // email
+        return username -> { 
                         Funcionario funcionario = funcionarioRepository.findByEmailForSecurity(username) 
                     .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
 

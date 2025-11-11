@@ -1,23 +1,23 @@
 <template>
   <div class="login-page">
     <div class="login-card">
-      <!-- Logo -->
+      
       <div class="logo-container">
         <img src="../assets/logo.png" ></img>
       </div>
 
-      <!-- Título -->
+      
       <h1 class="title">Acesso ao Sistema</h1>
       <p class="subtitle">Entre com suas credenciais para acessar o sistema</p>
 
-      <!-- Mensagem de erro -->
+      
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
 
-      <!-- Formulário -->
+      
       <form @submit.prevent="handleLogin" class="login-form">
-        <!-- Email -->
+        
         <div class="form-group">
           <label for="email" class="label">Email</label>
           <div class="input-container">
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <!-- Senha -->
+        
         <div class="form-group">
           <label for="senha" class="label">Senha</label>
           <div class="input-container">
@@ -68,7 +68,7 @@
           </div>
         </div>
         
-        <!-- Botão Entrar -->
+        
         <button type="submit" class="btn-entrar" :disabled="loading">
           <span v-if="!loading">Entrar</span>
           <span v-else class="loading">
@@ -80,7 +80,7 @@
           </span>
         </button>
 
-        <!-- Link Esqueceu sua senha -->
+        
         <div class="forgot-password">
           <a href="#" @click.prevent="handleForgotPassword" class="forgot-link">
             Esqueceu sua senha?
@@ -93,14 +93,14 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useAuth } from '../auth'; 
 
-const router = useRouter();
+
+const { login } = useAuth(); 
 
 const formData = reactive({
   email: '',
-  senha: ''
+  password: '' 
 });
 
 const showPassword = ref(false);
@@ -111,49 +111,26 @@ const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
 
+
 const handleLogin = async () => {
   errorMessage.value = '';
   loading.value = true;
 
   try {
-    const loginData = {
-      email: formData.email || null,
-      senha: formData.senha || null
-    };
-
-    const response = await axios.post('http://localhost:8080/api/auth/login', loginData);
     
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-      
-      // Redirecionar baseado no tipo de usuário
-      const usuario = response.data.usuario;
-      if (usuario.tipo === 'LIDER') {
-        router.push({ name: 'LiderInicio' });
-      } else {
-        router.push({ name: 'ColaboradorPerfilBase' });
-      }
-    }
+    await login(formData.email, formData.senha);
+    
   } catch (err) {
-    console.error('Erro no login:', err);
     
-    if (err.response?.status === 401) {
-      errorMessage.value = 'Email ou senha incorretos';
-    } else if (err.response?.status === 404) {
-      errorMessage.value = 'Usuário não encontrado';
-    } else {
-      errorMessage.value = 'Erro ao conectar com o servidor. Tente novamente.';
-    }
+    console.error('Erro no login:', err);
+    errorMessage.value = err.message || 'Erro desconhecido.';
   } finally {
     loading.value = false;
   }
 };
 
 const handleForgotPassword = () => {
-  // Redirecionar para recuperação de senha se tiver a rota
   console.log('Recuperar senha');
-  // router.push({ name: 'RecuperarSenha' });
 };
 </script>
 
@@ -412,7 +389,7 @@ const handleForgotPassword = () => {
   }
 
   .input-field {
-    font-size: 16px; /* Previne zoom no iOS */
+    font-size: 16px; 
   }
 }
 </style>

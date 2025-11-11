@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Areas: typeof import('./components/Areas.vue')['default']
     Avaliacao: typeof import('./components/Avaliacao.vue')['default']
+    CadastroColaborador: typeof import('./components/CadastroColaborador.vue')['default']
     CadastroPerguntas: typeof import('./components/CadastroPerguntas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
     ExperienciaModal: typeof import('./components/ExperienciaModal.vue')['default']
@@ -18,6 +19,7 @@ declare module 'vue' {
     Inicio: typeof import('./components/Inicio.vue')['default']
     LiderSideMenu: typeof import('./components/LiderSideMenu.vue')['default']
     Lista: typeof import('./components/Lista.vue')['default']
+    Login: typeof import('./components/login.vue')['default']
     PerfilBase: typeof import('./components/perfilBase.vue')['default']
     PerfilFun: typeof import('./components/perfilFun.vue')['default']
     RespostaAvaliacao: typeof import('./components/respostaAvaliacao.vue')['default']

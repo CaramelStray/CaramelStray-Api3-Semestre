@@ -12,20 +12,20 @@
         <div class="sidebar__subtitle">Colaborador</div>
       </div>
     </div>
-    <div class="sidebar__user">
-      <div class="user-avatar">L</div>
+
+    <div class="sidebar__user" v-if="usuarioLogado">
+      <div class="user-avatar">{{ getInitials(usuarioLogado.nomeCompleto) }}</div>
       <div class="user-info">
-        <div class="user-name">Leonardo Vianna</div>
-        <div class="user-email">leonardo.vianna@example.com</div>
+        <div class="user-name">{{ usuarioLogado.nomeCompleto }}</div>
+        <div class="user-email">{{ usuarioLogado.email }}</div>
       </div>
     </div>
+    
     <nav class="sidebar__nav">
       <router-link
-        :to="{ name: 'ColaboradorPerfil', params: { id: 1 } }"
+        :to="{ name: 'ColaboradorPerfil', params: { id: usuarioLogado?.codigo } }"
         class="nav-item"
-        :class="{ active: $route.name === 'ColaboradorPerfilBase' || $route.name === 'ColaboradorPerfil' }"
-      >
-        <svg viewBox="0 0 24 24" width="20" height="20">
+        > <svg viewBox="0 0 24 24" width="20" height="20">
           <circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
           <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="none" stroke="currentColor" stroke-width="2"/>
         </svg>
@@ -33,11 +33,9 @@
       </router-link>
 
       <router-link
-        :to="{ name: 'ColaboradorCompetencias', params: { id: 1 } }"
+        :to="{ name: 'ColaboradorCompetencias', params: { id: usuarioLogado?.codigo } }"
         class="nav-item"
-        :class="{ active: $route.name === 'ColaboradorCompetencias' }"
-      >
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        > <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
         <span>Competências</span>
@@ -46,9 +44,7 @@
       <router-link
         :to="{ name: 'ColaboradorStatus' }"
         class="nav-item"
-        :class="{ active: $route.name === 'ColaboradorStatus' }"
-      >
-        <svg viewBox="0 0 24 24" width="20" height="20">
+        > <svg viewBox="0 0 24 24" width="20" height="20">
           <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" fill="none" stroke="currentColor" stroke-width="2"/>
         </svg>
         <span>Minhas Avaliações</span>
@@ -66,13 +62,22 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
-const route = useRoute();
-const logout = () => { console.log("Sair SideMenuColaborador"); };
+import { useAuth } from '../auth';
+
+const { usuarioLogado, logout } = useAuth();
+
+const getInitials = (fullName) => {
+  if (!fullName) return '?';
+  const names = fullName.trim().split(' ');
+  const initials = names.length > 1 
+    ? `${names[0][0]}${names[names.length - 1][0]}`
+    : names[0].substring(0, 2);
+  return initials.toUpperCase();
+};
 </script>
 
 <style scoped>
-/* Estilos originais */
+/* Seus estilos originais */
 .sidebar { display: flex; flex-direction: column; width: 240px; flex-shrink: 0; height: 100vh; position: sticky; top: 0; background: var(--card, #ffffff); border-right: 1px solid var(--border, #e3eeee); padding: 20px 0; box-sizing: border-box; z-index: 20; }
 .sidebar__header { padding: 0 20px 20px; border-bottom: 1px solid var(--border, #e3eeee); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .sidebar__logo { width: 40px; height: 40px; background: var(--blue, #2563eb); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }

@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final String username; // email
+    private final String username; 
     private final String password;
-    private final Integer codigo;  // <-- NOSSO CAMPO EXTRA
-    private final Integer areaId;  // <-- NOSSO CAMPO EXTRA
+    private final Integer codigo;  
+    private final Integer areaId;  
     private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(Funcionario funcionario) {

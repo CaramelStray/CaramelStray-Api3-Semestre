@@ -6,10 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
-// --- IMPORTS ADICIONADOS ---
+
 import org.hibernate.LazyInitializationException; 
 import io.jsonwebtoken.JwtException;
-// ----------------------------
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -16,7 +16,7 @@ public class AvaliacaoFuncionarioResponseDTO {
     private final String resultadoStatus;
     private final Integer nota;
 
-    // Construtor que converte a Entidade para o DTO
+    
     public AvaliacaoFuncionarioResponseDTO(AvaliacaoFuncionario entidade) {
         this.codigo = entidade.getCodigo();
         this.funcionarioCodigo = (entidade.getFuncionario() != null) ? entidade.getFuncionario().getCodigo() : null;
