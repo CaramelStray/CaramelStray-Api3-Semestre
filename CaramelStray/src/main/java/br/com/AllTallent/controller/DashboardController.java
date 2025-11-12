@@ -21,4 +21,13 @@ public class DashboardController {
         return dashboardService.gerarResumo();
     }
 
+    @GetMapping("/distribuicao/area")
+    public Map<String, Long> getDistribuicaoPorArea() {
+        return dashboardService.getDistribuicaoPorArea();
+    }
+
+    @GetMapping("/distribuicao/competencias")
+    public Map<String, Long> getDistribuicaoPorCompetencias() {
+        return dashboardService.getDistribuicaoPorCompetencias();
+    }
 }

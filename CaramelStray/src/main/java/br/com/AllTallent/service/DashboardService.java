@@ -74,5 +74,31 @@ public class DashboardService {
 
     }
 
+    public Map<String, Long> getDistribuicaoPorArea() {
+        return funcionarioRepo.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        f -> {
+                            if (f.getArea() == null) {
+                                return "Sem área";
+                            }
+                            return f.getArea().getNome(); // ajuste se o campo do nome for outro
+                        },
+                        LinkedHashMap::new,
+                        Collectors.counting()
+                ));
+    }
+
+    public Map<String, Long> getDistribuicaoPorCompetencias() {
+        return funcionarioRepo.findAll().stream()
+                .flatMap(func -> func.getCompetencias().stream())
+                .collect(Collectors.groupingBy(
+                        comp -> {
+                            String nome = comp.getNome();
+                            return (nome == null || nome.isBlank()) ? "Sem nome" : nome;
+                        },
+                        LinkedHashMap::new,
+                        Collectors.counting()
+                ));
+    }
 
 }
