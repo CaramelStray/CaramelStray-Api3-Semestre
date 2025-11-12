@@ -52,6 +52,12 @@
           <span>Dashboard</span>
         </router-link>
 
+        <router-link :to="{ name: 'LiderCadastrarColaborador' }" class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        <span>Cadastrar Colaborador</span>
+        </router-link>
       </nav>
 
       <div class="sidebar__footer">
