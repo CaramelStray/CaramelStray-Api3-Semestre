@@ -1,5 +1,6 @@
 package br.com.AllTallent.model;
 
+import java.time.LocalDate; // Import adicionado
 import java.time.OffsetDateTime;
 import java.util.Set;
 
@@ -56,6 +57,15 @@ public class Funcionario {
     private String localizacao;
     private String resumo;
 
+    // --- NOVOS CAMPOS ADICIONADOS ---
+    
+    @Column(name = "id_cracha")
+    private String idCracha;
+
+    @Column(name = "data_admissao")
+    private LocalDate dataAdmissao;
+
+    // --- RELACIONAMENTOS ---
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_area")

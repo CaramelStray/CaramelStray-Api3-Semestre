@@ -17,6 +17,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import br.com.AllTallent.config.CustomUserDetails;
 import org.springframework.web.bind.annotation.*;
 import br.com.AllTallent.service.FuncionarioService; 
+
+// --- NOVAS IMPORTAÇÕES ---
+import br.com.AllTallent.dto.CadastroRequestDTO;
+import br.com.AllTallent.service.AuthService;
+import jakarta.validation.Valid;
+import java.net.URI;
+// --- FIM DAS NOVAS IMPORTAÇÕES ---
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -26,6 +34,9 @@ public class AuthController {
     private final FuncionarioRepository funcionarioRepository;
     private final JwtService jwtService;
     private final FuncionarioService funcionarioService; 
+    
+    // --- NOVO SERVICE INJETADO ---
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
@@ -46,6 +57,24 @@ public class AuthController {
             new LoginResponseDTO(jwtToken, funcionario.getCodigo(), funcionario.getNomeCompleto())
         );
     }
+
+    // --- NOVO ENDPOINT DE CADASTRO ---
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody CadastroRequestDTO request) {
+        try {
+            Funcionario funcionarioSalvo = authService.register(request);
+            
+            // Retorna 201 Created com a localização do novo recurso
+            URI location = URI.create("/api/funcionario/" + funcionarioSalvo.getCodigo());
+            
+            return ResponseEntity.created(location).body("Colaborador cadastrado com sucesso!");
+            
+        } catch (RuntimeException e) {
+            // Se o email já existir ou Area/Perfil não for encontrado
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    // --- FIM DO NOVO ENDPOINT ---
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()") 
