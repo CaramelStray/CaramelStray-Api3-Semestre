@@ -13,6 +13,7 @@ declare module 'vue' {
     CadastroColaborador: typeof import('./components/CadastroColaborador.vue')['default']
     CadastroPerguntas: typeof import('./components/CadastroPerguntas.vue')['default']
     Competencia: typeof import('./components/Competencia.vue')['default']
+    Dashboard: typeof import('./components/Dashboard.vue')['default']
     ExperienciaModal: typeof import('./components/ExperienciaModal.vue')['default']
     Funcionarios: typeof import('./components/Funcionarios.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
