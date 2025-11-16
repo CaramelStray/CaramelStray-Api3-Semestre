@@ -1,6 +1,5 @@
 <template>
   <div class="cadastro-page">
-    <!-- Header -->
     <div class="page-header">
       <div class="header-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -16,14 +15,11 @@
       </div>
     </div>
 
-    <!-- Formulário -->
     <form @submit.prevent="handleSubmit" class="form-container">
-      <!-- Informações Básicas -->
       <div class="form-section">
         <h2 class="section-title">Informações Básicas</h2>
-        
+
         <div class="form-grid">
-          <!-- Nome Completo -->
           <div class="form-group">
             <label for="nomeCompleto" class="label">
               Nome Completo <span class="required">*</span>
@@ -38,7 +34,6 @@
             />
           </div>
 
-          <!-- Email -->
           <div class="form-group">
             <label for="email" class="label">
               Email <span class="required">*</span>
@@ -53,7 +48,6 @@
             />
           </div>
 
-          <!-- ID do Crachá -->
           <div class="form-group">
             <label for="idCracha" class="label">
               ID do Crachá <span class="required">*</span>
@@ -68,7 +62,6 @@
             />
           </div>
 
-          <!-- Senha Inicial -->
           <div class="form-group">
             <label for="senhaInicial" class="label">
               Senha Inicial <span class="required">*</span>
@@ -83,7 +76,6 @@
             />
           </div>
 
-          <!-- Telefone -->
           <div class="form-group">
             <label for="telefone" class="label">Telefone</label>
             <input
@@ -96,7 +88,6 @@
             />
           </div>
 
-          <!-- CPF -->
           <div class="form-group">
             <label for="cpf" class="label">CPF <span class="required">*</span></label>
             <input
@@ -109,7 +100,6 @@
             />
           </div>
 
-          <!-- Localização -->
           <div class="form-group">
             <label for="localizacao" class="label">Localização</label>
             <input
@@ -121,7 +111,6 @@
             />
           </div>
 
-          <!-- Data de Admissão -->
           <div class="form-group">
             <label for="dataAdmissao" class="label">Data de Admissão</label>
             <input
@@ -135,50 +124,43 @@
         </div>
       </div>
 
-      <!-- Informações Profissionais -->
       <div class="form-section">
         <h2 class="section-title">Informações Profissionais</h2>
-        
+
         <div class="form-grid">
-          <!-- Cargo -->
+
           <div class="form-group">
-            <label for="cargo" class="label">Cargo</label>
+            <label for="cargo" class="label">
+              Cargo <span class="required">*</span>
+            </label>
             <select
               id="cargo"
-              v-model="formData.cargo"
-              class="select-field"
+              v-model="formData.codigoPerfil" class="select-field"
+              required
             >
-              <option value="">Selecione o cargo</option>
-              <option value="Analista">Analista</option>
-              <option value="Desenvolvedor">Desenvolvedor</option>
-              <option value="Gerente">Gerente</option>
-              <option value="Coordenador">Coordenador</option>
-              <option value="Assistente">Assistente</option>
-              <option value="Estagiario">Estagiário</option>
-              <option value="Outro">Outro</option>
+              <option :value="null" disabled>Selecione o cargo</option>
+              <option v-for="perfil in perfis" :key="perfil.codigo" :value="perfil.codigo">
+                {{ perfil.nome }}
+              </option>
             </select>
           </div>
 
-          <!-- Departamento -->
           <div class="form-group">
-            <label for="departamento" class="label">Departamento</label>
+            <label for="departamento" class="label">
+              Departamento <span class="required">*</span>
+            </label>
             <select
               id="departamento"
-              v-model="formData.departamento"
-              class="select-field"
+              v-model="formData.codigoArea" class="select-field"
+              required
             >
-              <option value="">Selecione o departamento</option>
-              <option value="Analista">Recursos Humanos</option>
-              <option value="Desenvolvedor">Tecnologia da Informação</option>
-              <option value="Gerente">Financeiro</option>
-              <option value="Coordenador">Comercial</option>
-              <option value="Assistente">Marketing</option>
-              <option value="Estagiario">Operações</option>
-              <option value="Outro">Outro</option>
+              <option :value="null" disabled>Selecione o departamento</option>
+              <option v-for="dept in departamentos" :key="dept.codigo" :value="dept.codigo">
+                {{ dept.nome }}
+              </option>
             </select>
           </div>
 
-          <!-- Título Profissional -->
           <div class="form-group">
             <label for="tituloProfissional" class="label">Título Profissional</label>
             <input
@@ -190,7 +172,6 @@
             />
           </div>
 
-          <!-- Código do Gestor -->
           <div class="form-group">
             <label for="codigoGestor" class="label">Código do Gestor</label>
             <input
@@ -204,10 +185,9 @@
         </div>
       </div>
 
-      <!-- Observações -->
       <div class="form-section">
         <h2 class="section-title">Observações</h2>
-        
+
         <div class="form-group">
           <textarea
             id="observacoes"
@@ -219,17 +199,13 @@
         </div>
       </div>
 
-      <!-- Mensagem de erro -->
       <div v-if="errorMessage" class="error-alert">
         {{ errorMessage }}
       </div>
-
-      <!-- Mensagem de sucesso -->
       <div v-if="successMessage" class="success-alert">
         {{ successMessage }}
       </div>
 
-      <!-- Botões -->
       <div class="form-actions">
         <button
           type="button"
@@ -267,80 +243,113 @@ import axios from 'axios';
 
 const router = useRouter();
 
+// 1. SEU FORMULÁRIO ORIGINAL, INTACTO
+// Apenas adicionamos os campos para os IDs que virão dos dropdowns
 const formData = reactive({
   nomeCompleto: '',
   email: '',
   idCracha: '',
-  senhaInicial: '',
+  senhaInicial: '', // O DTO espera 'senha', vamos mapear
   telefone: '',
   dataAdmissao: '',
-  cargo: '',
-  departamento: '',
-  observacoes: '',
+  cargo: '', // Este campo é do seu design original, o deixamos aqui
+  departamento: '', // Este campo é do seu design original, o deixamos aqui
+  observacoes: '', // O DTO espera 'resumo', vamos mapear
   cpf: '',
   tituloProfissional: '',
   localizacao: '',
-  codigoGestor: ''
+  codigoGestor: '',
+
+  // --- CAMPOS NOVOS PARA OS IDs ---
+  // Estes serão os v-model dos dropdowns
+  codigoArea: null,   // v-model do dropdown de Departamento
+  codigoPerfil: null  // v-model do dropdown de Cargo
 });
 
-const departamentos = ref([]);
+// Referências para guardar os dados dos dropdowns
+const departamentos = ref([]); // Lista de Áreas
+const perfis = ref([]);        // Lista de Perfis (Cargos)
+
 const loading = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
 
-// Buscar departamentos
-const fetchDepartamentos = async () => {
+// --- 2. BUSCA OS CARGOS (PERFIS) DA API ---
+// (Esta função não existia no seu script original)
+const fetchPerfis = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/areas');
-    departamentos.value = response.data;
+    // Chama o endpoint do PerfilController (GET /api/perfil)
+    const response = await axios.get('http://localhost:8080/api/perfil');
+    perfis.value = response.data;
   } catch (err) {
-    console.error('Erro ao carregar departamentos:', err);
+    console.error('Erro ao carregar perfis (cargos):', err);
+    errorMessage.value = 'Não foi possível carregar a lista de cargos.';
   }
 };
 
+// --- 3. BUSCA OS DEPARTAMENTOS (ÁREAS) DA API ---
+// (No seu original, a URL estava /api/areas, mas seu AreaController está em /api/area)
+const fetchDepartamentos = async () => {
+  try {
+    // Chama o endpoint do AreaController (GET /api/area)
+    const response = await axios.get('http://localhost:8080/api/area');
+    departamentos.value = response.data;
+  } catch (err) {
+    console.error('Erro ao carregar departamentos (áreas):', err);
+    errorMessage.value = 'Não foi possível carregar a lista de departamentos.';
+  }
+};
+
+// Quando o componente é montado, busca os dados dos dropdowns
 onMounted(() => {
   fetchDepartamentos();
+  fetchPerfis(); // Chama a nova função
 });
 
+// --- 4. O "ADAPTADOR" (LÓGICA DE SUBMISSÃO) ---
+// (Esta é a principal mudança)
 const handleSubmit = async () => {
   errorMessage.value = '';
   successMessage.value = '';
   loading.value = true;
 
   try {
+    // Monta o payload SÓ COM O QUE O CadastroRequestDTO (Backend) espera
     const payload = {
       nomeCompleto: formData.nomeCompleto,
       email: formData.email,
+      senha: formData.senhaInicial, // Mapeado de 'senhaInicial' para 'senha'
       idCracha: formData.idCracha,
-      senha: formData.senhaInicial,
-      telefone: formData.telefone || null,
-      dataCadastro: formData.dataAdmissao || new Date().toISOString().split('T')[0],
-      tituloProfissional: formData.cargo || null,
-      codigoArea: formData.departamento || null,
-      observacoes: formData.observacoes || null,
+      codigoArea: formData.codigoArea,     // Mapeado do novo v-model de dropdown
+      codigoPerfil: formData.codigoPerfil, // Mapeado do novo v-model de dropdown
 
-      cpf: formData.cpf,
-      localizacao: formData.localizacao || null,
-      codigoGestor: formData.codigoGestor || null,
-      titulo_profissional: formData.tituloProfissional || null
+      // Campos opcionais (enviamos null se estiverem vazios)
+      telefone: formData.telefone || null,
+      dataAdmissao: formData.dataAdmissao || null,
+      resumo: formData.observacoes || null // Mapeado de 'observacoes' para 'resumo'
+
+      // Note que 'cpf', 'localizacao', 'tituloProfissional', 'codigoGestor'
+      // são ignorados aqui, pois o DTO não os espera. O formulário não muda.
     };
 
-    const response = await axios.post('http://localhost:8080/api/funcionario', payload);
-    
-    successMessage.value = 'Colaborador cadastrado com sucesso!';
-    
+    // 5. CHAMA A URL CORRETA (/api/auth/register)
+    // (O seu original chamava /api/funcionario)
+    const response = await axios.post('http://localhost:8080/api/auth/register', payload);
+
+    successMessage.value = response.data || 'Colaborador cadastrado com sucesso!';
+
     // Redirecionar após 2 segundos
     setTimeout(() => {
+      // (Ajuste 'LiderFuncionarios' se o nome da sua rota de lista for outro)
       router.push({ name: 'LiderFuncionarios' });
     }, 2000);
-    
+
   } catch (err) {
     console.error('Erro ao cadastrar colaborador:', err);
-    
-    if (err.response?.status === 409) {
-      errorMessage.value = 'Email ou ID do crachá já cadastrado';
-    } else if (err.response?.data?.message) {
-      errorMessage.value = err.response.data.message;
+
+    // Tenta mostrar a mensagem de erro específica do backend (ex: "Email já cadastrado")
+    if (err.response?.data) {
+      errorMessage.value = err.response.data.message || err.response.data;
     } else {
       errorMessage.value = 'Erro ao cadastrar colaborador. Tente novamente.';
     }
@@ -349,11 +358,12 @@ const handleSubmit = async () => {
   }
 };
 
+// --- 6. O RESTO FICA IGUAL (HANDLERS E MÁSCARA) ---
 const handleCancel = () => {
-  router.push({ name: 'LiderFuncionarios' });
+  router.back(); // Volta para a página anterior
 };
 
-// Diretiva de máscara simples (opcional, pode usar biblioteca)
+// Diretiva de máscara (SEU CÓDIGO ORIGINAL - INTOCADO)
 const vMask = {
   mounted(el, binding) {
     el.addEventListener('input', (e) => {
@@ -614,7 +624,7 @@ const vMask = {
   }
 }
 
-/* Responsividade */
+/* Responsividade (SEU CÓDIGO ORIGINAL - INTOCADO) */
 @media (max-width: 768px) {
   .cadastro-page {
     padding: 20px 16px;

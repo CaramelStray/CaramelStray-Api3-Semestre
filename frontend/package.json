@@ -15,6 +15,7 @@
     "@fontsource/roboto": "5.2.6",
     "@mdi/font": "7.4.47",
     "axios": "^1.12.2",
+    "chart.js": "^4.5.1",
     "vue": "^3.5.17",
     "vuetify": "^3.9.1"
   },
