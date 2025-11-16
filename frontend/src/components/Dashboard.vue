@@ -139,8 +139,11 @@ import { ref, onMounted } from 'vue';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
 
+console.log("🔥 Dashboard.vue foi carregado");
+
 const API_URL = 'http://localhost:8080/api';
 
+// ------- STATE PRINCIPAL -------
 const metrics = ref({
   totalColaboradores: 0,
   avaliacoesConcluidas: 0,
@@ -149,21 +152,33 @@ const metrics = ref({
 });
 
 const evolucaoMensal = ref([]);
+
+// novas listas vindas do back
+const top5Competencias = ref([]);            // top5CompetenciasMaisAvaliadas
+const distribuicaoCompetencias = ref([]);    // totalColaboradoresCompetencia
+const distribuicaoAreas = ref([]);           // totalColaboradoresArea
+
 const loading = ref(true);
 const error = ref(null);
 
+// ------- REFS PARA OS CANVAS -------
 const lineChart = ref(null);
 const barChart = ref(null);
 const competencyBarChart = ref(null);
 const pieChart = ref(null);
 
-// Função para buscar dados do dashboard
+// instâncias dos gráficos (para destruir se recriar)
+const lineChartInstance = ref(null);
+const barChartInstance = ref(null);
+const competencyBarChartInstance = ref(null);
+const pieChartInstance = ref(null);
+
+// ------- BUSCAR DADOS DO DASHBOARD -------
 const fetchDashboardData = async () => {
   try {
     loading.value = true;
     error.value = null;
 
-    // Buscar dados principais do dashboard
     const dashboardResponse = await axios.get(`${API_URL}/dashboard`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -172,7 +187,7 @@ const fetchDashboardData = async () => {
 
     const data = dashboardResponse.data;
 
-    // Atualizar métricas
+    // Cards
     metrics.value = {
       totalColaboradores: data.totalColaboradores || 0,
       avaliacoesConcluidas: data.avaliacoesConcluidasMes || 0,
@@ -180,8 +195,24 @@ const fetchDashboardData = async () => {
       pendencias: data.totalPendencias || 0
     };
 
-    // Atualizar evolução mensal
+    // Linha (evolução mensal)
     evolucaoMensal.value = data.evolucaoMensal || [];
+
+    // Top 5 competências mais avaliadas
+    top5Competencias.value = data.top5CompetenciasMaisAvaliadas || [];
+
+    // Distribuição por competência
+    distribuicaoCompetencias.value = data.totalColaboradoresCompetencia || [];
+
+    // Distribuição por área
+    distribuicaoAreas.value = data.totalColaboradoresArea || [];
+
+    // Se os gráficos já existirem (por exemplo, após um retry),
+    // podemos recriá-los com dados novos:
+    createLineChart();
+    createBarChart();
+    createCompetencyBarChart();
+    createPieChart();
 
   } catch (err) {
     console.error('Erro ao buscar dados do dashboard:', err);
@@ -191,24 +222,26 @@ const fetchDashboardData = async () => {
   }
 };
 
+// ------- GRÁFICO DE LINHA (EVOLUÇÃO MENSAL) -------
 const createLineChart = () => {
   if (!lineChart.value) return;
 
   const ctx = lineChart.value.getContext('2d');
-  
-  // Mapear os meses em português para labels
+
+  if (lineChartInstance.value) {
+    lineChartInstance.value.destroy();
+  }
+
   const mesesPortugues = {
     'Jan': 'Jan', 'Feb': 'Fev', 'Mar': 'Mar', 'Apr': 'Abr',
     'May': 'Mai', 'Jun': 'Jun', 'Jul': 'Jul', 'Aug': 'Ago',
     'Sep': 'Set', 'Oct': 'Out', 'Nov': 'Nov', 'Dec': 'Dez',
-    // Caso venha em português completo
     'Janeiro': 'Jan', 'Fevereiro': 'Fev', 'Março': 'Mar', 'Abril': 'Abr',
     'Maio': 'Mai', 'Junho': 'Jun', 'Julho': 'Jul', 'Agosto': 'Ago',
     'Setembro': 'Set', 'Outubro': 'Out', 'Novembro': 'Nov', 'Dezembro': 'Dez'
   };
 
-  // Usar dados reais da API ou dados de exemplo
-  const labels = evolucaoMensal.value.length > 0 
+  const labels = evolucaoMensal.value.length > 0
     ? evolucaoMensal.value.map(item => mesesPortugues[item.mes] || item.mes)
     : ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'];
 
@@ -218,13 +251,13 @@ const createLineChart = () => {
 
   const maxValue = Math.max(...data, 20) + 5;
 
-  new Chart(ctx, {
+  lineChartInstance.value = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels,
+      labels,
       datasets: [{
         label: 'Colaboradores',
-        data: data,
+        data,
         borderColor: '#2563eb',
         backgroundColor: 'rgba(37, 99, 235, 0.1)',
         tension: 0.4,
@@ -240,43 +273,53 @@ const createLineChart = () => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false
-        }
+        legend: { display: false }
       },
       scales: {
         y: {
           beginAtZero: true,
           max: maxValue,
-          ticks: {
-            color: '#6e7f89'
-          },
-          grid: {
-            color: '#e3eeee'
-          }
+          ticks: { color: '#6e7f89' },
+          grid: { color: '#e3eeee' }
         },
         x: {
-          ticks: {
-            color: '#6e7f89'
-          },
-          grid: {
-            display: false
-          }
+          ticks: { color: '#6e7f89' },
+          grid: { display: false }
         }
       }
     }
   });
 };
 
+// ------- GRÁFICO HORIZONTAL: TOP 5 COMPETÊNCIAS MAIS AVALIADAS -------
 const createBarChart = () => {
+  if (!barChart.value) return;
+
   const ctx = barChart.value.getContext('2d');
-  new Chart(ctx, {
+
+  if (barChartInstance.value) {
+    barChartInstance.value.destroy();
+  }
+
+  const hasData = top5Competencias.value && top5Competencias.value.length > 0;
+
+  const labels = hasData
+    ? top5Competencias.value.map(item =>
+        item.nomeCompetencia || item.competencia || item.nome // ajuste se seus campos forem diferentes
+      )
+    : ['Trabalho em Equipe', 'Comunicação', 'Liderança', 'Gestão de Tempo', 'Resolução de Problemas'];
+
+  const data = hasData
+    ? top5Competencias.value.map(item => item.quantidade || 0)
+    : [145, 132, 128, 125, 98];
+
+  barChartInstance.value = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Trabalho em Equipe', 'Comunicação', 'Liderança', 'Gestão de Tempo', 'Resolução de Problemas'],
+      labels,
       datasets: [{
         label: 'Avaliações',
-        data: [145, 132, 128, 125, 98],
+        data,
         backgroundColor: '#2563eb',
         borderRadius: 6
       }]
@@ -286,44 +329,56 @@ const createBarChart = () => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false
-        }
+        legend: { display: false }
       },
       scales: {
         x: {
           beginAtZero: true,
-          max: 160,
           ticks: {
-            stepSize: 40,
             color: '#6e7f89'
           },
-          grid: {
-            color: '#e3eeee'
-          }
+          grid: { color: '#e3eeee' }
         },
         y: {
-          ticks: {
-            color: '#6e7f89'
-          },
-          grid: {
-            display: false
-          }
+          ticks: { color: '#6e7f89' },
+          grid: { display: false }
         }
       }
     }
   });
 };
 
+// ------- GRÁFICO BARRAS: DISTRIBUIÇÃO POR COMPETÊNCIA -------
 const createCompetencyBarChart = () => {
+  if (!competencyBarChart.value) return;
+
   const ctx = competencyBarChart.value.getContext('2d');
-  new Chart(ctx, {
+
+  if (competencyBarChartInstance.value) {
+    competencyBarChartInstance.value.destroy();
+  }
+
+  const hasData = distribuicaoCompetencias.value && distribuicaoCompetencias.value.length > 0;
+
+  const labels = hasData
+    ? distribuicaoCompetencias.value.map(item =>
+        item.nomeCompetencia || item.competencia || item.nome
+      )
+    : ['Liderança', 'Comunicação', 'Trabalho em Equipe', 'Ser Multitarefa', 'Inovação', 'Gestão de Tempo'];
+
+  const data = hasData
+    ? distribuicaoCompetencias.value.map(item => item.quantidade || 0)
+    : [45, 68, 72, 52, 38, 60];
+
+  const maxValue = Math.max(...data, 10) + 5;
+
+  competencyBarChartInstance.value = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Liderança', 'Comunicação', 'Trabalho em Equipe', 'Ser Multitarefa', 'Inovação', 'Gestão de Tempo'],
+      labels,
       datasets: [{
         label: 'Colaboradores',
-        data: [45, 68, 72, 52, 38, 60],
+        data,
         backgroundColor: '#2563eb',
         borderRadius: 6
       }]
@@ -332,43 +387,54 @@ const createCompetencyBarChart = () => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false
-        }
+        legend: { display: false }
       },
       scales: {
         y: {
           beginAtZero: true,
-          max: 80,
+          max: maxValue,
           ticks: {
-            stepSize: 20,
             color: '#6e7f89'
           },
-          grid: {
-            color: '#e3eeee'
-          }
+          grid: { color: '#e3eeee' }
         },
         x: {
-          ticks: {
-            color: '#6e7f89'
-          },
-          grid: {
-            display: false
-          }
+          ticks: { color: '#6e7f89' },
+          grid: { display: false }
         }
       }
     }
   });
 };
 
+// ------- GRÁFICO PIZZA: DISTRIBUIÇÃO POR ÁREA -------
 const createPieChart = () => {
+  if (!pieChart.value) return;
+
   const ctx = pieChart.value.getContext('2d');
-  new Chart(ctx, {
+
+  if (pieChartInstance.value) {
+    pieChartInstance.value.destroy();
+  }
+
+  const hasData = distribuicaoAreas.value && distribuicaoAreas.value.length > 0;
+
+  const labels = hasData
+    ? distribuicaoAreas.value.map(item =>
+        item.nomeArea || item.area || item.nome
+      )
+    : ['TI', 'RH', 'Financeiro', 'Marketing', 'Operações', 'Vendas'];
+
+  const data = hasData
+    ? distribuicaoAreas.value.map(item => item.quantidade || 0)
+    : [35, 20, 15, 12, 10, 8];
+
+  pieChartInstance.value = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['TI', 'RH', 'Financeiro', 'Marketing', 'Operações', 'Vendas'],
+      labels,
       datasets: [{
-        data: [35, 20, 15, 12, 10, 8],
+        data,
         backgroundColor: [
           '#2563eb',
           '#3b82f6',
@@ -389,9 +455,7 @@ const createPieChart = () => {
           position: 'right',
           labels: {
             padding: 15,
-            font: {
-              size: 12
-            },
+            font: { size: 12 },
             color: '#6e7f89'
           }
         }
@@ -400,15 +464,9 @@ const createPieChart = () => {
   });
 };
 
+// ------- CICLO DE VIDA -------
 onMounted(async () => {
-  // Primeiro buscar os dados da API
   await fetchDashboardData();
-  
-  // Depois criar os gráficos com os dados reais
-  createLineChart();
-  createBarChart();
-  createCompetencyBarChart();
-  createPieChart();
 });
 </script>
 

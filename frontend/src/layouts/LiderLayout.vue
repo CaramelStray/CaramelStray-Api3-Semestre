@@ -96,11 +96,18 @@
 </template>
 
 <script setup>
-// Script setup simples, sem importação do SideMenu
-import { useRoute } from 'vue-router';
-const route = useRoute();
+import { useRoute, useRouter } from 'vue-router';
 
-const logout = () => { console.log("Sair LiderLayout"); };
+const route = useRoute();
+const router = useRouter();
+
+const logout = () => {
+  // 1. Remove o token (mesma chave usada no beforeEach)
+  localStorage.removeItem('token');
+
+  // 2. Redireciona para a tela de login
+  router.push('/login');
+};
 </script>
 
 <style scoped>

@@ -29,10 +29,18 @@
 </template>
 
 <script setup>
-import SideMenuColaborador from '../components/SideMenuColaborador.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+
 const route = useRoute();
-const logout = () => { console.log("Sair ColaboradorLayout"); };
+const router = useRouter();
+
+const logout = () => {
+  // 1. Remove o token (mesma chave usada no beforeEach)
+  localStorage.removeItem('token');
+
+  // 2. Redireciona para a tela de login
+  router.push('/login');
+};
 </script>
 
 <style scoped>
