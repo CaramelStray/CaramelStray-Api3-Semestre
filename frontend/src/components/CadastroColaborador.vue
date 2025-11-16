@@ -96,6 +96,31 @@
             />
           </div>
 
+          <!-- CPF -->
+          <div class="form-group">
+            <label for="cpf" class="label">CPF <span class="required">*</span></label>
+            <input
+              id="cpf"
+              v-model="formData.cpf"
+              type="text"
+              placeholder="000.000.000-00"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <!-- Localização -->
+          <div class="form-group">
+            <label for="localizacao" class="label">Localização</label>
+            <input
+              id="localizacao"
+              v-model="formData.localizacao"
+              type="text"
+              placeholder="Ex: São Paulo / Remoto"
+              class="input-field"
+            />
+          </div>
+
           <!-- Data de Admissão -->
           <div class="form-group">
             <label for="dataAdmissao" class="label">Data de Admissão</label>
@@ -151,6 +176,30 @@
               <option value="Estagiario">Operações</option>
               <option value="Outro">Outro</option>
             </select>
+          </div>
+
+          <!-- Título Profissional -->
+          <div class="form-group">
+            <label for="tituloProfissional" class="label">Título Profissional</label>
+            <input
+              id="tituloProfissional"
+              v-model="formData.tituloProfissional"
+              type="text"
+              placeholder="Ex: Desenvolvedor Pleno"
+              class="input-field"
+            />
+          </div>
+
+          <!-- Código do Gestor -->
+          <div class="form-group">
+            <label for="codigoGestor" class="label">Código do Gestor</label>
+            <input
+              id="codigoGestor"
+              v-model="formData.codigoGestor"
+              type="text"
+              placeholder="ID do gestor responsável"
+              class="input-field"
+            />
           </div>
         </div>
       </div>
@@ -227,7 +276,11 @@ const formData = reactive({
   dataAdmissao: '',
   cargo: '',
   departamento: '',
-  observacoes: ''
+  observacoes: '',
+  cpf: '',
+  tituloProfissional: '',
+  localizacao: '',
+  codigoGestor: ''
 });
 
 const departamentos = ref([]);
@@ -264,7 +317,12 @@ const handleSubmit = async () => {
       dataCadastro: formData.dataAdmissao || new Date().toISOString().split('T')[0],
       tituloProfissional: formData.cargo || null,
       codigoArea: formData.departamento || null,
-      observacoes: formData.observacoes || null
+      observacoes: formData.observacoes || null,
+
+      cpf: formData.cpf,
+      localizacao: formData.localizacao || null,
+      codigoGestor: formData.codigoGestor || null,
+      titulo_profissional: formData.tituloProfissional || null
     };
 
     const response = await axios.post('http://localhost:8080/api/funcionario', payload);
@@ -320,6 +378,7 @@ const vMask = {
 </script>
 
 <style scoped>
+/* SEU CSS ORIGINAL (não alterei nada) */
 .cadastro-page {
   max-width: 800px;
   margin: 0 auto;
