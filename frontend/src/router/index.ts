@@ -20,8 +20,7 @@ import Perfilfun from '../components/perfilFun.vue';
 import Competencia from '../components/Competencia.vue';
 import Perfilbase from '../components/perfilBase.vue';
 import CadastroColaborador from '../components/CadastroColaborador.vue';
-
-const DashboardPage = { template: '<div><h1>Página de Dashboard</h1></div>' };
+import Dashboard from '../components/Dashboard.vue';
 
 const routes: RouteRecordRaw[] = [
   // --- ROTA DE LOGIN PÚBLICA ---
@@ -45,7 +44,6 @@ const routes: RouteRecordRaw[] = [
       { path: 'inicio', name: 'LiderInicio', component: Inicio, meta: { title: 'Sistema Corporativo', subtitle: 'Painel de Liderança' } },
       { path: 'funcionarios', name: 'LiderFuncionarios', component: Lista, meta: { title: 'Lista de Colaboradores', subtitle: 'Visualizar e filtrar equipe' } },
       { path: 'avaliacoes', name: 'LiderAvaliacoes', component: Avaliacao, props: { createHref: { name: 'LiderPerguntas' }, statusHref: { name: 'LiderStatusAvaliacoes' } }, meta: { title: 'Sistema de Avaliações', subtitle: 'Criar e Acompanhar Avaliações' } },
-      { path: 'dashboard', name: 'LiderDashboard', component: DashboardPage, meta: { title: 'Dashboard', subtitle: 'Visão Geral' } },
       { path: 'perguntas/', name: 'LiderPerguntas', component: Perguntas, meta: { title: 'Cadastro de Perguntas', subtitle: 'Gerenciar perguntas globais' } },
       { path: 'areas', name: 'LiderAreas', component: Areas, meta: { title: 'Gerenciamento de Áreas', subtitle: 'Visualizar e cadastrar áreas' } },
       { path: 'avaliacoes/status', name: 'LiderStatusAvaliacoes', component: Status, meta: { title: 'Status das Avaliações', subtitle: 'Acompanhamento de progresso (Líder)' } },
@@ -54,7 +52,8 @@ const routes: RouteRecordRaw[] = [
       { path: 'perfil/:id', name: 'LiderVerPerfil', component: Perfilfun, props: true, meta: { title: 'Perfil do Colaborador', subtitle: 'Informações detalhadas' } },
       { path: 'perfil/:id/competencia', name: 'LiderVerCompetencias', component: Competencia, props: true, meta: { title: 'Gerenciar Competências', subtitle: 'Atribuir ou remover habilidades' } },
       { path: 'status2', name: 'LiderStatus2', component: Status2, meta: { title: 'Status 2', subtitle: 'Página de Teste 2' } },
-      {path: 'cadastrar-colaborador', name: 'LiderCadastrarColaborador', component: CadastroColaborador, meta: {title: 'Cadastrar Colaborador', subtitle: 'Adicionar novo membro à equipe'}}
+      {path: 'cadastrar-colaborador', name: 'LiderCadastrarColaborador', component: CadastroColaborador, meta: {title: 'Cadastrar Colaborador', subtitle: 'Adicionar novo membro à equipe'}},
+      {path: 'dashboard', name: 'LiderDashboard', component: Dashboard, meta: {title: 'Dashboard', subtitle: 'Painel de Controle' }}
     ]
   },
 
