@@ -19,6 +19,7 @@ import Teste from '../components/Teste.vue';
 import Perfilfun from '../components/perfilFun.vue';
 import Competencia from '../components/Competencia.vue';
 import Perfilbase from '../components/perfilBase.vue';
+import CadastroColaborador from '../components/CadastroColaborador.vue';
 
 const DashboardPage = { template: '<div><h1>Página de Dashboard</h1></div>' };
 
@@ -52,7 +53,8 @@ const routes: RouteRecordRaw[] = [
       { path: 'teste', name: 'LiderTeste', component: Teste, props: true, meta: { title: 'Criar Avaliação (Teste)', subtitle: 'Componente antigo' } },
       { path: 'perfil/:id', name: 'LiderVerPerfil', component: Perfilfun, props: true, meta: { title: 'Perfil do Colaborador', subtitle: 'Informações detalhadas' } },
       { path: 'perfil/:id/competencia', name: 'LiderVerCompetencias', component: Competencia, props: true, meta: { title: 'Gerenciar Competências', subtitle: 'Atribuir ou remover habilidades' } },
-      { path: 'status2', name: 'LiderStatus2', component: Status2, meta: { title: 'Status 2', subtitle: 'Página de Teste 2' } }
+      { path: 'status2', name: 'LiderStatus2', component: Status2, meta: { title: 'Status 2', subtitle: 'Página de Teste 2' } },
+      {path: 'cadastrar-colaborador', name: 'LiderCadastrarColaborador', component: CadastroColaborador, meta: {title: 'Cadastrar Colaborador', subtitle: 'Adicionar novo membro à equipe'}}
     ]
   },
 
