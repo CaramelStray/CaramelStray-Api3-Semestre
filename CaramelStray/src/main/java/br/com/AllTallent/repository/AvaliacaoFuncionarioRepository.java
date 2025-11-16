@@ -2,6 +2,9 @@ package br.com.AllTallent.repository;
 
 import java.util.Optional;
 import java.util.List;
+
+import br.com.AllTallent.dto.CompetenciaQuantidadeDTO;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -64,4 +67,18 @@ public interface AvaliacaoFuncionarioRepository extends JpaRepository<AvaliacaoF
             AND a.data_prazo BETWEEN :dataInicio AND :dataFim
     """)
     Integer countAprovadasNoMes(@Param("dataInicio") LocalDate dataInicio, @Param("dataFim") LocalDate dataFim);
+
+
+
+    //consulta para o gráfico de ranking das 5 competências mais avaliadas
+    @Query("""
+        SELECT c.nome, COUNT(rc)
+        FROM RespostaColaborador rc
+        JOIN rc.pergunta p
+        JOIN p.competencia c
+        GROUP BY c.nome
+        ORDER BY COUNT(rc) DESC
+    """)
+    List<CompetenciaQuantidadeDTO> findTopCompetenciasMaisAvaliadas(Pageable pageable);
+
 }

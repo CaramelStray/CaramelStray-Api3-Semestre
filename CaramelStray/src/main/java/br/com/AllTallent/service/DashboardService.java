@@ -1,6 +1,8 @@
 package br.com.AllTallent.service;
 
 // --- NOVAS IMPORTAÇÕES ---
+import br.com.AllTallent.dto.AreaQuantidadeDTO;
+import br.com.AllTallent.dto.CompetenciaQuantidadeDTO;
 import br.com.AllTallent.dto.DashboardResponseDTO;
 import br.com.AllTallent.dto.MesQuantidadeDTO;
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import br.com.AllTallent.repository.AvaliacaoRepository;
 import br.com.AllTallent.repository.FuncionarioRepository;
 import br.com.AllTallent.repository.RespostaColaboradorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Importar
 
@@ -37,9 +40,27 @@ public class DashboardService {
     @Autowired
     private RespostaColaboradorRepository respostaColaboradorRepo;
 
+
+
     // --- NOVO MÉTODO PARA O NOVO DASHBOARD ---
     // Este método é performático e busca os dados corretos (mensais)
     @Transactional(readOnly = true)
+
+    // TOTAL DE COLABORADORES POR ÁREA
+    public List<AreaQuantidadeDTO> getTotalColaboradoresArea() {
+        return funcionarioRepo.countFuncionariosPorArea();
+    }
+    // --- TOTAL DE COLABORADORES POR COMPETÊNCIA ---
+    public List<CompetenciaQuantidadeDTO> getTotalColaboradoresCompetencia() {
+        return funcionarioRepo.countFuncionariosPorCompetencia();
+    }
+
+    // --- TOP 5 COMPETÊNCIAS MAIS AVALIADAS ---
+    public List<CompetenciaQuantidadeDTO> getTop5CompetenciasMaisAvaliadas() {
+        return avaliacaoFuncionarioRepo
+                .findTopCompetenciasMaisAvaliadas(PageRequest.of(0, 5));
+    }
+
     public DashboardResponseDTO getDashboardData() {
 
         // --- Cálculos de Data ---
@@ -69,78 +90,11 @@ public class DashboardService {
                 .metaMensal(metaMensal)
                 .totalPendencias(totalPendencias)
                 .evolucaoMensal(evolucao)
+                .totalColaboradoresCompetencia(getTotalColaboradoresCompetencia())
+                .top5CompetenciasMaisAvaliadas(getTop5CompetenciasMaisAvaliadas())
+                .totalColaboradoresArea(getTotalColaboradoresArea())
                 .build();
     }
     // --- FIM DO NOVO MÉTODO ---
 
-
-    // --- SEUS MÉTODOS ANTIGOS (COM LÓGICA DE PERFORMANCE INEFICIENTE) ---
-    // (Mantidos aqui para não quebrar o resto do seu sistema)
-    public Map<String, Object> gerarResumo() {
-        List<Funcionario> funcionarios = funcionarioRepo.findAll();
-        List<Avaliacao> instancias = avaliacaoRepo.findAll();
-        List<AvaliacaoFuncionario> instanciasFuncionarios = avaliacaoFuncionarioRepo.findAll();
-        List<RespostaColaborador> instanciasRespostas = respostaColaboradorRepo.findAll();
-
-        long totalColaboradores = funcionarios.size();
-        long avaliacoesConcluidas = instancias.stream()
-                .filter(i -> "CONCLUIDO".equalsIgnoreCase(i.getStatus()))
-                .count();
-
-        long avaliacoesPendentes = instancias.stream()
-                .filter(i -> "PENDENTE".equalsIgnoreCase(i.getStatus()))
-                .count();
-
-        List<String> colaboradoresPendentes = instanciasFuncionarios.stream()
-                .filter(i -> "PENDENTE".equalsIgnoreCase(i.getResultadoStatus()))
-                .map(i -> i.getFuncionario().getNomeCompleto())
-                .distinct()
-                .toList();
-
-        List<String> colaboradoresSemEntrega = instanciasFuncionarios.stream()
-                .filter(instancia -> {
-                    List<RespostaColaborador> respostas = respostaColaboradorRepo
-                            .findByAvaliacaoFuncionarioCodigo(instancia.getCodigo());
-                    return respostas.isEmpty();
-                })
-                .map(instancia -> instancia.getFuncionario().getNomeCompleto())
-                .distinct()
-                .toList();
-
-        Map<String, Object> dados = new LinkedHashMap<>();
-        dados.put("totalColaboradores", totalColaboradores);
-        dados.put("avaliacoesConcluidas", avaliacoesConcluidas);
-        dados.put("avaliacoesPendentes", avaliacoesPendentes);
-        dados.put("colaboradoresPendentes", colaboradoresPendentes);
-        dados.put("colaboradoresSemEntrega", colaboradoresSemEntrega);
-
-        return dados;
-    }
-
-    public Map<String, Long> getDistribuicaoPorArea() {
-        return funcionarioRepo.findAll().stream()
-                .collect(Collectors.groupingBy(
-                        f -> {
-                            if (f.getArea() == null) {
-                                return "Sem área";
-                            }
-                            return f.getArea().getNome();
-                        },
-                        LinkedHashMap::new,
-                        Collectors.counting()
-                ));
-    }
-
-    public Map<String, Long> getDistribuicaoPorCompetencias() {
-        return funcionarioRepo.findAll().stream()
-                .flatMap(func -> func.getCompetencias().stream())
-                .collect(Collectors.groupingBy(
-                        comp -> {
-                            String nome = comp.getNome();
-                            return (nome == null || nome.isBlank()) ? "Sem nome" : nome;
-                        },
-                        LinkedHashMap::new,
-                        Collectors.counting()
-                ));
-    }
 }

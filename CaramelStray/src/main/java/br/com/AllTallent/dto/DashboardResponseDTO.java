@@ -24,4 +24,15 @@ public class DashboardResponseDTO {
 
     // Gráfico: Evolução Mensal (Colaboradores contratados por mês)
     private List<MesQuantidadeDTO> evolucaoMensal;
+
+    //Gráfico: Distribuição de colaboradores por competência
+    private List<CompetenciaQuantidadeDTO> totalColaboradoresCompetencia;
+
+
+    //Gráfico de pizza: Distribuição de colaboradores por área de atuação
+    private List<AreaQuantidadeDTO> totalColaboradoresArea;
+
+
+    //Gráfico: ranking de 5 competencias mais avaliadas
+    private List<CompetenciaQuantidadeDTO> top5CompetenciasMaisAvaliadas;
 }
