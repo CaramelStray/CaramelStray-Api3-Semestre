@@ -95,6 +95,5 @@ public class DashboardService {
                 .totalColaboradoresArea(getTotalColaboradoresArea())
                 .build();
     }
-    // --- FIM DO NOVO MÉTODO ---
 
 }

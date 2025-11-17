@@ -54,18 +54,20 @@
           <div class="metric-card__change positive">Avaliações concluídas este mês</div>
         </div>
 
-        <div class="metric-card">
-          <div class="metric-card__header">
-            <div class="metric-card__label">Meta Mensal</div>
-            <div class="metric-card__icon">
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              </svg>
-            </div>
-          </div>
-          <div class="metric-card__value">{{ metrics.mediaMensal }}%</div>
-          <div class="metric-card__change positive">Percentual de aprovação mensal</div>
-        </div>
+         <!--
+<div class="metric-card">
+  <div class="metric-card__header">
+    <div class="metric-card__label">Meta Mensal</div>
+    <div class="metric-card__icon">
+      <svg viewBox="0 0 24 24" width="20" height="20">
+        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+  <div class="metric-card__value">{{ metrics.mediaMensal }}%</div>
+  <div class="metric-card__change positive">Percentual de aprovação mensal</div>
+</div>
+-->
 
         <div class="metric-card">
           <div class="metric-card__header">
@@ -135,15 +137,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
 
-console.log("🔥 Dashboard.vue foi carregado");
-
 const API_URL = 'http://localhost:8080/api';
 
-// ------- STATE PRINCIPAL -------
+// --------- STATE PRINCIPAL ---------
 const metrics = ref({
   totalColaboradores: 0,
   avaliacoesConcluidas: 0,
@@ -152,28 +152,26 @@ const metrics = ref({
 });
 
 const evolucaoMensal = ref([]);
-
-// novas listas vindas do back
-const top5Competencias = ref([]);            // top5CompetenciasMaisAvaliadas
-const distribuicaoCompetencias = ref([]);    // totalColaboradoresCompetencia
-const distribuicaoAreas = ref([]);           // totalColaboradoresArea
+const top5Competencias = ref([]);
+const distribuicaoCompetencias = ref([]);
+const distribuicaoAreas = ref([]);
 
 const loading = ref(true);
 const error = ref(null);
 
-// ------- REFS PARA OS CANVAS -------
+// --------- REFS DOS CANVAS ---------
 const lineChart = ref(null);
 const barChart = ref(null);
 const competencyBarChart = ref(null);
 const pieChart = ref(null);
 
-// instâncias dos gráficos (para destruir se recriar)
+// instâncias dos gráficos (pra poder destruir ao recriar)
 const lineChartInstance = ref(null);
 const barChartInstance = ref(null);
 const competencyBarChartInstance = ref(null);
 const pieChartInstance = ref(null);
 
-// ------- BUSCAR DADOS DO DASHBOARD -------
+// --------- BUSCAR DADOS DO BACK ---------
 const fetchDashboardData = async () => {
   try {
     loading.value = true;
@@ -186,6 +184,7 @@ const fetchDashboardData = async () => {
     });
 
     const data = dashboardResponse.data;
+    console.log('Body /api/dashboard:', data);
 
     // Cards
     metrics.value = {
@@ -195,34 +194,29 @@ const fetchDashboardData = async () => {
       pendencias: data.totalPendencias || 0
     };
 
-    // Linha (evolução mensal)
+    // Dados dos gráficos
     evolucaoMensal.value = data.evolucaoMensal || [];
-
-    // Top 5 competências mais avaliadas
     top5Competencias.value = data.top5CompetenciasMaisAvaliadas || [];
-
-    // Distribuição por competência
     distribuicaoCompetencias.value = data.totalColaboradoresCompetencia || [];
-
-    // Distribuição por área
     distribuicaoAreas.value = data.totalColaboradoresArea || [];
-
-    // Se os gráficos já existirem (por exemplo, após um retry),
-    // podemos recriá-los com dados novos:
-    createLineChart();
-    createBarChart();
-    createCompetencyBarChart();
-    createPieChart();
 
   } catch (err) {
     console.error('Erro ao buscar dados do dashboard:', err);
     error.value = 'Não foi possível carregar os dados do dashboard';
   } finally {
+    // 1) some com o loading
     loading.value = false;
+    // 2) espera o DOM renderizar os canvases do v-else
+    await nextTick();
+    // 3) cria os gráficos
+    createLineChart();
+    createBarChart();
+    createCompetencyBarChart();
+    createPieChart();
   }
 };
 
-// ------- GRÁFICO DE LINHA (EVOLUÇÃO MENSAL) -------
+// --------- GRÁFICO: EVOLUÇÃO MENSAL ---------
 const createLineChart = () => {
   if (!lineChart.value) return;
 
@@ -232,17 +226,9 @@ const createLineChart = () => {
     lineChartInstance.value.destroy();
   }
 
-  const mesesPortugues = {
-    'Jan': 'Jan', 'Feb': 'Fev', 'Mar': 'Mar', 'Apr': 'Abr',
-    'May': 'Mai', 'Jun': 'Jun', 'Jul': 'Jul', 'Aug': 'Ago',
-    'Sep': 'Set', 'Oct': 'Out', 'Nov': 'Nov', 'Dec': 'Dez',
-    'Janeiro': 'Jan', 'Fevereiro': 'Fev', 'Março': 'Mar', 'Abril': 'Abr',
-    'Maio': 'Mai', 'Junho': 'Jun', 'Julho': 'Jul', 'Agosto': 'Ago',
-    'Setembro': 'Set', 'Outubro': 'Out', 'Novembro': 'Nov', 'Dezembro': 'Dez'
-  };
-
+  // no seu JSON vem "11/2025", então vamos só exibir isso mesmo
   const labels = evolucaoMensal.value.length > 0
-    ? evolucaoMensal.value.map(item => mesesPortugues[item.mes] || item.mes)
+    ? evolucaoMensal.value.map(item => item.mes)
     : ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'];
 
   const data = evolucaoMensal.value.length > 0
@@ -272,9 +258,7 @@ const createLineChart = () => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
@@ -291,7 +275,7 @@ const createLineChart = () => {
   });
 };
 
-// ------- GRÁFICO HORIZONTAL: TOP 5 COMPETÊNCIAS MAIS AVALIADAS -------
+// --------- GRÁFICO: TOP 5 COMPETÊNCIAS MAIS AVALIADAS ---------
 const createBarChart = () => {
   if (!barChart.value) return;
 
@@ -304,9 +288,7 @@ const createBarChart = () => {
   const hasData = top5Competencias.value && top5Competencias.value.length > 0;
 
   const labels = hasData
-    ? top5Competencias.value.map(item =>
-        item.nomeCompetencia || item.competencia || item.nome // ajuste se seus campos forem diferentes
-      )
+    ? top5Competencias.value.map(item => item.nomeCompetencia)
     : ['Trabalho em Equipe', 'Comunicação', 'Liderança', 'Gestão de Tempo', 'Resolução de Problemas'];
 
   const data = hasData
@@ -328,15 +310,11 @@ const createBarChart = () => {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         x: {
           beginAtZero: true,
-          ticks: {
-            color: '#6e7f89'
-          },
+          ticks: { color: '#6e7f89' },
           grid: { color: '#e3eeee' }
         },
         y: {
@@ -348,7 +326,7 @@ const createBarChart = () => {
   });
 };
 
-// ------- GRÁFICO BARRAS: DISTRIBUIÇÃO POR COMPETÊNCIA -------
+// --------- GRÁFICO: DISTRIBUIÇÃO POR COMPETÊNCIA ---------
 const createCompetencyBarChart = () => {
   if (!competencyBarChart.value) return;
 
@@ -361,9 +339,7 @@ const createCompetencyBarChart = () => {
   const hasData = distribuicaoCompetencias.value && distribuicaoCompetencias.value.length > 0;
 
   const labels = hasData
-    ? distribuicaoCompetencias.value.map(item =>
-        item.nomeCompetencia || item.competencia || item.nome
-      )
+    ? distribuicaoCompetencias.value.map(item => item.nomeCompetencia)
     : ['Liderança', 'Comunicação', 'Trabalho em Equipe', 'Ser Multitarefa', 'Inovação', 'Gestão de Tempo'];
 
   const data = hasData
@@ -386,16 +362,12 @@ const createCompetencyBarChart = () => {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
           max: maxValue,
-          ticks: {
-            color: '#6e7f89'
-          },
+          ticks: { color: '#6e7f89' },
           grid: { color: '#e3eeee' }
         },
         x: {
@@ -407,7 +379,7 @@ const createCompetencyBarChart = () => {
   });
 };
 
-// ------- GRÁFICO PIZZA: DISTRIBUIÇÃO POR ÁREA -------
+// --------- GRÁFICO: DISTRIBUIÇÃO POR ÁREA ---------
 const createPieChart = () => {
   if (!pieChart.value) return;
 
@@ -420,9 +392,7 @@ const createPieChart = () => {
   const hasData = distribuicaoAreas.value && distribuicaoAreas.value.length > 0;
 
   const labels = hasData
-    ? distribuicaoAreas.value.map(item =>
-        item.nomeArea || item.area || item.nome
-      )
+    ? distribuicaoAreas.value.map(item => item.nomeArea)
     : ['TI', 'RH', 'Financeiro', 'Marketing', 'Operações', 'Vendas'];
 
   const data = hasData
@@ -464,8 +434,9 @@ const createPieChart = () => {
   });
 };
 
-// ------- CICLO DE VIDA -------
+// --------- CICLO DE VIDA ---------
 onMounted(async () => {
+  console.log('🔥 Dashboard.vue foi montado');
   await fetchDashboardData();
 });
 </script>
