@@ -20,8 +20,30 @@
     <div v-else>
       <!-- Header -->
       <div class="dashboard-header">
-        <h1 class="page-title">Painel de Controle</h1>
-        <p class="page-subtitle">Acompanhe as principais métricas e indicadores da empresa</p>
+        <div>
+          <h1 class="page-title">Painel de Controle</h1>
+          <p class="page-subtitle">Acompanhe as principais métricas e indicadores da empresa</p>
+        </div>
+
+        <!-- Filtro por Área / Equipe -->
+        <div class="team-filter">
+          <label for="area-select" class="team-filter__label">Equipe / Área</label>
+          <select
+            id="area-select"
+            v-model="selectedArea"
+            @change="onAreaChange"
+            class="team-filter__select"
+          >
+            <option value="">Todas</option>
+            <option
+              v-for="area in areas"
+              :key="area.codigo"
+              :value="area.codigo"
+            >
+              {{ area.nome }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <!-- Metrics Cards -->
@@ -54,20 +76,20 @@
           <div class="metric-card__change positive">Avaliações concluídas este mês</div>
         </div>
 
-         <!--
-<div class="metric-card">
-  <div class="metric-card__header">
-    <div class="metric-card__label">Meta Mensal</div>
-    <div class="metric-card__icon">
-      <svg viewBox="0 0 24 24" width="20" height="20">
-        <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
-    </div>
-  </div>
-  <div class="metric-card__value">{{ metrics.mediaMensal }}%</div>
-  <div class="metric-card__change positive">Percentual de aprovação mensal</div>
-</div>
--->
+        <!--
+        <div class="metric-card">
+          <div class="metric-card__header">
+            <div class="metric-card__label">Meta Mensal</div>
+            <div class="metric-card__icon">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
+          </div>
+          <div class="metric-card__value">{{ metrics.mediaMensal }}%</div>
+          <div class="metric-card__change positive">Percentual de aprovação mensal</div>
+        </div>
+        -->
 
         <div class="metric-card">
           <div class="metric-card__header">
@@ -156,6 +178,10 @@ const top5Competencias = ref([]);
 const distribuicaoCompetencias = ref([]);
 const distribuicaoAreas = ref([]);
 
+// NOVO: áreas para o filtro
+const areas = ref([]);
+const selectedArea = ref('');
+
 const loading = ref(true);
 const error = ref(null);
 
@@ -171,8 +197,30 @@ const barChartInstance = ref(null);
 const competencyBarChartInstance = ref(null);
 const pieChartInstance = ref(null);
 
+// --------- BUSCAR ÁREAS / EQUIPES ---------
+const fetchAreas = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/area`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    console.log('Resposta de /api/area:', response.data);
+
+    // Normaliza os dados para { codigo, nome }
+    areas.value = (response.data || []).map((area) => ({
+      // aqui a gente tenta várias possibilidades pra não depender do nome exato dos campos
+      codigo: area.codigo ?? area.codigoArea ?? area.id,
+      nome: area.nome ?? area.nomeArea ?? area.descricao
+    }));
+  } catch (err) {
+    console.error('Erro ao buscar áreas/equipes:', err);
+  }
+};
+
 // --------- BUSCAR DADOS DO BACK ---------
-const fetchDashboardData = async () => {
+const fetchDashboardData = async (codigoArea = '') => {
   try {
     loading.value = true;
     error.value = null;
@@ -180,6 +228,10 @@ const fetchDashboardData = async () => {
     const dashboardResponse = await axios.get(`${API_URL}/dashboard`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      params: {
+        // tem que bater com o @RequestParam("codigoArea")
+        codigoArea: codigoArea || undefined
       }
     });
 
@@ -204,16 +256,18 @@ const fetchDashboardData = async () => {
     console.error('Erro ao buscar dados do dashboard:', err);
     error.value = 'Não foi possível carregar os dados do dashboard';
   } finally {
-    // 1) some com o loading
     loading.value = false;
-    // 2) espera o DOM renderizar os canvases do v-else
     await nextTick();
-    // 3) cria os gráficos
     createLineChart();
     createBarChart();
     createCompetencyBarChart();
     createPieChart();
   }
+};
+
+// handler do select
+const onAreaChange = () => {
+  fetchDashboardData(selectedArea.value);
 };
 
 // --------- GRÁFICO: EVOLUÇÃO MENSAL ---------
@@ -226,7 +280,6 @@ const createLineChart = () => {
     lineChartInstance.value.destroy();
   }
 
-  // no seu JSON vem "11/2025", então vamos só exibir isso mesmo
   const labels = evolucaoMensal.value.length > 0
     ? evolucaoMensal.value.map(item => item.mes)
     : ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov'];
@@ -437,7 +490,8 @@ const createPieChart = () => {
 // --------- CICLO DE VIDA ---------
 onMounted(async () => {
   console.log('🔥 Dashboard.vue foi montado');
-  await fetchDashboardData();
+  await fetchAreas();          // carrega lista de áreas/equipes
+  await fetchDashboardData();  // carrega dados gerais (todas)
 });
 </script>
 
@@ -512,6 +566,10 @@ onMounted(async () => {
 /* Header */
 .dashboard-header {
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
 }
 
 .page-title {
@@ -525,6 +583,37 @@ onMounted(async () => {
   color: var(--subtitle, #6e7f89);
   font-size: 15px;
   margin: 0;
+}
+
+/* Filtro de Equipe / Área */
+.team-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.team-filter__label {
+  font-size: 13px;
+  color: var(--subtitle, #6e7f89);
+  font-weight: 500;
+}
+
+.team-filter__select {
+  min-width: 220px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e3eeee);
+  background: var(--card, #ffffff);
+  font-size: 14px;
+  color: var(--title, #274b57);
+  font-family: inherit;
+  outline: none;
+}
+
+.team-filter__select:focus {
+  border-color: var(--blue, #2563eb);
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 
 /* Metrics Grid */
@@ -664,6 +753,11 @@ onMounted(async () => {
   .page-title {
     font-size: 24px;
   }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
   
   .metric-card__value {
     font-size: 28px;
@@ -671,6 +765,10 @@ onMounted(async () => {
   
   .chart-card__body {
     height: 250px;
+  }
+
+  .team-filter__select {
+    width: 100%;
   }
 }
 </style>

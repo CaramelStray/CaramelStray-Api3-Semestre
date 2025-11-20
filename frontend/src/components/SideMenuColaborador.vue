@@ -8,7 +8,7 @@
         </svg>
       </div>
       <div class="sidebar__text">
-        <div class="sidebar__title">Sistema RH</div>
+        <div class="sidebar__title">Gestor de Equipes</div>
         <div class="sidebar__subtitle">Colaborador</div>
       </div>
     </div>

@@ -12,12 +12,9 @@
             </svg>
           </div>
           <div class="brand__text">
-            <div class="brand__title">{{ $route.meta.title || 'Sistema RH' }}</div>
+            <div class="brand__title">{{ $route.meta.title || 'Gestor de Equipes' }}</div>
             <div class="brand__subtitle">{{ $route.meta.subtitle || 'Colaborador' }}</div>
           </div>
-        </div>
-        <div class="actions">
-          <button class="btn-outline" @click="logout">Sair</button>
         </div>
       </header>
 

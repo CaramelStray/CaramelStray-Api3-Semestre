@@ -9,7 +9,7 @@
           </svg>
         </div>
         <div class="sidebar__text">
-          <div class="sidebar__title">Sistema RH</div>
+          <div class="sidebar__title">Gestor de Equipes</div>
           <div class="sidebar__subtitle">Liderança</div>
         </div>
       </div>
@@ -79,13 +79,11 @@
           </svg>
         </div>
         <div class="brand__text">
-          <div class="brand__title">{{ $route.meta.title || 'Sistema RH' }}</div>
+          <div class="brand__title">{{ $route.meta.title || 'Gestor de Equipes' }}</div>
           <div class="brand__subtitle">{{ $route.meta.subtitle || 'Liderança' }}</div>
         </div>
       </div>
-      <div class="actions">
-        <button class="btn-outline" @click="logout">Sair</button>
-      </div>
+    
     </header>
 
     <div class="content-area">
