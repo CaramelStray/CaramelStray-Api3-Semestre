@@ -1,33 +1,18 @@
-package br.com.AllTallent.model; 
+package br.com.AllTallent.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "codigo")
 @Entity
 @Table(name = "tb_cad_resposta_colaborador")
 public class RespostaColaborador {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_cad_resposta_colaborador_codigo_seq")
-    @SequenceGenerator(name = "tb_cad_resposta_colaborador_codigo_seq", sequenceName = "tb_cad_resposta_colaborador_codigo_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Seu banco usa sequence, mas identity deve funcionar se estiver configurado
     private Long codigo;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,9 +24,24 @@ public class RespostaColaborador {
     private Pergunta pergunta;
 
     @Column(name = "resposta_texto", columnDefinition = "TEXT")
-    private String respostaTexto; 
+    private String respostaTexto;
 
+    // AQUI ESTÁ O PULO DO GATO: O nome do atributo que vamos usar em todo lugar
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_pergunta_opcao_selecionada") 
-    private PerguntaOpcao opcaoSelecionada;
+    @JoinColumn(name = "codigo_pergunta_opcao_selecionada")
+    private PerguntaOpcao perguntaOpcaoSelecionada; 
+
+    // Métodos auxiliares para compatibilidade com código antigo (se precisar)
+    public PerguntaOpcao getOpcaoSelecionada() {
+        return this.perguntaOpcaoSelecionada;
+    }
+
+    public void setOpcaoSelecionada(PerguntaOpcao opcao) {
+        this.perguntaOpcaoSelecionada = opcao;
+    }
+    
+    // Método auxiliar para pegar o ID direto (útil para DTOs)
+    public Long getCodigoPerguntaOpcaoSelecionada() {
+        return (this.perguntaOpcaoSelecionada != null) ? this.perguntaOpcaoSelecionada.getCodigo() : null;
+    }
 }

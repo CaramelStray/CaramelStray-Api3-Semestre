@@ -30,4 +30,24 @@
         </query>
     </named-native-query>
 
+    <named-native-query name="FuncionarioRepository.findEvolucaoMensalByArea" 
+                          result-set-mapping="EvolucaoMensalMapping">
+        <query>
+            <![CDATA[
+                SELECT 
+                    TO_CHAR(DATE_TRUNC('month', data_admissao), 'YYYY-MM') AS mes,
+                    COUNT(*) AS quantidade
+                FROM 
+                    tb_cad_funcionario
+                WHERE 
+                    data_admissao IS NOT NULL
+                    AND codigo_area = :codigoArea
+                GROUP BY 
+                    DATE_TRUNC('month', data_admissao)
+                ORDER BY 
+                    mes
+            ]]>
+        </query>
+    </named-native-query>
+
 </entity-mappings>

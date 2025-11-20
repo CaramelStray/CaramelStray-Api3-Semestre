@@ -39,29 +39,31 @@ public class PerguntaService {
         novaPergunta.setCompetencia(competencia);
         novaPergunta.setTipoPergunta(dto.tipoPergunta()); 
 
-        
-        if ("multipla escolha".equalsIgnoreCase(dto.tipoPergunta()) && dto.opcoes() != null && !dto.opcoes().isEmpty()) {
+        // CORREÇÃO DO BUG: Verificação mais robusta do tipo (com ou sem acento)
+        String tipo = dto.tipoPergunta() != null ? dto.tipoPergunta().toLowerCase() : "";
+        boolean isMultipla = tipo.contains("múltipla") || tipo.contains("multipla");
+
+        if (isMultipla && dto.opcoes() != null && !dto.opcoes().isEmpty()) {
             System.out.println(">>> Processando " + dto.opcoes().size() + " opções recebidas.");
             
             Set<PerguntaOpcao> opcoesSet = new HashSet<>();
             
-
             for (OpcaoRequest opRequest : dto.opcoes()) { 
-        if (opRequest.descricao() != null && !opRequest.descricao().trim().isEmpty()) {
-            PerguntaOpcao opcao = new PerguntaOpcao();
-            
-            // Configure os dois campos
-            opcao.setDescricaoOpcao(opRequest.descricao().trim());
-            opcao.setIsCorreta(opRequest.isCorreta()); // <--- AQUI
-            
-            opcao.setPergunta(novaPergunta);
-            opcoesSet.add(opcao);
-        }
-    }
-    
-    novaPergunta.setOpcoes(opcoesSet);
-}else {
-             System.out.println(">>> Não é múltipla escolha ou não há opções válidas a processar.");
+                if (opRequest.descricao() != null && !opRequest.descricao().trim().isEmpty()) {
+                    PerguntaOpcao opcao = new PerguntaOpcao();
+                    
+                    opcao.setDescricaoOpcao(opRequest.descricao().trim());
+                    opcao.setIsCorreta(opRequest.isCorreta());
+                    
+                    // VINCULO IMPORTANTE: JPA precisa saber quem é o pai
+                    opcao.setPergunta(novaPergunta); 
+                    
+                    opcoesSet.add(opcao);
+                }
+            }
+            novaPergunta.setOpcoes(opcoesSet);
+        } else {
+             System.out.println(">>> Não é múltipla escolha ou não há opções válidas. Tipo recebido: " + tipo);
         }
 
         System.out.println(">>> Salvando Pergunta no repositório..."); 

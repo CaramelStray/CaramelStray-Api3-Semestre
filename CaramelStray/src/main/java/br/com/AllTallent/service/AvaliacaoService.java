@@ -1,5 +1,7 @@
 package br.com.AllTallent.service;
 
+import java.util.stream.Collectors;
+import java.util.List;
 import br.com.AllTallent.dto.*; 
 import br.com.AllTallent.exception.ResourceNotFoundException; 
 import br.com.AllTallent.exception.UnauthorizedActionException; 
@@ -14,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.Objects; // <<< IMPORT ADICIONADO
+import java.util.Objects;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -334,4 +336,35 @@ public class AvaliacaoService {
          instancia.getRespostas().forEach(r -> Hibernate.initialize(r.getOpcaoSelecionada())); 
          return new AvaliacaoRevisaoDTO(instancia, avaliacaoBase);
      }
+
+    // --- MÉTODO CORRIGIDO PARA A REVISÃO DO SUPERVISOR ---
+    @Transactional(readOnly = true)
+    public List<RevisaoDetalhadaDTO> buscarDadosRevisao(Long codigoAvaliacaoFuncionario) {
+        
+        // 1. Verifica se a avaliação existe
+        if (!avaliacaoFuncionarioRepository.existsById(codigoAvaliacaoFuncionario)) {
+            throw new EntityNotFoundException("Avaliação de funcionário não encontrada com id: " + codigoAvaliacaoFuncionario);
+        }
+
+        // 2. Busca as respostas associadas a essa avaliação
+        List<RespostaColaborador> respostas = respostaColaboradorRepository.findByAvaliacaoFuncionarioCodigo(codigoAvaliacaoFuncionario);
+
+        // 3. Converte para o DTO de visualização
+        return respostas.stream().map(resp -> {
+            // LÓGICA CORRIGIDA AQUI:
+            Long idOpcao = null;
+            if (resp.getPerguntaOpcaoSelecionada() != null) {
+                idOpcao = resp.getPerguntaOpcaoSelecionada().getCodigo();
+            }
+
+            return RevisaoDetalhadaDTO.builder()
+                .perguntaId(resp.getPergunta().getCodigo())
+                .perguntaTexto(resp.getPergunta().getPergunta())
+                .respostaDada(resp.getRespostaTexto()) 
+                .opcaoSelecionadaId(idOpcao) // Usa a variável que calculamos acima
+                .build();
+        }).collect(Collectors.toList());
+    }
+
+     
 }
