@@ -45,7 +45,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 | 4 | Alta | Como supervisor ou diretor, eu quero avaliar os colaboradores, para que eu possa acompanhar sua evolução profissional e identificar pontos fortes ou de melhoria. | 8 | 2 |
 | 5 | Média | Como diretor ou supervisor, eu quero poder registrar novos usuários, para que eles possam ter acesso aos recursos do sistema. | 5 | 3 |
 | 6 | Média | Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso. | 3 | 3 |
-| 7 | Média | Como diretor, eu quero gerar relatórios de competências da equipe, para que eu possa tomar decisões de alocação e treinamentos. | 8 | 3 |
+| 7 | Média | Como usuário, eu devo ter uma usabilidade clara e padronizada no sistema. | 5 | 3 |
 | 8 | Alta | Como diretor, eu quero acessar dashboards de competências, para que eu possa visualizar métricas da equipe de forma clara e rápida. | 8 | 3 |
 
 ---
