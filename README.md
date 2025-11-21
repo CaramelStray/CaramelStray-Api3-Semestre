@@ -11,10 +11,9 @@
   | <a href ="#desafio"> Desafio</a>  |
   <a href ="#solucao"> Solução</a>  |
   <a href ="#backlog"> Backlog do Produto</a>  |
-  <a href ="#sprint"> Cronograma de Sprints</a>  |
-  <a href ="#tecnologias">Tecnologias</a> |
-  <a href ="#branchs">Manual de Branchs</a>  |
-  <a href ="#pb">Product backlog -> DOR e DOD</a>  |
+  <a href ="#sprint"> Cronograma de Sprints</a>  | <a href ="#sprint">Product backlog -> DOR e DOD</a> |
+  <a href ="#tecnologias">Tecnologias</a> |  <a href ="#figma">Figma</a> |
+  <a href ="#branchs">Estrutura de Branchs</a>  |
   <a href ="#equipe"> Equipe</a> |
 </p>
 
@@ -56,7 +55,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------- |----------------------------------------------- |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./Documentação/SprintBacklog.md) | [Sprint 1 Tasks](./Documentação/BackLog-Sprint-1.md)  |[Sprint 1 entrega](#) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/SprintBacklog.md) |[Sprint 2 Tasks](./Documentação/Backlog-Sprint2.md)|  |
-| 🔖 **SPRINT 3** | 03/11 - 23/11 | | ||
+| 🔖 **SPRINT 3** | 03/11 - 23/11 | [Sprint 3 Docs](./Documentação/SprintBacklog.md) | [Sprint 3 Tasks](./Documentação/Backlog-Sprint3.md) ||
 | ⚡️ **feira de soluções** | 04/12 |  |  ||
 
 ## 💻 Tecnologias <a id="tecnologias"></a>
@@ -74,7 +73,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
  <a href="https://www.figma.com/"><img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/></a>
 </h4>
 
-# 🪵 Estrutura de branchs
+# 🪵 Estrutura de branchs <a id="branchs"></a>
 
 [📄 Estrutura de branchs](./Documentação/estrutura_de_branchs.md)
 
