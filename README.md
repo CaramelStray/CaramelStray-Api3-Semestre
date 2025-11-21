@@ -55,7 +55,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 | Sprint          |    Período    | Documentação                                     |            Alocação das tasks               | Vídeo Entrega                                  |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------- |----------------------------------------------- |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./Documentação/SprintBacklog.md) | [Sprint 1 Tasks](./Documentação/BackLog-Sprint-1.md)  |[Sprint 1 entrega](#) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/SprintBacklog.md) || [Sprint 2 Tasks](./Documentação/Backlog-Sprint2.md) |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./Documentação/SprintBacklog.md) |[Sprint 2 Tasks](./Documentação/Backlog-Sprint2.md)|  |
 | 🔖 **SPRINT 3** | 03/11 - 23/11 | | ||
 | ⚡️ **feira de soluções** | 04/12 |  |  ||
 
