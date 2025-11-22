@@ -33,3 +33,7 @@ Esta Sprint, focada em estabelecer a base de **Perfis** e **Tags de Competência
 | **Database (SQL)** | D2.1 | **Criar e versionar o Script SQL (V2)** para a tabela `competency_tags` e a tabela pivô (`user_competency_tags`). | 3h | ✅ Concluída | ✅ PostgreSQL, ✅ Scripts versionados |
 | **Frontend (Vue)** | F2.1 | **Desenvolver o componente "Visualizador/Gerenciador de Tags"** para exibir as tags em um perfil e permitir a adição/remoção (Vuetify chips/autocomplete). | 8h | ✅ Concluída | ✅ Vuetify, ✅ Figma |
 | **Frontend (Vue)** | F2.2 | **Integrar o gerenciador de tags** (F2.1) com o endpoint de backend (B2.2) para atualização em tempo real. Validar em Homologação. | 6h | ✅ Concluída | ✅ Integração |
+
+### Dados
+- 📝 Planilha original (Google Sheets): https://docs.google.com/spreadsheets/d/1r0aeFDEpNP3cPAwtIt-F7OhtGDTFcSjes-tYQEKTEwc/edit?usp=sharing  
+- 📁 Versão para análise: [Sprint1 Tasks csv](./Documentação/sprint1.csv)
