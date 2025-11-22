@@ -13,11 +13,9 @@ Todos os commits dessa branch devem ser estáveis.
 
 ---
 
-### `sprint1`
-É onde foram inseridas todas as atualizações referentes à **Sprint 1**.
+### `sprintn`
+É onde foram inseridas todas as atualizações referentes às **Sprints correspondentes**.
 
-### `sprint2`
-É onde foram inseridas todas as atualizações referentes à **Sprint 2**.
 
 ---
 
