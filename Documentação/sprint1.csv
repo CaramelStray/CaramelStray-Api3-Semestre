@@ -1,0 +1,18 @@
+Summary,Issue key,Assignee,Sprint,Issue id,Issue Type,Status,Resolution,Reporter,Creator,Created,Updated,Resolved,Due date,Sprint
+[FE] Validar campos obrigatórios,SCRUM-51,,SCRUM Sprint 1,10115,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:11 PM,09/nov./25 15:38,09/nov./25 15:38,,
+[TEST] Validar atribuição e filtragem por tags.,SCRUM-56,,SCRUM Sprint 1,10125,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:13 PM,09/nov./25 15:37,09/nov./25 15:37,26/Sep/25 12:00 AM,
+"[FE] Fazer o redirecionamento na tela de listagem de colaboradores, aos seus respectivos perfis",SCRUM-77,rodrigues312016,SCRUM Sprint 2,10364,Task,Concluído,Done,Patricia Moraes Viegas dos Santos,Patricia Moraes Viegas dos Santos,22/Oct/25 5:44 PM,09/nov./25 15:37,09/nov./25 15:37,,SCRUM Sprint 1
+[FE] ajustar a cor da tela de perfil e de competência,SCRUM-80,Giovana Zucareli,SCRUM Sprint 2,10367,Task,Concluído,Done,Patricia Moraes Viegas dos Santos,Patricia Moraes Viegas dos Santos,22/Oct/25 5:58 PM,09/nov./25 15:37,09/nov./25 15:37,,SCRUM Sprint 1
+[FE] Criar interface para adicionar/remover tags.,SCRUM-55,Patricia Moraes Viegas dos Santos,SCRUM Sprint 1,10123,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:12 PM,30/Sep/25 9:27 PM,26/Sep/25 2:52 PM,24/Sep/25 12:00 AM,
+"[BE] Endpoints CRUD para tags (criar, atribuir, remover).",SCRUM-54,Patricia Moraes Viegas dos Santos,SCRUM Sprint 1,10121,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:12 PM,29/Sep/25 1:17 PM,29/Sep/25 1:17 PM,26/Sep/25 12:00 AM,
+[BE] Criar endpoints CRUD para perfil,SCRUM-49,rodrigues312016,SCRUM Sprint 1,10111,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:10 PM,29/Sep/25 11:00 AM,29/Sep/25 11:00 AM,22/Sep/25 12:00 AM,
+[DB] Criar tabela `Tags` vinculada a usuários.,SCRUM-53,William Daisuke Honda,SCRUM Sprint 1,10119,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:12 PM,26/Sep/25 8:09 PM,26/Sep/25 8:09 PM,20/Sep/25 12:00 AM,
+[TEST] Testar atualização de perfil,SCRUM-52,Thomas Gustavo Heinrich,SCRUM Sprint 1,10117,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:11 PM,26/Sep/25 8:08 PM,26/Sep/25 8:08 PM,24/Sep/25 12:00 AM,
+[TEST] Validar build local e integração básica.,SCRUM-46,Daniel Lima,SCRUM Sprint 1,10106,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:05 PM,24/Sep/25 6:22 PM,24/Sep/25 6:22 PM,24/Sep/25 12:00 AM,
+[DB] Configurar conexão PostgreSQL,SCRUM-43,Daniel Lima,SCRUM Sprint 1,10100,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:04 PM,19/Sep/25 7:19 PM,18/Sep/25 2:19 PM,18/Sep/25 12:00 AM,
+[FE] Criar projeto Vue.js + Vuetify.,SCRUM-44,Daniel Lima,SCRUM Sprint 1,10102,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:05 PM,18/Sep/25 6:29 PM,18/Sep/25 6:29 PM,18/Sep/25 12:00 AM,
+[FE] Criar tela de edição do perfil profissional,SCRUM-50,,SCRUM Sprint 1,10113,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:11 PM,17/Sep/25 9:03 PM,17/Sep/25 9:03 PM,22/Sep/25 12:00 AM,
+[FE] Criar layout base com navegação (Figma).,SCRUM-45,Thomas Gustavo Heinrich,SCRUM Sprint 1,10104,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:05 PM,17/Sep/25 8:44 PM,17/Sep/25 8:44 PM,,
+[BE] Criar projeto Spring Boot,SCRUM-42,,SCRUM Sprint 1,10098,Task,Concluído,Done,Daniel Lima,Daniel Lima,09/Sep/25 4:04 PM,17/Sep/25 8:35 PM,17/Sep/25 8:35 PM,,
+Criação do banco e tabelas,SCRUM-32,William Daisuke Honda,SCRUM Sprint 1,10087,Task,Concluído,Done,Thomas Gustavo Heinrich,Thomas Gustavo Heinrich,08/Sep/25 10:13 PM,09/Sep/25 9:31 PM,09/Sep/25 9:31 PM,,
+Modelagem do banco de dados,SCRUM-31,William Daisuke Honda,SCRUM Sprint 1,10086,Task,Concluído,Done,Thomas Gustavo Heinrich,Thomas Gustavo Heinrich,08/Sep/25 10:12 PM,09/Sep/25 9:31 PM,09/Sep/25 9:31 PM,,

@@ -1,0 +1,106 @@
+Summary,Issue key,Assignee,Status,Issue id,Issue Type,Project name,Sprint,Project lead,Resolution,Reporter,Created,Updated,Resolved,Description,Watchers,Original estimate,Sprint
+"[FE] Fazer o redirecionamento na tela de listagem de colaboradores, aos seus respectivos perfis",SCRUM-77,rodrigues312016,Concluído,10364,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 5:44 PM,09/nov./25 15:37,09/nov./25 15:37,,Patricia Moraes Viegas dos Santos,,SCRUM Sprint 1
+[FE] ajustar a cor da tela de perfil e de competência,SCRUM-80,Giovana Zucareli,Concluído,10367,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 5:58 PM,09/nov./25 15:37,09/nov./25 15:37,"a tela de perfil e de competência, ainda está verde. mudar para azul
+
+
+caminho da tela de perfil no router:
+
+{{path: '/perfil/:id'}}
+
+caminho pra tela de competências no router:
+
+{{path: '/perfil/:id/competencia'}}
+",Patricia Moraes Viegas dos Santos,,SCRUM Sprint 1
+[DOC] Me ajudar a organizar o git-hub (apagar depois),SCRUM-85,Giovana Zucareli,Concluído,10398,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,25/Oct/25 9:22 PM,08/nov./25 14:29,08/nov./25 14:29,,Patricia Moraes Viegas dos Santos,,
+[BE] Finalizar os end-points do sistema de avaliação,SCRUM-84,William Daisuke Honda,Concluído,10397,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,25/Oct/25 9:18 PM,08/nov./25 14:29,08/nov./25 14:29,,Patricia Moraes Viegas dos Santos,,
+[BE] Finalizar os end-points do sistema de avaliação,SCRUM-83,Thomas Gustavo Heinrich,Concluído,10396,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,25/Oct/25 9:18 PM,08/nov./25 14:29,08/nov./25 14:29,,Patricia Moraes Viegas dos Santos,,
+[BE] Finalizar os end-points com relação à avaliação,SCRUM-81,Daniel Lima,Concluído,10368,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 6:53 PM,08/nov./25 14:29,08/nov./25 14:29,,Patricia Moraes Viegas dos Santos,,
+SCRUM-74 [FE] Implementar nas outras telas o menu lateral do menu principal,SCRUM-76,rodrigues312016,Concluído,10363,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 3:43 PM,05/nov./25 21:30,24/Oct/25 11:23 PM,"Colocar em todas as telas (colaborador -perfil, competências, avaliação / lider- colaboradores, sistema de avaliações, cadastro de perguntas e status das avaliações) o menu lateral já implementado na tela de menu
+
+Colaborador:
+
+!colaborador1.png|width=266,alt=""colaborador1.png""!
+
+!colaborador-compentencia.png|width=266,alt=""colaborador-compentencia.png""!
+
+!colaborador-status avalia.png|width=266,alt=""colaborador-status avalia.png""!
+
+!colaborador- avaliacao.png|width=266,alt=""colaborador- avaliacao.png""!
+
+Líder:
+
+!lider- listagem.png|width=266,alt=""lider- listagem.png""!
+
+!lider- perfilcolab.png|width=266,alt=""lider- perfilcolab.png""!
+
+!lider-competencia.png|width=266,alt=""lider-competencia.png""!
+
+!lider-sistema de avaliacao.png|width=266,alt=""lider-sistema de avaliacao.png""!
+
+!lider-perguntas.png|width=266,alt=""lider-perguntas.png""!
+
+!lider-status avaliacao.png|width=266,alt=""lider-status avaliacao.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-71 [BE] Fazer o redirecionamento dos botões de menu inicial líder e menu lateral de colaboradores e líder,SCRUM-71,rodrigues312016,Concluído,10264,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,18/Oct/25 11:08 AM,26/Oct/25 6:41 PM,26/Oct/25 6:41 PM,"TELAS 
+
+/inicio-> ADICIONAR CAMINHOS PARA OS RESPECTIVOS BOTÕES
+
+* VIZUALIZAR COLABORADORES .
+* STATUS 
+
+
+
+
+FALTA ATUALIZAR CADA TELA COM O MENU LADERAL(EXCETO DO LIDER QUE É DIFERENTE), ADICIONAR ESSE CODIGO NO FRONT DE CADA TELA:
+
+
+
+{noformat}<!-- Menu lateral -->
+<aside class=""sidebar"">
+<div class=""sidebar__header"">
+  <div class=""sidebar__logo"">
+    <svg viewBox=""0 0 24 24"" width=""20"" height=""20"">
+      <rect x=""3"" y=""3"" width=""18"" height=""18"" rx=""2"" fill=""none"" stroke=""currentColor"" stroke-width=""2""/>
+      <path d=""M9 3v18M15 3v18M3 9h18M3 15h18"" stroke=""currentColor"" stroke-width=""2""/>
+    </svg>
+  </div>
+  <div class=""sidebar__text"">
+    <div class=""sidebar__title"">Sistema RH</div>
+    <div class=""sidebar__subtitle"">Liderança</div>
+  </div>
+</div>
+
+  <div class=""sidebar__user"">
+    <div class=""user-avatar"">L</div>
+    <div class=""user-info"">
+      <div class=""user-name"">Líder</div>
+      <div class=""user-email"">lider@empresa.com</div>
+    </div>
+  </div>{noformat}",Patricia Moraes Viegas dos Santos,,
+SCRUM-66 [FE] Incluir o menu navegação com os botões de líder + colaboradores em todas as telas já concluídas,SCRUM-66,rodrigues312016,Concluído,10198,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,11/Oct/25 2:33 PM,26/Oct/25 6:40 PM,26/Oct/25 6:40 PM,"!Captura de tela de 2025-10-10 16-21-25.png|width=791,height=657,alt=""Captura de tela de 2025-10-10 16-21-25.png""!
+
+!Captura de tela de 2025-10-11 14-32-55.png|width=1440,height=900,alt=""Captura de tela de 2025-10-11 14-32-55.png""!
+
+!Captura de tela de 2025-10-11 14-32-38.png|width=1440,height=900,alt=""Captura de tela de 2025-10-11 14-32-38.png""!
+
+!Captura de tela de 2025-10-11 14-33-06.png|width=1440,height=900,alt=""Captura de tela de 2025-10-11 14-33-06.png""!",Patricia Moraes Viegas dos Santos,,
+[BD] Implementar mudanças para incluir as respostas e um prazo de conclusão da avaliação ao colaborador,SCRUM-79,William Daisuke Honda,Concluído,10366,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 5:57 PM,25/Oct/25 9:23 PM,25/Oct/25 9:23 PM,,Patricia Moraes Viegas dos Santos,,
+[FE] Fazer o design da tela de listagem das avaliações,SCRUM-78,Patricia Moraes Viegas dos Santos,Concluído,10365,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 5:46 PM,25/Oct/25 3:23 PM,25/Oct/25 3:23 PM,,Patricia Moraes Viegas dos Santos,,
+[FE] Criar a tela de listagem das respostas dos colaboradores,SCRUM-82,Giovana Zucareli,Concluído,10369,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,22/Oct/25 6:57 PM,22/Oct/25 9:55 PM,22/Oct/25 9:55 PM,"!image-20251022-215809.png|width=266,alt=""image-20251022-215809.png""!
+
+!image-20251022-215826.png|width=266,alt=""image-20251022-215826.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-73[FE] Fazer a tela de status das avaliações,SCRUM-73,Thomas Gustavo Heinrich,Concluído,10298,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,20/Oct/25 8:37 PM,22/Oct/25 7:30 PM,22/Oct/25 7:30 PM,"!image-20251020-233737.png|width=266,alt=""image-20251020-233737.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-68 [BE] Criar os endpoints da tela de perguntas,SCRUM-68,William Daisuke Honda,Concluído,10200,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,11/Oct/25 2:41 PM,22/Oct/25 3:50 PM,22/Oct/25 3:50 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-72 [FE] Fazer a tela de avaliação,SCRUM-72,Thomas Gustavo Heinrich,Concluído,10297,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,20/Oct/25 8:31 PM,22/Oct/25 3:50 PM,22/Oct/25 3:50 PM,"!image-20251020-233323.png|width=266,alt=""image-20251020-233323.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-70 [FE] Fazer a tela de menu do colaborador,SCRUM-70,Thomas Gustavo Heinrich,Concluído,10232,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,15/Oct/25 12:55 PM,22/Oct/25 3:50 PM,22/Oct/25 3:50 PM,"!image-20251015-155644.png|width=1425,height=833,alt=""image-20251015-155644.png""!",Patricia Moraes Viegas dos Santos,,
+"SCRUM-69 [FE] Incluir na tela de perguntas a parte dos filtros, tipo de resposta e botão criar avaliação",SCRUM-69,Thomas Gustavo Heinrich,Concluído,10231,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,15/Oct/25 12:53 PM,18/Oct/25 11:10 AM,18/Oct/25 11:10 AM,"!image-20251015-155326.png|width=1439,height=834,alt=""image-20251015-155326.png""!
+
+!image-20251015-155402.png|width=1430,height=679,alt=""image-20251015-155402.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-67 [FE] Definir e validar com equipe o design de avaliações no figma,SCRUM-67,Patricia Moraes Viegas dos Santos,Concluído,10199,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,11/Oct/25 2:36 PM,15/Oct/25 5:40 PM,15/Oct/25 5:40 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-64 [FE] Incluir campo de pesquisa por nome na tela de lista de colaboradores,SCRUM-65,Thomas Gustavo Heinrich,Concluído,10166,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,06/Oct/25 10:19 PM,15/Oct/25 12:46 PM,15/Oct/25 12:46 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-65 [BE] Criar os endpoints da tela de Listagem de perfil,SCRUM-64,Daniel Lima,Concluído,10165,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,06/Oct/25 10:09 PM,15/Oct/25 12:46 PM,15/Oct/25 12:46 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-59 [FE] Criar Front da tela de cadastrar perguntas por perfil,SCRUM-59,Giovana Zucareli,Concluído,10134,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,04/Oct/25 10:12 AM,10/Oct/25 9:50 AM,10/Oct/25 9:50 AM,"!image-20251005-153802.png|width=949,height=737,alt=""image-20251005-153802.png""!",Patricia Moraes Viegas dos Santos,,
+SCRUM-62 [FE] Criar tela de menu base,SCRUM-62,Thomas Gustavo Heinrich,Concluído,10137,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,04/Oct/25 3:29 PM,06/Oct/25 9:38 PM,06/Oct/25 9:38 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-58 [FE] Criar o Front das telas: listagem de perfil,SCRUM-58,Thomas Gustavo Heinrich,Concluído,10133,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,04/Oct/25 10:11 AM,06/Oct/25 9:37 PM,06/Oct/25 9:37 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM- 63 [BD] Incluir campo de avaliação ligado ao perfil,SCRUM-63,William Daisuke Honda,Concluído,10138,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,05/Oct/25 1:33 PM,06/Oct/25 9:37 PM,06/Oct/25 9:37 PM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-60 [FE] Incluir botões de navegação nas telas e perfil colab. e de competências,SCRUM-60,rodrigues312016,Concluído,10135,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,04/Oct/25 11:08 AM,06/Oct/25 11:12 AM,06/Oct/25 11:12 AM,,Patricia Moraes Viegas dos Santos,,
+SCRUM-57 [FE] Criar o protótipo das telas que o diretor terá acesso e a tela de avaliação do colaborador,SCRUM-57,Patricia Moraes Viegas dos Santos,Concluído,10132,Task,Caramel Stray,SCRUM Sprint 2,Patricia Moraes ,Done,Patricia Moraes ,04/Oct/25 10:00 AM,05/Oct/25 12:19 PM,05/Oct/25 12:19 PM,,Patricia Moraes Viegas dos Santos,,
