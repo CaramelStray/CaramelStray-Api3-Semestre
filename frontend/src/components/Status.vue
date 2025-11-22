@@ -1,28 +1,6 @@
 <template>
   <div> 
-    <header class="topbar-local">
-      <div class="topbar-local__inner">
-        <button @click="handleVoltar" class="btn icon" aria-label="Voltar">
-          <svg viewBox="0 0 24 24" class="icon__svg"><path d="M15 18 9 12l6-6"/></svg>
-        </button>
-        <div class="title">
-          <div class="title__icon">
-            <svg viewBox="0 0 24 24" class="title__icon-svg">
-              <rect x="4" y="3" width="16" height="18" rx="2" fill="none" stroke="currentColor"/>
-              <path d="M9 3v2h6V3" fill="none" stroke="currentColor"/>
-              <path d="M9 9h6" fill="none" stroke="currentColor"/>
-              <path d="M9 13h6" fill="none" stroke="currentColor"/>
-              <path d="M9 17h6" fill="none" stroke="currentColor"/>
-            </svg>
-          </div>
-          <div>
-            <h1 class="title__main">Status das Avaliações (Líder)</h1>
-            <p class="title__sub">Visualize o progresso das avaliações criadas</p>
-          </div>
-        </div>
-      </div>
-    </header>
-    
+
     <main class="container">
       
       <div v-if="loading" class="text-center py-10 text-slate-600" style="text-align: center; padding: 2.5rem 0; color: #475569;">
