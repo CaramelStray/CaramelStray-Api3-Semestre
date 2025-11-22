@@ -30,6 +30,8 @@
           <span>Início</span>
         </router-link>
 
+        
+
         <router-link :to="{ name: 'LiderFuncionarios' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -38,12 +40,29 @@
           <span>Colaboradores</span>
         </router-link>
 
+
         <router-link :to="{ name: 'LiderAvaliacoes' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" fill="none" stroke="currentColor" stroke-width="2"/>
           </svg>
           <span>Avaliações</span>
         </router-link>
+
+        <router-link
+  :to="{ name: 'LiderVerCompetencias', params: { id: 1 } }"
+  class="nav-item"
+>
+  <svg viewBox="0 0 24 24" width="20" height="20">
+    <path
+      d="M5 5h14v4H5zM5 11h14v4H5zM5 17h8v4H5z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span>Competências</span>
+</router-link>
 
         <router-link :to="{ name: 'LiderDashboard' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
