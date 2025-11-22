@@ -36,5 +36,5 @@ Esta Sprint, focada em estabelecer a base de **Perfis** e **Tags de Competência
 
 ### Dados
 - 📝 Planilha original (Google Sheets): https://docs.google.com/spreadsheets/d/1r0aeFDEpNP3cPAwtIt-F7OhtGDTFcSjes-tYQEKTEwc/edit?usp=sharing  
-- 📁 Versão para análise: [Sprint1 Tasks csv](Documentacao/sprint1.csv)
+- 📁 Versão para análise: [Sprint1 Tasks csv](./sprint1.csv)
 
