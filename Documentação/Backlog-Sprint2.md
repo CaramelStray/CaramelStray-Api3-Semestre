@@ -42,6 +42,8 @@ Esta Sprint, focada em estabelecer a base de **Perfis** e **Tags de Competência
 | **Backend (Spring Boot)**       | B3.3        | **Finalizar os endpoints relacionados às avaliações.**                                                 | 5h                     | ✅ Concluída | ✅ Spring Boot, ✅ Testes             |
 | **Frontend (Vue.js)**           | F3.8        | **Criar a tela de listagem das respostas dos colaboradores.**                                          | 6h                     | ✅ Concluída | ✅ Vue.js, ✅ Integração Backend      |
 
-
+### Dados
+- 📝 Planilha original (Google Sheets): https://docs.google.com/spreadsheets/d/1frL6FXkfENcCwqjMnwLCObYQp4ZJwlVWINT7swGQLfs/edit?usp=sharing  
+- 📁 Versão para análise: [Sprint1 Tasks csv](./sprint2.csv)
 
 
