@@ -47,8 +47,8 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S1-1 | Como colaborador, quero editar meu perfil profissional                     | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [1] Edição de perfil |
-| S1-2 | Como diretor ou supervisor, quero adicionar tags aos perfis dos colaboradores | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [2] Implementação de tags |
+| S1-1 | Como colaborador, quero editar meu perfil profissional                     | Alta       | ✅ Concluída   | ✅                | ✅            | ✅            | [1] Edição de perfil |
+| S1-2 | Como diretor ou supervisor, quero adicionar tags aos perfis dos colaboradores | Alta     | ✅ Concluída   | ✅                | ✅            | ✅            | [2] Implementação de tags |
 
 ---
 
@@ -56,8 +56,8 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S2-1 | Como usuário, quero visualizar os perfis e suas respectivas equipes        | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [3] Listagem e organização de equipes |
-| S2-2 | Como supervisor ou diretor, quero avaliar os colaboradores                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [4] Avaliações de colaboradores |
+| S2-1 | Como usuário, quero visualizar os perfis e suas respectivas equipes        | Média      | ✅ Concluída | ✅                | ✅            | ✅            | [3] Listagem e organização de equipes |
+| S2-2 | Como supervisor ou diretor, quero avaliar os colaboradores                 | Alta       | ✅ Concluída   | ✅                | ✅            | ✅            | [4] Avaliações de colaboradores |
 
 ---
 
@@ -65,10 +65,10 @@
 
 | ID   | User Story                                                                 | Prioridade | Status        | Backlog Completo | DoR Atendido | DoD Atendido | Requisito Referenciado |
 |------|----------------------------------------------------------------------------|------------|---------------|------------------|--------------|--------------|------------------------|
-| S3-1 | Como diretor ou supervisor, quero cadastrar novos usuários                 | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [5] Cadastro de usuários com hierarquia |
-| S3-2 | Como usuário, quero realizar login seguro na plataforma                    | Alta       | 🚀 Planejada  | ✅                | ❌            | ❌            | [6] Login e autenticação via JWT |
-| S3-3 | Como diretor, quero gerar relatórios exportáveis da equipe                 | Média      | 🚀 Planejada  | ✅                | ❌            | ❌            | [7] Relatórios exportáveis |
-| S3-4 | Como diretor, quero acessar dashboards de competências com filtros dinâmicos | Alta     | 🚀 Planejada  | ✅                | ❌            | ❌            | [8] Dashboard visual |
+| S3-1 | Como diretor ou supervisor, quero cadastrar novos usuários                 | Alta       | ✅ Concluída   | ✅                | ✅            | ✅            | [5] Cadastro de usuários com hierarquia |
+| S3-2 | Como usuário, quero realizar login seguro na plataforma                    | Alta       | ✅ Concluída   | ✅                | ✅            | ✅            | [6] Login e autenticação via JWT |
+| S3-3 | Como usuário, eu devo ter uma usabilidade clara e padronizada no sistema                 | Média      | ✅ Concluída  | ✅                | ✅            | ✅            | [7] Correção de pendencias de usabilidade |
+| S3-4 | Como diretor, quero acessar dashboards de competências com filtros dinâmicos | Alta     | ✅ Concluída   | ✅                | ✅            | ✅            | [8] Dashboard visual |
 
 ---
 
