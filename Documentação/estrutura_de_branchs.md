@@ -21,8 +21,8 @@ Todos os commits dessa branch devem ser estáveis.
 
 ---
 
-### `endpoints`
-Essas branchs são criadas a partir da branch da sprint de referência para facilitar o desenvolvimento de novas funcionalidades.  
+### `features`
+Essas branchs são criadas a partir da branch da sprint de referência para facilitar o desenvolvimento de novas funcionalidades, testes ou correção de erros.  
 Uma vez que a funcionalidade é completa, testada e aceita, ela é mergeada novamente na branch da sprint correspondente.
 
 ---
