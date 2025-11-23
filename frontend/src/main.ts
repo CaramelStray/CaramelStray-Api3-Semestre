@@ -1,44 +1,35 @@
+// Conteúdo de frontend/src/main.ts
+
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
+
+// Components
 import App from './App.vue'
+// Composables
 import { createApp } from 'vue'
+// Plugins
 import { registerPlugins } from '@/plugins'
+// Auth (para simular usuário nos menus/componentes)
 import { useAuth } from './auth'
-import axios from 'axios'
+// Importa o router por causa do seu uso no auth.ts/outros
+import router from './router';
 
 
-const { logout, carregarSessao } = useAuth();
+// --- LÓGICA DE INICIALIZAÇÃO ---
 
+// 1. Inicia o uso do sistema de autenticação
+const { carregarSessao } = useAuth()
 
-axios.interceptors.response.use(
-  (response) => response, 
-  async (error) => {
-    const status = error.response ? error.response.status : null;
-    if (status === 401) {
-      console.warn("Axios Interceptor: Recebido 401. Deslogando.");
-      await logout();
-    }
-    return Promise.reject(error);
-  }
-);
+// 2. Cria a aplicação Vue
+const app = createApp(App)
 
+// 3. Registra TODOS os plugins
+registerPlugins(app)
 
-async function startApp() {
-  
-  
-  try {
-    await carregarSessao();
-  } catch (e) {
-    console.error("Falha ao restaurar sessão no main.ts", e);
-  }
-
-  
-  const app = createApp(App);
-
-  
-  registerPlugins(app);
-
-  
+// 4. Monta a aplicação APÓS O CARREGAMENTO DE SESSÃO
+carregarSessao().finally(() => {
   app.mount('#app');
-}
-
-
-startApp();
+});

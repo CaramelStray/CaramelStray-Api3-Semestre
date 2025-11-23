@@ -30,8 +30,10 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SideMenu: typeof import('./components/SideMenu.vue')['default']
     SideMenuColaborador: typeof import('./components/SideMenuColaborador.vue')['default']
+    SideMenuSupervisor: typeof import('./components/SideMenuSupervisor.vue')['default']
     Status: typeof import('./components/Status.vue')['default']
     Status2: typeof import('./components/Status2.vue')['default']
+    StatusSupervisor: typeof import('./components/StatusSupervisor.vue')['default']
     Teste: typeof import('./components/Teste.vue')['default']
   }
 }
