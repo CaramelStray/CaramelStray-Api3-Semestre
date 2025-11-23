@@ -49,7 +49,7 @@
         </router-link>
 
         <router-link
-  :to="{ name: 'LiderVerCompetencias', params: { id: 1 } }"
+  :to="{ name: 'LiderVerCompetencias', params: { id: usuarioLogado.codigo } }"
   class="nav-item"
 >
   <svg viewBox="0 0 24 24" width="20" height="20">
@@ -114,9 +114,12 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
+import { useAuth } from '../auth';
 
 const route = useRoute();
 const router = useRouter();
+
+const { usuarioLogado } = useAuth();
 
 const logout = () => {
   // 1. Remove o token (mesma chave usada no beforeEach)

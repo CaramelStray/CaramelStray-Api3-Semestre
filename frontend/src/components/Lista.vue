@@ -57,7 +57,7 @@
         </div>
         <div class="card__body">
           <div class="card__header">
-            <router-link :to="{ name: 'LiderVerPerfil', params: { id: c.id } }" class="emp-name-link">
+            <router-link :to="{ name: nomeRotaPerfil, params: { id: c.id } }" class="emp-name-link">
               <h3 class="emp-name">{{ c.name }}</h3>
             </router-link>
             <span v-if="c.badge" class="badge">{{ c.badge }}</span>
@@ -107,6 +107,13 @@ const statuses = ref(["Ativo", "Férias", "Inativo"]);
 const collaborators = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(6);
+
+const nomeRotaPerfil = computed(() => {
+  if (usuarioLogado.value && usuarioLogado.value.perfilId === 2) {
+    return 'SupervisorVerPerfil';
+  }
+  return 'LiderVerPerfil';
+});
 
 const filtered = computed(() => {
   let list = collaborators.value.filter(c => {
