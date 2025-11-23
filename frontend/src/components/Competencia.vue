@@ -51,47 +51,73 @@
       </button>
     </section>
 
-    <!-- NOVA SESSÃO: CRIAR COMPETÊNCIA -->
-    <section class="create">
-      <h3 class="create__title">Cadastrar nova competência</h3>
-      <p class="create__hint">
-        Preencha os campos abaixo para adicionar uma nova competência à base.
-      </p>
+    
+    <div class="create-toggle-area">
+      <button 
+        class="btn-toggle-create" 
+        @click="showCreateForm = !showCreateForm"
+        :class="{ 'active': showCreateForm }"
+      >
+        <span v-if="!showCreateForm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Cadastrar nova competência
+        </span>
+        <span v-else>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          Cancelar cadastro
+        </span>
+      </button>
+    </div>
 
-      <div class="create__grid">
-        <div class="field">
-          <label for="novo-nome" class="field__label">Nome da competência</label>
-          <input
-            id="novo-nome"
-            v-model="novoNome"
-            type="text"
-            class="field__input"
-            placeholder="Ex: Comunicação, Liderança, Java, Excel..."
-          />
+    <transition name="slide-fade">
+      <section v-if="showCreateForm" class="create">
+        <h3 class="create__title">Nova Competência</h3>
+        
+        <div class="create__grid">
+          <div class="field">
+            <label for="novo-nome" class="field__label">Nome</label>
+            <input
+              id="novo-nome"
+              v-model="novoNome"
+              type="text"
+              class="field__input"
+              placeholder="Ex: Java..."
+            />
+          </div>
+
+          <div class="field">
+            <label for="nova-categoria" class="field__label">Categoria</label>
+            <select id="nova-categoria" v-model="novaCategoria" class="field__input">
+              <option disabled value="">Selecione...</option>
+              <option v-for="cat in categorias" :key="cat" :value="cat">
+                {{ cat }}
+              </option>
+            </select>
+          </div>
+
+          <div class="field field--full">
+            <label for="nova-descricao" class="field__label">Descrição</label>
+            <textarea
+              id="nova-descricao"
+              v-model="novaDescricao"
+              class="field__textarea"
+              rows="2"
+              placeholder="Opcional"
+            ></textarea>
+          </div>
         </div>
 
-        <div class="field field--full">
-          <label for="nova-descricao" class="field__label">Descrição</label>
-          <textarea
-            id="nova-descricao"
-            v-model="novaDescricao"
-            class="field__textarea"
-            rows="2"
-            placeholder="Descreva brevemente a competência (opcional)"
-          ></textarea>
+        <div class="create__actions">
+          <button
+            class="create__button"
+            :disabled="isCreating || !novoNome.trim()"
+            @click="createCompetencia"
+          >
+            {{ isCreating ? 'Salvando...' : 'Salvar' }}
+          </button>
         </div>
-      </div>
-
-      <div class="create__actions">
-        <button
-          class="create__button"
-          :disabled="isCreating || !novoNome.trim()"
-          @click="createCompetencia"
-        >
-          {{ isCreating ? 'Criando...' : 'Criar competência' }}
-        </button>
-      </div>
-    </section>
+      </section>
+    </transition>
 
     <template v-if="isLoading">
       <div class="loading-container">
@@ -231,10 +257,12 @@ const dragPayload = ref(null)
 const categorias = ['Comportamental', 'Técnica', 'Negócios', 'RH', 'Idiomas', 'Outros']
 const categoriasComTodas = ['Todas', ...categorias]
 
-// NOVOS STATES PARA CRIAR COMPETÊNCIA
+
 const novoNome = ref('')
 const novaDescricao = ref('')
+const novaCategoria = ref('Outros')
 const isCreating = ref(false)
+const showCreateForm = ref(false)
 
 async function loadCompetencias() {
   isLoading.value = true
@@ -389,25 +417,31 @@ async function createCompetencia() {
     alert('Informe um nome para a nova competência.')
     return
   }
+  if (!novaCategoria.value) {
+    alert('Selecione uma categoria.')
+    return
+  }
 
   isCreating.value = true
 
   try {
+    // Agora enviamos o payload completo, igual ao DTO do Java
     const payload = {
       nome: novoNome.value.trim(),
-      descricao: novaDescricao.value.trim() || null
-      // Se o backend tiver mais campos (categoria, etc.), incluir aqui
+      descricao: novaDescricao.value.trim() || null,
+      categoria: novaCategoria.value // <--- O campo novo
     }
 
     await axios.post(API_BASE_URL, payload)
     alert('Competência criada com sucesso!')
 
-    // Recarrega lista de competências
+    // Recarrega lista de competências para ela aparecer na hora
     await loadCompetencias()
 
     // Limpa formulário
     novoNome.value = ''
     novaDescricao.value = ''
+    novaCategoria.value = 'Outros' // Reseta para o padrão
   } catch (error) {
     console.error('Erro ao criar competência:', error)
     let message = 'Erro desconhecido ao criar competência.'
@@ -1007,5 +1041,57 @@ onMounted(() => {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.create-toggle-area {
+  display: flex;
+  justify-content: flex-end; /* Botão alinhado à direita, discreto */
+  margin-bottom: 8px;
+}
+
+.btn-toggle-create {
+  all: unset;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.btn-toggle-create:hover {
+  background-color: #eef2ff; /* Azulzinho bem claro */
+}
+
+.btn-toggle-create.active {
+  color: #ef4444; /* Vermelho suave quando for para cancelar */
+}
+.btn-toggle-create.active:hover {
+  background-color: #fef2f2;
+}
+
+/* Ajuste fino no card de criação para ele não parecer solto */
+.create {
+  margin-top: 0; /* Remove margem do topo pois o botão está acima */
+  border-left: 3px solid var(--primary); /* Um detalhe visual bonito */
+}
+
+/* Animação de entrada e saída (Slide Fade) */
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateY(-10px);
+  opacity: 0;
 }
 </style>
