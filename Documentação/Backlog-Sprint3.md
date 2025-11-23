@@ -21,14 +21,17 @@ Esta Sprint é focada em arrumar todas as pendências referentes à sprint anter
 **Como um usuário, eu quero realizar login na plataforma, para que eu possa acessar as funcionalidades de acordo com meu nível de acesso.
 **
 
-| Disciplina              | Task ID | Task (O que fazer)                                                               | Estimativa (Horas) | Status        | DoD Atendido                            |
-|-------------------------|---------|----------------------------------------------------------------------------------|---------------------|---------------|------------------------------------------|
-| Backend (Spring Boot)   | B4.1    | Realizar o sistema de autenticação do backend                                   | 6h                  | ✔️ Concluída  | ✔️ Spring Boot, ✔️ Segurança, ✔️ Auth    |
-| Frontend (Vue.js)       | F4.1    | Realizar o sistema de autenticação do frontend                                  | 5h                  | ✔️ Concluída  | ✔️ Vue.js, ✔️ Controle de Sessão         |
-| Backend (Spring Boot)   | B4.2    | Criar o backend da tela de login                                                | 4h                  | ✔️ Concluída  | ✔️ Spring Boot, ✔️ API Login             |
-| Backend (Spring Boot)   | B4.3    | Ajudar no sistema de autenticação do backend (suporte/ajustes)                  | 3h                  | ✔️ Concluída  | ✔️ Correções BE, ✔️ Auth Revisado        |
-| Frontend (Vue.js)       | F4.2    | Fazer a tela de login (frontend)                                                | 4h                  | ✔️ Concluída  | ✔️ Vue.js, ✔️ UI Login                   |
-| Integração (Fullstack)  | I4.1    | Conectar a tela de login ao endpoint feito pelo Honda                           | 2h                  | ✔️ Concluída  | ✔️ API Integrada, ✔️ Fluxo de Login      |
+| Disciplina              | Task ID | Task (O que fazer)                                                               | Estimativa (Horas) | Status        | DoD Atendido                                 |
+|-------------------------|---------|----------------------------------------------------------------------------------|---------------------|---------------|-----------------------------------------------|
+| Backend (Spring Boot)   | B4.1    | Realizar o sistema de autenticação do backend                                   | 6h                  | ✔️ Concluída  | ✔️ Spring Boot, ✔️ Segurança, ✔️ Auth         |
+| Frontend (Vue.js)       | F4.1    | Realizar o sistema de autenticação do frontend                                  | 5h                  | ✔️ Concluída  | ✔️ Vue.js, ✔️ Controle de Sessão              |
+| Backend (Spring Boot)   | B4.2    | Criar o backend da tela de login                                                | 4h                  | ✔️ Concluída  | ✔️ Spring Boot, ✔️ API Login                  |
+| Backend (Spring Boot)   | B4.3    | Ajudar no sistema de autenticação do backend (suporte/ajustes)                  | 3h                  | ✔️ Concluída  | ✔️ Correções BE, ✔️ Auth Revisado             |
+| Frontend (Vue.js)       | F4.2    | Fazer a tela de login (frontend)                                                | 4h                  | ✔️ Concluída  | ✔️ Vue.js, ✔️ UI Login                        |
+| Integração (Fullstack)  | I4.1    | Conectar a tela de login ao endpoint feito pelo Honda                           | 2h                  | ✔️ Concluída  | ✔️ API Integrada, ✔️ Fluxo de Login           |
+| Frontend (Vue.js)       | F4.3    | Incluir campo e botão de inserção de novas competências                         | 3h                  | ✔️ Concluída  | ✔️ Vue.js, ✔️ CRUD Competências               |
+| Backend (Spring Boot)   | B4.4    | Permitir que o supervisor realize as avaliações destinadas a ele                | 4h                  | ✔️ Concluída  | ✔️ Regras de Permissão, ✔️ Fluxo Revisado     |
+| Backend (Spring Boot)   | B4.5    | Mostrar somente as avaliações do setor correspondente ao supervisor             | 3h                  | ✔️ Concluída  | ✔️ Filtro por Setor, ✔️ Lógica de Supervisor  |
 
 
 ## 🎯 User Story S3-3: Dashboard
@@ -54,4 +57,19 @@ Esta Sprint é focada em arrumar todas as pendências referentes à sprint anter
 
 **Como usuário, eu devo ter uma usabilidade clara e padronizada no sistema**
 
-vou inserir quando tdas as tasks estiverem concluídas
+| Disciplina             | Task ID | Task (O que fazer)                                                                                   | Estimativa (Horas) | Status       | DoD Atendido                                  |
+|------------------------|---------|--------------------------------------------------------------------------------------------------------|---------------------|--------------|------------------------------------------------|
+| Frontend (Vue.js)      | F4.1    | Arrumar layout da revisão de avaliação                                                                 | 3h                  | ✔️ Concluída | ✔️ Vue.js, ✔️ Layout                           |
+| Backend (Spring Boot)  | B4.1    | Tela de perfil — equipe do colaborador não inserida (corrigir endpoint)                               | 4h                  | ✔️ Concluída | ✔️ Spring Boot, ✔️ Endpoint Ajustado           |
+| Frontend (Vue.js)      | F4.2    | Incluir na tela de perfil do colaborador um campo de Cargo                                            | 2h                  | ✔️ Concluída | ✔️ Campo Adicionado, ✔️ UI Perfil              |
+| Frontend (Vue.js)      | F4.3    | Incluir campo de prazo ao criar avaliação                                                              | 2h                  | ✔️ Concluída | ✔️ Campo Criado, ✔️ UI Avaliação               |
+| Frontend (Vue.js)      | F4.4    | Ajustar dashboard: botão visível só para supervisor + mover botão de cadastro perto do botão sair     | 3h                  | ✔️ Concluída | ✔️ Navegação, ✔️ Permissões                    |
+| Backend (Spring Boot)  | B4.2    | Questões somem após responder — permitir que supervisor visualize como concluídas                     | 4h                  | ✔️ Concluída | ✔️ Fluxo Corrigido, ✔️ Ajuste de Regras        |
+| Backend (Spring Boot)  | B4.3    | Arrumar Dashboard para permitir filtro por equipes                                                    | 3h                  | ✔️ Concluída | ✔️ Filtro de Equipes, ✔️ API Dashboard         |
+| Frontend (Vue.js)      | F4.5    | Incluir ScrollView para filtro de equipes na Dashboard                                                | 2h                  | ✔️ Concluída | ✔️ ScrollView, ✔️ UX Dashboard                 |
+| Frontend (Vue.js)      | F4.6    | Barra lateral mostra “Sistema RH” — substituir por novo termo                                         | 1h                  | ✔️ Concluída | ✔️ Texto Atualizado                            |
+| Frontend (Vue.js)      | F4.7    | Botão de sair duplicado — manter apenas na barra lateral                                              | 1h                  | ✔️ Concluída | ✔️ Navegação Corrigida                         |
+
+### Dados
+- 📁 Versão para análise: [Sprint1 Tasks csv](./TasksSprint3.csv)
+
