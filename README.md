@@ -78,7 +78,7 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 [📄 Estrutura de branchs](./Documentação/estrutura_de_branchs.md)
 
 # 📚 Manual de usuário <a id="manual"></a>
-[Manual do usuário](./Manual-Usuario-alltallent.pdf)
+[Manual do usuário](Documentação/Manual-Usuario-alltallent.pdf)
 
 ## 📦 Figma Projeto <a id="figma"></a>
 [Figma](https://www.figma.com/make/aSO16kJmEfupakrrjeVgRB/CaramelStray-Front?fullscreen=1) - Protótipo de alta fidelidade do sistema AllTalent.
