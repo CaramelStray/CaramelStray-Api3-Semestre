@@ -71,5 +71,5 @@ Esta Sprint é focada em arrumar todas as pendências referentes à sprint anter
 | Frontend (Vue.js)      | F4.7    | Botão de sair duplicado — manter apenas na barra lateral                                              | 1h                  | ✔️ Concluída | ✔️ Navegação Corrigida                         |
 
 ### Dados
-- 📁 Versão para análise: [Sprint1 Tasks csv](./TasksSprint3.csv)
+- 📁 Versão para análise: [Sprint3 Tasks csv](./TasksSprint3.csv)
 
