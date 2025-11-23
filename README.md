@@ -14,7 +14,7 @@
   <a href ="#sprint"> Cronograma de Sprints</a>  | <a href ="#sprint">Product backlog -> DOR e DOD</a> |
   <a href ="#tecnologias">Tecnologias</a> |  <a href ="#figma">Figma</a> |
   <a href ="#branchs">Estrutura de Branchs</a>  |
-  <a href ="#equipe"> Equipe</a> |
+  <a href ="#equipe"> Equipe</a> | <a href ="#manual"> Manual do usuário</a>
 </p>
 
 > Status do Projeto: Em progresso  🚧
@@ -77,6 +77,8 @@ AllTalent é um sistema que facilita a visualização dos colaboradores e de sua
 
 [📄 Estrutura de branchs](./Documentação/estrutura_de_branchs.md)
 
+# 📚 Manual de usuário <a id="manual"></a>
+[Manual do usuário](Documentação/Manual-Usuario-alltallent.pdf)
 
 ## 📦 Figma Projeto <a id="figma"></a>
 [Figma](https://www.figma.com/make/aSO16kJmEfupakrrjeVgRB/CaramelStray-Front?fullscreen=1) - Protótipo de alta fidelidade do sistema AllTalent.
