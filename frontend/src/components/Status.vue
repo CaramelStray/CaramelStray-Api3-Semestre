@@ -120,8 +120,13 @@ function handleVoltar(){
 }
 
 function verificar(a){
+  
+  const nomeRota = (usuarioLogado.value && usuarioLogado.value.perfilId === 2) 
+      ? 'SupervisorVerRespostas' 
+      : 'LiderVerRespostas';
+
   router.push({
-    name: 'LiderVerRespostas',
+    name: nomeRota,
     params: { avaliacaoId: a.id }
   })
 }

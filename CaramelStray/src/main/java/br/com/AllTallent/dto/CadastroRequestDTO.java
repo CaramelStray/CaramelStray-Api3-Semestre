@@ -28,15 +28,20 @@ public class CadastroRequestDTO {
     private String telefone;
 
     @NotBlank(message = "ID do Crachá é obrigatório")
-    private String idCracha; // Novo campo
+    private String idCracha; 
 
-    private LocalDate dataAdmissao; // Novo campo (Envie como "YYYY-MM-DD")
+    private LocalDate dataAdmissao; 
 
-    private String resumo; // Campo "Observações" do formulário
+    private String resumo; 
 
     @NotNull(message = "Departamento (código da área) é obrigatório")
-    private Integer codigoArea; // ID do Departamento
+    private Integer codigoArea; 
 
     @NotNull(message = "Cargo (código do perfil) é obrigatório")
-    private Integer codigoPerfil; // ID do Cargo
+    private Integer codigoPerfil; 
+
+    private String cpf;
+    private String localizacao;
+    private String tituloProfissional;
+    private Integer codigoGestor;
 }

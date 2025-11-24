@@ -88,10 +88,6 @@
                     <h4 class="revisao-titulo">Revisão do Supervisor</h4>
                     <div class="revisao-grid">
                         <div class="revisao-campo">
-                            <label :for="'nota-' + dest.id">Nota Final (1-5)</label>
-                            <input type="number" :id="'nota-' + dest.id" min="1" max="5" class="revisao-input" v-model.number="dest.revisaoNota" />
-                        </div>
-                        <div class="revisao-campo">
                             <label :for="'status-' + dest.id">Status Final</label>
                             <select :id="'status-' + dest.id" v-model="dest.revisaoStatus" class="revisao-input">
                                 <option value="APROVADO">Aprovado</option>
@@ -116,7 +112,6 @@
                   <div v-if="dest.status === 'APROVADO' || dest.status === 'REPROVADO'" class="pergunta-item revisao-box-salva">
                     <h4 class="revisao-titulo">Revisão Concluída</h4>
                     <p class="revisao-texto"><strong>Status:</strong> {{ labelStatus(dest.status) }}</p>
-                    <p class="revisao-texto"><strong>Nota:</strong> {{ dest.revisaoNota || 'N/A' }}</p>
                     <p class="revisao-texto"><strong>Comentário Privado:</strong> {{ dest.revisaoComentarioSupervisor || 'N/A' }}</p>
                     <p class="revisao-texto"><strong>Comentário para Colaborador:</strong> {{ dest.revisaoComentarioColaborador || 'Nenhum' }}</p>
                   </div>
@@ -340,11 +335,7 @@ function statusClass(statusBackend) {
 async function handleSalvarRevisao(destinatario) {
     console.log("Salvando revisão para:", destinatario.nome, destinatario.id);
 
-    // 1. Validação (simples)
-    if (!destinatario.revisaoNota || destinatario.revisaoNota < 1 || destinatario.revisaoNota > 5) { // Assumindo nota 1-5
-       alert('Por favor, insira uma nota válida (1-5).');
-       return;
-    }
+    
     if (!destinatario.revisaoComentarioSupervisor || !destinatario.revisaoComentarioSupervisor.trim()) {
        alert('Por favor, preencha o comentário privado do supervisor.');
        return;
@@ -358,7 +349,6 @@ async function handleSalvarRevisao(destinatario) {
     const payload = {
       comentarioSupervisao: destinatario.revisaoComentarioSupervisor,
       comentarioParaColaborador: destinatario.revisaoComentarioColaborador,
-      nota: destinatario.revisaoNota,
       resultadoStatus: destinatario.revisaoStatus
     };
 
@@ -376,7 +366,6 @@ async function handleSalvarRevisao(destinatario) {
 
       // Atualiza o status localmente para o card mudar (de AGUARDANDO_REVISAO para APROVADO, etc.)
       destinatario.status = response.data.resultadoStatus;
-      destinatario.nota = response.data.nota; // Pega a nota salva
       destinatario.comentarioSupervisao = response.data.comentarioSupervisao; // Pega o comentário salvo
       destinatario.comentarioColaborador = payload.comentarioParaColaborador; // Atualiza com o que foi enviado
 

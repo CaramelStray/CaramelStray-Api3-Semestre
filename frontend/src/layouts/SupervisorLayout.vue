@@ -28,6 +28,7 @@ import SideMenuSupervisor from '../components/SideMenuSupervisor.vue';
 .page-layout {
   display: flex; /* OBRIGATÓRIO: Coloca Menu e Conteúdo lado a lado */
   min-height: 100vh;
+  overflow: hidden; /* Impede que a página inteira role */
   background-color: var(--background);
 }
 
@@ -35,7 +36,9 @@ import SideMenuSupervisor from '../components/SideMenuSupervisor.vue';
   flex: 1; /* Ocupa o resto da tela ao lado do menu */
   display: flex;
   flex-direction: column;
-  min-width: 0; /* Evita que tabelas grandes quebrem o layout */
+  height: 100vh;
+  overflow: hidden; /* Impede rolagem aqui também */
+  min-width: 0; 
 }
 
 .topbar {
@@ -45,6 +48,7 @@ import SideMenuSupervisor from '../components/SideMenuSupervisor.vue';
   display: flex;
   align-items: center;
   padding: 0 30px;
+  flex-shrink: 0; 
 }
 
 .brand__title {

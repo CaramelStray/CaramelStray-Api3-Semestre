@@ -276,7 +276,7 @@ public class AvaliacaoService {
         }
         instancia.setComentarioSupervisao(dto.comentarioSupervisao());
         instancia.setComentarioColaborador(dto.comentarioParaColaborador());
-        instancia.setNota(dto.nota());
+        
         instancia.setResultadoStatus(dto.resultadoStatus());
         AvaliacaoFuncionario instanciaSalva = avaliacaoFuncionarioRepository.save(instancia);
         return new AvaliacaoFuncionarioResponseDTO(instanciaSalva);
