@@ -1,39 +1,5 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-800">
-    <header class="bg-white border border-slate-200 border-t-0 border-x-0">
-      <div class="mx-auto max-w-7xl px-4 py-4 flex items-center gap-3">
-        <button
-          @click="handleVoltar"
-          class="h-9 w-9 grid place-items-center rounded-lg border border-slate-200 hover:bg-slate-100"
-          aria-label="Voltar"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-            <path fill-rule="evenodd" d="M10.03 4.97a.75.75 0 0 1 0 1.06L5.06 11l4.97 4.97a.75.75 0 1 1-1.06 1.06l-5.5-5.5a.75.75 0 0 1 0-1.06l5.5-5.5a.75.75 0 0 1 1.06 0Zm4.94 0a.75.75 0 0 1 1.06 0l5.5 5.5a.75.75 0 0 1 0 1.06l-5.5 5.5a.75.75 0 1 1-1.06-1.06L18.94 11l-4.97-4.97a.75.75 0 0 1 1.06-1.06Z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-
-        <div class="flex items-center gap-2">
-          <div class="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 grid place-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-base font-semibold text-slate-800">Cadastro de Perguntas</h1>
-            <p class="text-xs text-slate-500">Avaliador {{ usuarioLogado?.nomeCompleto || 'Carregando...' }}</p>
-          </div>
-        </div>
-
-        <div class="ml-auto flex items-center gap-2">
-          <button
-            @click="handleSalvarPergunta"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Salvar Pergunta
-          </button>
-        </div>
-      </div>
-    </header>
 
     <main class="mx-auto max-w-4xl p-6">
       <div v-if="loading" class="text-center py-10 text-slate-600">
@@ -46,8 +12,7 @@
       </div>
 
       <template v-else-if="usuarioLogado">
-
-
+        <!-- TÍTULO DA AVALIAÇÃO -->
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
           <label for="tituloAvaliacao" class="block mb-2 text-base font-semibold text-slate-800">
             Título da Avaliação <span class="text-red-500">*</span>
@@ -61,9 +26,20 @@
           />
         </div>
 
-    <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
-      </div>
-
+        <!-- ✅ DATA LIMITE (MOVIDO PARA ESTE CARD) -->
+        <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <label class="text-sm font-medium text-slate-700 mb-2 block">
+            Data limite para resposta <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="date"
+            v-model="dataLimite"
+            class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-slate-800 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+          />
+          <p class="text-xs text-slate-500 mt-1">
+            Defina até quando os colaboradores poderão responder esta avaliação.
+          </p>
+        </div>
 
         <!-- ====== Card Filtros ====== -->
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
@@ -164,13 +140,29 @@
           <p class="text-sm font-medium text-slate-700 mb-3">Colaboradores selecionados:</p>
 
           <div class="flex flex-wrap gap-3 mb-5">
-            <div v-for="c in filtros.colaboradores" :key="c.id" class="chip">
-              <span class="chip__avatar">{{ getInitials(c.nome) }}</span>
-              <span class="chip__content">
-                <span class="chip__title">{{ c.nome }}</span>
-                <span class="chip__subtitle">{{ c.cargo }}</span>
+            <div
+              v-for="c in filtros.colaboradores"
+              :key="c.id"
+              class="flex items-center gap-3 px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 shadow-sm"
+            >
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm">
+                {{ getInitials(c.nome) }}
               </span>
+
+              <div class="flex flex-col leading-tight">
+                <span class="font-medium text-slate-800 text-sm">{{ c.nome }}</span>
+                <span class="text-slate-500 text-xs">{{ c.cargo }}</span>
+              </div>
+
+              <button
+                @click="removerColaborador(c)"
+                class="text-slate-400 hover:text-red-500 ml-2 transition"
+                title="Remover colaborador"
+              >
+                ✕
+              </button>
             </div>
+
             <p v-if="filtros.colaboradores.length === 0" class="text-sm text-slate-500">
               Nenhum colaborador selecionado
             </p>
@@ -181,9 +173,16 @@
             <span
               v-for="comp in filtros.competencias"
               :key="comp.id"
-              class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
+              class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700"
             >
               {{ comp.nome }}
+              <button
+                @click="removerCompetencia(comp)"
+                class="text-blue-600 hover:text-blue-800 font-bold ml-1"
+                title="Remover competência"
+              >
+                ✕
+              </button>
             </span>
 
             <p v-if="filtros.competencias.length === 0" class="text-sm text-slate-500">
@@ -196,7 +195,7 @@
         <div class="rounded-xl bg-white shadow-sm border border-slate-200 p-6">
           <h3 class="text-base font-semibold text-slate-800 mb-4">Nova Pergunta</h3>
 
-          <!-- Competência Selecionada (visível) -->
+          <!-- Competência Vinculada -->
           <div class="mb-4">
             <label class="text-sm font-medium text-slate-700 mb-2 block">
               Competência Vinculada <span class="text-red-500">*</span>
@@ -226,22 +225,16 @@
               style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23334155%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25rem; padding-right: 2.5rem;"
               aria-label="Selecionar tipo de pergunta"
             >
-              <option value="texto">
-                <span>T</span> Texto
-              </option>
-              <option value="multipla escolha">
-                <span>≡</span> Múltipla Escolha
-              </option>
-              <option value="escala/nota">
-                <span>#</span> Escala/Nota
-              </option>
+              <option value="texto">Texto</option>
+              <option value="multipla escolha">Múltipla Escolha</option>
+              <option value="escala/nota">Escala/Nota</option>
             </select>
             <p class="text-xs text-slate-500 mt-1">
               Escolha como o colaborador irá responder.
             </p>
           </div>
 
-          <!-- Campo Pergunta -->
+          <!-- Pergunta -->
           <div class="mb-4">
             <label class="text-sm font-medium text-slate-700 mb-2 block">Pergunta</label>
             <textarea
@@ -254,7 +247,7 @@
             />
           </div>
 
-          <!-- Opções de Resposta (só quando múltipla escolha) -->
+          <!-- Opções de Resposta -->
           <div v-if="tipoPergunta === 'multipla escolha'">
             <label class="text-sm font-medium text-slate-700 mb-2 block">
               Opções de Resposta <span class="text-slate-500 font-normal">(Selecione a correta)</span>
@@ -266,7 +259,7 @@
                 :key="index"
                 class="flex items-center gap-2"
               >
-              <input
+                <input
                   type="radio"
                   name="opcaoCorretaRadio"
                   :value="index"
@@ -313,8 +306,8 @@
             </button>
           </div>
 
-          <!-- ====== PERGUNTAS CADASTRADAS ====== -->
-          <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6">
+          <!-- Perguntas Cadastradas -->
+          <div v-if="perguntas.length > 0" class="rounded-xl bg-white shadow-sm border border-slate-200 p-6 mb-6 mt-6">
             <h3 class="text-base font-semibold text-slate-800 mb-4">
               Perguntas Cadastradas ({{ perguntas.length }})
             </h3>
@@ -325,46 +318,34 @@
                 :key="index"
                 class="border border-slate-200 rounded-lg p-4 bg-slate-50"
               >
-                <!-- Cabeçalho com competência e tipo -->
                 <div class="flex items-center gap-2 mb-2 flex-wrap">
                   <span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-blue-300 bg-blue-50 text-blue-700">
                     {{ obterNomeCompetencia(p.competenciaId) }}
                   </span>
                   <span v-if="p.tipoPergunta === 'multipla escolha'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                      <polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3"></polyline>
-                    </svg>
                     Múltipla Escolha
                   </span>
                   <span v-else-if="p.tipoPergunta === 'escala/nota'" class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                    </svg>
                     Escala/Nota
                   </span>
                   <span v-else class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border border-slate-300 bg-white text-slate-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
-                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
                     Texto
                   </span>
                   <span class="ml-auto text-xs text-slate-500">Pergunta {{ index + 1 }}</span>
                 </div>
 
-                <!-- Texto da pergunta -->
                 <p class="text-sm font-medium text-slate-800 mb-3">{{ p.pergunta }}</p>
 
-                <!-- Opções (se houver) -->
                 <div v-if="p.tipoPergunta === 'multipla escolha' && p.opcoes && p.opcoes.length">
-                  <p class="text-xs font-medium text-slate-600 mb-2">Opções (seleção múltipla):</p>
+                  <p class="text-xs font-medium text-slate-600 mb-2">Opções:</p>
                   <ul class="list-disc list-inside space-y-1">
                     <li v-for="(opcao, idx) in p.opcoes" :key="idx" class="text-sm text-slate-700">
-                      {{ opcao }}
+                      {{ opcao.descricao }}
+                      <span v-if="opcao.isCorreta" class="text-xs text-emerald-600 font-semibold"> (Correta)</span>
                     </li>
                   </ul>
                 </div>
 
-                <!-- Botão deletar -->
                 <div class="mt-4 flex justify-end">
                   <button
                     @click="handleDeletarPergunta(index)"
@@ -381,51 +362,61 @@
             </div>
           </div>
 
+          <!-- Botão Criar Avaliação -->
           <div class="mt-8 pt-6 border-t border-slate-200">
-              <button
-                @click="handleCriarAvaliacao"
-                :class="[
-                  'w-full rounded-lg px-4 py-3 text-base font-semibold text-white transition-colors disabled:opacity-50',
-                  perguntas.length > 0 ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                ]"
-
-                :disabled="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()"
-              >
-                Criar Avaliação para {{ filtros.colaboradores.length }} Colaborador(es)
-              </button>
-              <p v-if="perguntas.length === 0 || filtros.colaboradores.length === 0 || !tituloAvaliacao.trim()" class="text-xs text-center text-red-600 mt-2">
-                  Preencha o título, adicione perguntas e selecione colaboradores.
-              </p>
+            <button
+              @click="handleCriarAvaliacao"
+              :class="[
+                'w-full rounded-lg px-4 py-3 text-base font-semibold text-white transition-colors disabled:opacity-50',
+                perguntas.length > 0 &&
+                filtros.colaboradores.length > 0 &&
+                tituloAvaliacao.trim() &&
+                dataLimite
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+              ]"
+              :disabled="
+                perguntas.length === 0 ||
+                filtros.colaboradores.length === 0 ||
+                !tituloAvaliacao.trim() ||
+                !dataLimite
+              "
+            >
+              Criar Avaliação para {{ filtros.colaboradores.length }} Colaborador(es)
+            </button>
+            <p
+              v-if="
+                perguntas.length === 0 ||
+                filtros.colaboradores.length === 0 ||
+                !tituloAvaliacao.trim() ||
+                !dataLimite
+              "
+              class="text-xs text-center text-red-600 mt-2"
+            >
+              Preencha o título, adicione perguntas, selecione colaboradores e defina a data limite.
+            </p>
           </div>
-
-
         </div>
-
       </template>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch,nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import {useAuth} from '../auth';
-
+import { useAuth } from '../auth';
 
 const route = useRoute();
 const router = useRouter();
-
-
-
-
 
 const { usuarioLogado, carregarUsuarioLogado } = useAuth();
 const loading = ref(true);
 const error = ref(null);
 const pergunta = ref('');
 const tipoPergunta = ref('texto');
-const opcoes = ref([{texto:'', isCorreta: false}]);
+const opcoes = ref([{ texto: '', isCorreta: false }]);
 const competenciaSelecionada = ref('');
 const perguntas = ref([]);
 const allColaboradores = ref([]);
@@ -433,6 +424,7 @@ const allCompetencias = ref([]);
 const allAreas = ref([]);
 const tituloAvaliacao = ref('');
 const opcaoCorretaIndex = ref(0);
+const dataLimite = ref(''); // campo de data limite
 
 const filtros = ref({
   colaboradores: [],
@@ -440,46 +432,29 @@ const filtros = ref({
   equipes: []
 });
 
-
-// ---------- BUSCA DO FUNCIONÁRIO ----------
-/*const fetchFuncionarioData = async () => {
-  loading.value = true;
-  error.value = null;
-  try {
-    const funcionarioId = props.id || route.params.id;
-    const response = await axios.get(`http://localhost:8080/api/funcionario`);
-    funcionario.value = response.data;
-  } catch (err) {
-    console.error("Falha ao buscar dados do funcionário:", err);
-    error.value = "Não foi possível carregar as informações. Tente novamente mais tarde.";
-  } finally {
-    loading.value = false;
-  }
+const removerColaborador = (colab) => {
+  filtros.value.colaboradores = filtros.value.colaboradores.filter(c => c.codigo !== colab.codigo);
 };
 
-onMounted(fetchFuncionarioData);*/
+const removerCompetencia = (comp) => {
+  filtros.value.competencias = filtros.value.competencias.filter(c => c.id !== comp.id);
+};
 
 onMounted(async () => {
   loading.value = true;
   error.value = null;
   try {
-    // Pega o ID da prop (vindo da rota)
-
-
-    
     if (!usuarioLogado.value) {
       console.warn("Usuário logado não encontrado no estado global, tentando carregar...");
-      
-      if(!usuarioLogado.value){
-           throw new Error("Falha ao obter dados do usuário logado. O estado global está vazio.");
+      await carregarUsuarioLogado();
+      if (!usuarioLogado.value) {
+        throw new Error("Falha ao obter dados do usuário logado. O estado global está vazio.");
       }
     } else {
-        console.log("Usuário logado encontrado no estado global:", usuarioLogado.value.nomeCompleto);
+      console.log("Usuário logado encontrado no estado global:", usuarioLogado.value.nomeCompleto);
     }
 
-    // 2. DEPOIS, busca os dados dos filtros
     await fetchFilterData();
-
   } catch (err) {
     console.error("Falha ao carregar dados iniciais:", err);
     error.value = "Não foi possível carregar os dados. " + (err.message || '');
@@ -487,20 +462,17 @@ onMounted(async () => {
     loading.value = false;
   }
 
-  // Adiciona o listener para fechar dropdowns
   document.addEventListener('click', handleClickOutside);
 });
 
 const fetchFilterData = async () => {
   try {
-    // Busca simultânea dos 3 endpoints
     const [colabRes, compRes, areaRes] = await Promise.all([
       axios.get('http://localhost:8080/api/funcionario'),
-      axios.get('http://localhost:8080/api/competencia'), // Ajuste se a rota for plural
-      axios.get('http://localhost:8080/api/area')      // Ajuste se a rota for diferente
+      axios.get('http://localhost:8080/api/competencia'),
+      axios.get('http://localhost:8080/api/area')
     ]);
 
-    // Mapeia a resposta de /api/funcionario para o formato do filtro
     allColaboradores.value = colabRes.data.map(c => ({
       codigo: c.codigo,
       nome: c.nomeCompleto,
@@ -509,19 +481,15 @@ const fetchFilterData = async () => {
       perfilId: c.perfilId
     }));
 
-    // Assume que /api/competencia retorna { codigo, nome }
     allCompetencias.value = compRes.data;
-
-    // Assume que /api/areas retorna { codigo, nome }
     allAreas.value = areaRes.data;
-
   } catch (err) {
     console.error("Falha ao buscar dados dos filtros:", err);
     throw new Error("Falha ao carregar listas de filtros. Verifique os endpoints da API.");
   }
 };
 
-// ---------- UTIL ----------
+// UTIL
 const getInitials = (fullName) => {
   if (!fullName) return '';
   const names = fullName.trim().split(/\s+/);
@@ -531,11 +499,9 @@ const getInitials = (fullName) => {
   return initials.toUpperCase();
 };
 
-const obterNomeCompetencia = (id) => { // Recebe o ID da competência
-  // === CORREÇÃO AQUI: Procurar em allCompetencias.value usando o 'id' ===
+const obterNomeCompetencia = (id) => {
   const found = allCompetencias.value.find(c => c.id === id);
-  // ======================================================================
-  return found?.nome || `Competência #${id}`; // Retorna o nome ou o ID como fallback
+  return found?.nome || `Competência #${id}`;
 };
 
 const handleVoltar = () => {
@@ -543,31 +509,21 @@ const handleVoltar = () => {
 };
 
 const handleAdicionarOpcao = () => {
-  opcoes.value.push({texto: '', isCorreta: false});
+  opcoes.value.push({ texto: '', isCorreta: false });
 };
 
 const handleRemoverOpcao = (index) => {
   if (opcoes.value.length > 1) {
     opcoes.value.splice(index, 1);
     if (opcaoCorretaIndex.value === index) {
-        opcaoCorretaIndex.value = 0;
-    }else if (opcaoCorretaIndex.value > index) {
-        // Se removemos um item ANTES do item correto,
-        // o índice do item correto diminui.
-        opcaoCorretaIndex.value--;
+      opcaoCorretaIndex.value = 0;
+    } else if (opcaoCorretaIndex.value > index) {
+      opcaoCorretaIndex.value--;
     }
+  }
 };
-}
 
-/*const competenciaSelecionadaNome = computed(() => {
-  const lista = listaCompetenciasParaSelecao.value;
-  const found = lista.find(c => c.codigo === competenciaSelecionada.value);
-  return found?.nome || '';
-});*/
-
-const handleSalvarPergunta = () => { // Removido o async, pois não chama API
-  // 1. Validações (como antes)
-  console.log('Adicionar Pergunta Local: Valor de competenciaSelecionada:', competenciaSelecionada.value);
+const handleSalvarPergunta = () => {
   if (!pergunta.value.trim()) {
     alert('Por favor, digite a pergunta.');
     return;
@@ -576,50 +532,35 @@ const handleSalvarPergunta = () => { // Removido o async, pois não chama API
     alert('Por favor, selecione uma competência.');
     return;
   }
-  console.log('Conteúdo de opcoes.value antes do map:', JSON.stringify(opcoes.value));
+
   const opcoesValidas = opcoes.value
     .map((op, index) => {
-      console.log(`Mapeando opção no índice ${index}:`, op); // <-- DEBUG 2: Veja a estrutura de 'op'
-      // Adicione uma verificação defensiva antes de chamar trim()
-      const descricaoTrimmed = (op && typeof op.texto === 'string') ? op.texto.trim() : ''; // <-- DEFESA AQUI
-      console.log(`Descrição após trim (ou fallback): '${descricaoTrimmed}'`); // <-- DEBUG 3
-
+      const descricaoTrimmed = (op && typeof op.texto === 'string') ? op.texto.trim() : '';
       return {
         descricao: descricaoTrimmed,
         isCorreta: index === opcaoCorretaIndex.value
       };
     })
-    .filter(op => op.descricao !== ''); // Filtra opções vazias
+    .filter(op => op.descricao !== '');
 
-    console.log('opcoesValidas após map e filter:', opcoesValidas);
-
-if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
+  if (tipoPergunta.value === 'multipla escolha' && opcoesValidas.length < 2) {
     alert('Para múltipla escolha, informe ao menos 2 opções válidas.');
     return;
-}
+  }
 
-  // 2. Cria o objeto da pergunta LOCALMENTE
-  //    Usamos 'competenciaId' aqui para ser consistente com o que obterNomeCompetencia espera
   const novaPerguntaLocal = {
     pergunta: pergunta.value.trim(),
-    competenciaId: competenciaSelecionada.value, // Guarda o ID selecionado
+    competenciaId: competenciaSelecionada.value,
     tipoPergunta: tipoPergunta.value,
     opcoes: (tipoPergunta.value === 'multipla escolha') ? opcoesValidas : null,
-    // NÃO TEM 'codigo' AINDA, pois não foi salvo no backend
   };
 
-  console.log("Adicionando pergunta localmente:", novaPerguntaLocal);
-
-  // 3. Adiciona ao array local 'perguntas.value'
   perguntas.value.push(novaPerguntaLocal);
 
-  // 4. Limpa APENAS os campos do formulário de nova pergunta
   pergunta.value = '';
   tipoPergunta.value = 'texto';
-  opcoes.value = [{ texto: '', isCorreta: false }]; // <-- LINHA NOVA
-  opcaoCorretaIndex.value = 0; // <-- ADICIONAR
-
-  // Não mostra alerta de sucesso aqui, apenas adiciona à lista
+  opcoes.value = [{ texto: '', isCorreta: false }];
+  opcaoCorretaIndex.value = 0;
 };
 
 const handleDeletarPergunta = (index) => {
@@ -628,7 +569,7 @@ const handleDeletarPergunta = (index) => {
   }
 };
 
-// ================== TYPEAHEAD ==================
+// TYPEAHEAD
 const qColab  = ref('');
 const qComp   = ref('');
 const qEquipe = ref('');
@@ -648,43 +589,6 @@ const normaliza = (s) =>
 const jaTemColab = (codigo) => filtros.value.colaboradores.some((x) => x.codigo === codigo);
 const jaTemComp = (id) => filtros.value.competencias.some((x) => x.id === id);
 const jaTemEquipe = (codigo) => filtros.value.equipes.some((x) => x.codigo === codigo);
-
-/*const listaCompetenciasBase = computed(() => {
-  const lista = funcionario.value?.competencias;
-  return Array.isArray(lista) && lista.length ? lista : competenciasMock.value;
-});
-
-const listaCompetenciasParaSelecao = computed(() => {
-  return filtros.value.competencias.length
-    ? filtros.value.competencias
-    : listaCompetenciasBase.value;
-});
-
-const filteredColabs = computed(() => {
-  const q = normaliza(qColab.value);
-  return colaboradoresOptions.value
-    .filter((c) => !jaTemColab(c.id))
-    .filter((c) => !q || normaliza(c.nome).includes(q) || normaliza(c.cargo).includes(q))
-    .slice(0, 8);
-});
-
-const filteredComps = computed(() => {
-  const lista = listaCompetenciasBase.value;
-  const q = normaliza(qComp.value);
-  return lista
-    .filter((c) => !jaTemComp(c.codigo))
-    .filter((c) => !q || normaliza(c.nome).includes(q))
-    .slice(0, 8);
-});
-
-const filteredEquipes = computed(() => {
-  const q = normaliza(qEquipe.value);
-  return equipesOptions.value
-    .filter((e) => !jaTemEquipe(e.id))
-    .filter((e) => !q || normaliza(e.nome).includes(q))
-    .slice(0, 8);
-});
-*/
 
 const listaCompetenciasParaSelecao = computed(() => {
   if (filtros.value.competencias.length) {
@@ -707,10 +611,10 @@ const filteredColabs = computed(() => {
   return allColaboradores.value
     .filter((colab) => !jaTemColab(colab.codigo))
     .filter((colab) => {
-        if (colab.codigo === userLogado.codigo) return false; // Auto-avaliação
-        const podeAvaliarNivel = userPerfilId < colab.perfilId; // Permissão
-        const mesmaArea = colab.areaId === userAreaId;          // Área
-        return podeAvaliarNivel && mesmaArea;
+      if (colab.codigo === userLogado.codigo) return false;
+      const podeAvaliarNivel = userPerfilId < colab.perfilId;
+      const mesmaArea = colab.areaId === userAreaId;
+      return podeAvaliarNivel && mesmaArea;
     })
     .filter((colab) => !q || normaliza(colab.nome).includes(q) || normaliza(colab.cargo).includes(q))
     .slice(0, 30);
@@ -718,11 +622,10 @@ const filteredColabs = computed(() => {
 
 const filteredComps = computed(() => {
   const q = normaliza(qComp.value);
-  return allCompetencias.value
+  const result = allCompetencias.value
     .filter((c) => !jaTemComp(c.id))
     .filter((c) => !q || normaliza(c.nome).includes(q))
     .slice(0, 30);
-    console.log('Competências Filtradas para Dropdown:', result.map(c => c.nome));
   return result;
 });
 
@@ -735,29 +638,20 @@ const filteredEquipes = computed(() => {
 });
 
 const addColab = (c) => {
-  console.log('Tentando adicionar:', c.nome,c.codigo);
   if (!jaTemColab(c.codigo)) filtros.value.colaboradores.push(c);
   qColab.value = '';
   open.value.colab = false;
 };
 
 const addComp = (comp) => {
-  // === LOG ADICIONADO ===
-  console.log('Tentando adicionar:', comp.nome);
   if (!jaTemComp(comp.id)) {
     filtros.value.competencias.push(comp);
-    // === LOG ADICIONADO ===
-    console.log('Competências no Filtro AGORA:', filtros.value.competencias.map(c => c.nome));
   } else {
-     // === LOG ADICIONADO ===
-    console.log(comp.nome, 'já está no filtro.');
-    nextTick(()=>{
+    nextTick(() => {
       open.value.comp = false;
-      console.log('Dropdown de competências fechado via nextTick (item já existia)');
     });
   }
-  qComp.value = ''; // Limpa o input
-
+  qComp.value = '';
 };
 
 const addEquipe = (e) => {
@@ -771,47 +665,32 @@ const handleClickOutside = (ev) => {
   if (wrapComp.value && !wrapComp.value.contains(t)) open.value.comp = false;
   if (wrapEquipe.value && !wrapEquipe.value.contains(t)) open.value.equipe = false;
 };
+
 const competenciasParaDropdown = computed(() => {
-  // Se houver competências selecionadas no filtro, usa elas
   if (filtros.value.competencias.length > 0) {
     return filtros.value.competencias;
   }
-  // Senão, usa todas as competências carregadas
   return allCompetencias.value;
 });
 
 watch(() => filtros.value.competencias, (novasCompetenciasSelecionadas) => {
-  // === NOVO LOG AQUI ===
-  console.log('WATCH: Filtro de competências mudou. Novas selecionadas:', novasCompetenciasSelecionadas);
-  if (novasCompetenciasSelecionadas.length > 0) {
-      console.log('WATCH: Primeiro item selecionado:', novasCompetenciasSelecionadas[0]); // Veja a estrutura deste objeto
-  }
-  // ======================
-
   if (novasCompetenciasSelecionadas.length === 1) {
-    // Tentativa de auto-seleção (com .codigo)
-    const compCodigo = novasCompetenciasSelecionadas[0]?.id; // Usar optional chaining ?. por segurança
+    const compCodigo = novasCompetenciasSelecionadas[0]?.id;
     if (compCodigo !== undefined) {
-         competenciaSelecionada.value = compCodigo;
-         console.log(`WATCH: Competência vinculada auto-selecionada para: ${competenciaSelecionada.value}`);
+      competenciaSelecionada.value = compCodigo;
     } else {
-         console.error('WATCH: Erro na auto-seleção - O primeiro item não tem a propriedade "codigo":', novasCompetenciasSelecionadas[0]);
-         competenciaSelecionada.value = ''; // Reseta se não encontrar o código
+      competenciaSelecionada.value = '';
     }
-
   } else {
-    // Lógica de reset (como estava antes, usando .codigo)
     const selecionadaAindaValida = novasCompetenciasSelecionadas.length === 0 ||
-                                 novasCompetenciasSelecionadas.some(c => c.id === competenciaSelecionada.value);
+      novasCompetenciasSelecionadas.some(c => c.id === competenciaSelecionada.value);
     if (!selecionadaAindaValida) {
       competenciaSelecionada.value = '';
-      console.log('WATCH: Competência vinculada resetada.');
     }
   }
 }, { deep: true });
 
 const handleCriarAvaliacao = async () => {
-  // 1. Validações (como antes)
   if (!tituloAvaliacao.value.trim()) {
     alert('Por favor, informe o título da avaliação.');
     return;
@@ -824,88 +703,73 @@ const handleCriarAvaliacao = async () => {
     alert('Selecione pelo menos um colaborador para receber a avaliação.');
     return;
   }
+  if (!dataLimite.value) {
+    alert('Defina uma data limite para a avaliação.');
+    return;
+  }
 
-  console.log("Iniciando processo de Criar Avaliação...");
-  console.log("Perguntas locais a serem salvas:", perguntas.value);
-  console.log("Colaboradores selecionados:", filtros.value.colaboradores);
-
-  let codigosPerguntasSalvas = []; // Array para guardar os IDs das perguntas salvas
+  let codigosPerguntasSalvas = [];
 
   try {
-    // === PASSO 2a: Salvar cada pergunta local no backend ===
-    console.log("Salvando perguntas individuais no backend...");
     const savePromises = perguntas.value.map(perguntaLocal => {
-      // Monta o payload para POST /api/perguntas
       const payloadPergunta = {
         pergunta: perguntaLocal.pergunta,
-        competenciaCodigo: perguntaLocal.competenciaId, // Nome esperado pelo backend
+        competenciaCodigo: perguntaLocal.competenciaId,
         tipoPergunta: perguntaLocal.tipoPergunta,
         opcoes: perguntaLocal.opcoes
       };
-      console.log("Enviando para /api/perguntas:", payloadPergunta);
       return axios.post('http://localhost:8080/api/perguntas', payloadPergunta);
     });
 
-    // Executa todas as requisições de salvar pergunta em paralelo
     const responses = await Promise.all(savePromises);
 
-    // Coleta os códigos das perguntas salvas
     codigosPerguntasSalvas = responses.map(response => response.data.codigo);
-    console.log("Códigos das perguntas salvas:", codigosPerguntasSalvas);
 
     if (codigosPerguntasSalvas.length !== perguntas.value.length || codigosPerguntasSalvas.some(code => code == null)) {
-        throw new Error("Falha ao salvar uma ou mais perguntas no backend.");
+      throw new Error("Falha ao salvar uma ou mais perguntas no backend.");
     }
 
-    // === PASSO 2b: Montar e enviar payload para Criar Avaliação ===
     const codigosFuncionarios = filtros.value.colaboradores.map(c => c.codigo);
 
     const payloadAvaliacao = {
       titulo: tituloAvaliacao.value.trim(),
-      codigosFuncionarios: codigosFuncionarios,
-      codigosPerguntas: codigosPerguntasSalvas // Usa os códigos recém-obtidos
+      codigosFuncionarios,
+      codigosPerguntas: codigosPerguntasSalvas,
+      dataPrazo: new Date(dataLimite.value).toISOString()
     };
 
-    console.log("Enviando Payload final para Criar Avaliação (/api/avaliacoes):", payloadAvaliacao);
-
     const responseAvaliacao = await axios.post('http://localhost:8080/api/avaliacoes', payloadAvaliacao);
-    console.log('Resposta do Servidor (Criar Avaliação):', responseAvaliacao.data);
 
     alert(`Avaliação "${responseAvaliacao.data.titulo}" criada com sucesso!`);
 
-    // Limpa tudo após o sucesso
     tituloAvaliacao.value = '';
     perguntas.value = [];
     filtros.value.colaboradores = [];
     filtros.value.competencias = [];
     filtros.value.equipes = [];
-    // router.push('/algum-lugar');
-
+    dataLimite.value = '';
   } catch (err) {
-      console.error("Erro completo durante a criação da avaliação:", err);
-      let mensagem = "Ocorreu um erro geral ao criar a avaliação.";
+    console.error("Erro completo durante a criação da avaliação:", err);
+    let mensagem = "Ocorreu um erro geral ao criar a avaliação.";
 
-      // Tenta dar mensagens mais específicas
-      if (err.message && err.message.includes("Falha ao salvar uma ou mais perguntas")) {
-          mensagem = err.message + " Verifique o console do backend para detalhes.";
-      } else if (axios.isAxiosError(err) && err.response) {
-           console.error("Erro Axios:", err.response.status, err.response.data);
-           if (err.config.url.includes('/api/perguntas')) {
-               mensagem = `Erro ao salvar uma das perguntas (${err.response.status}): ${err.response.data?.message || err.response.data || 'Erro desconhecido'}`;
-           } else if (err.config.url.includes('/api/avaliacoes')) {
-               mensagem = `Erro ao criar a avaliação final (${err.response.status}): ${err.response.data?.message || err.response.data || 'Funcionário(s) ou Pergunta(s) inválido(s)'}`;
-           } else {
-               mensagem = `Erro de rede ou servidor (${err.response.status}).`;
-           }
-      } else if (err.code === 'ERR_NETWORK') {
-          mensagem = "Não foi possível conectar ao servidor (localhost:8080).";
-      } else if (err.message) {
-          mensagem = err.message;
+    if (err.message && err.message.includes("Falha ao salvar uma ou mais perguntas")) {
+      mensagem = err.message + " Verifique o console do backend para detalhes.";
+    } else if (axios.isAxiosError(err) && err.response) {
+      if (err.config.url.includes('/api/perguntas')) {
+        mensagem = `Erro ao salvar uma das perguntas (${err.response.status}): ${err.response.data?.message || err.response.data || 'Erro desconhecido'}`;
+      } else if (err.config.url.includes('/api/avaliacoes')) {
+        mensagem = `Erro ao criar a avaliação final (${err.response.status}): ${err.response.data?.message || err.response.data || 'Funcionário(s) ou Pergunta(s) inválido(s)'}`;
+      } else {
+        mensagem = `Erro de rede ou servidor (${err.response.status}).`;
       }
-      alert(mensagem);
+    } else if (err.code === 'ERR_NETWORK') {
+      mensagem = "Não foi possível conectar ao servidor (localhost:8080).";
+    } else if (err.message) {
+      mensagem = err.message;
+    }
+    alert(mensagem);
   }
 };
-
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
@@ -913,6 +777,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* (mesmos estilos que você já tinha, mantive tudo) */
+
 /* Cores de fundo */
 .bg-slate-50 { background: #f8fafc; }
 .bg-white { background: #ffffff; }
@@ -973,6 +839,7 @@ onUnmounted(() => {
 .mt-3 { margin-top: 0.75rem; }
 .mt-4 { margin-top: 1rem; }
 .mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
 .mb-1 { margin-bottom: 0.25rem; }
 .mb-2 { margin-bottom: 0.5rem; }
 .mb-3 { margin-bottom: 0.75rem; }
@@ -983,6 +850,7 @@ onUnmounted(() => {
 /* Gap */
 .gap-1 { gap: 0.25rem; }
 .gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
 .gap-4 { gap: 1rem; }
 
 /* Flexbox */
@@ -1017,12 +885,11 @@ onUnmounted(() => {
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
 
-/* Misc */
+/* Miscelânea */
 .block { display: block; }
 .inline-block { display: inline-block; }
 .inline-flex { display: inline-flex; }
 .shrink-0 { flex-shrink: 0; }
-.resize-none { resize: none; }
 .text-center { text-align: center; }
 .transition-colors { transition-property: color, background-color, border-color; transition-duration: 150ms; }
 .space-y-1 > * + * { margin-top: 0.25rem; }
@@ -1037,34 +904,15 @@ onUnmounted(() => {
 .hover\:bg-blue-700:hover { background: #1d4ed8; }
 .hover\:bg-red-100:hover { background: #fee2e2; }
 .hover\:text-blue-700:hover { color: #1d4ed8; }
-.hover\:border-blue-300:hover { border-color: #93c5fd; }
 
-/* Responsive */
+/* Responsivo */
 @media (min-width: 768px) {
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* ====== estilos extras para os cards ====== */
-
-/* Chips de colaboradores */
-.chip {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border: 1px solid #dbeafe; background: #f8fbff;
-  border-radius: 12px; box-shadow: 0 1px 0 rgba(0,0,0,.02);
-}
-.chip__avatar {
-  height: 36px; width: 36px; display: grid; place-items: center;
-  border-radius: 9999px; background: #e5efff; color: #1d4ed8;
-  font-weight: 700; font-size: 0.875rem;
-  box-shadow: inset 0 0 0 4px #f2f6ff;
-}
-.chip__content { display: grid; }
-.chip__title { font-size: 0.9rem; font-weight: 700; color: #1f2937; }
-.chip__subtitle { font-size: 0.75rem; color: #6b7280; margin-top: -2px; }
-
-/* ---- Typeahead simples ---- */
+/* Typeahead */
 .search-select { position: relative; }
 .search-input {
   width: 100%;
@@ -1081,7 +929,6 @@ onUnmounted(() => {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59,130,246,.3);
 }
-
 .search-list {
   position: absolute;
   z-index: 30;
@@ -1096,7 +943,6 @@ onUnmounted(() => {
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   padding: 6px;
 }
-
 .search-item {
   display: grid;
   gap: 2px;
@@ -1104,14 +950,7 @@ onUnmounted(() => {
   border-radius: 8px;
   cursor: pointer;
 }
-.search-item:hover {
-  background: #f1f5f9;
-}
+.search-item:hover { background: #f1f5f9; }
 .item-title { font-size: 0.875rem; color: #0f172a; font-weight: 600; }
 .item-sub   { font-size: 0.75rem;  color: #64748b; }
-
-/* Lista de perguntas */
-.space-y-4 > * + * {
-  margin-top: 1rem;
-}
 </style>

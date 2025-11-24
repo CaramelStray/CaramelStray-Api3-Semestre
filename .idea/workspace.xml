@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d521825-c43e-421e-bd98-0d81923b4be4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/frontend/src/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components.d.ts" afterDir="false" />
-    </list>
+    <list default="true" id="6d521825-c43e-421e-bd98-0d81923b4be4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,10 +25,10 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Sprint-2-",
+    "git-widget-placeholder": "Sprint3",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/thoma/OneDrive/Documentos/API/CaramelStray-Api3-Semestre/CaramelStray"
+    "last_opened_file_path": "C:/Users/thoma/OneDrive/Documentos/API/CaramelStray-Api3-Semestre"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

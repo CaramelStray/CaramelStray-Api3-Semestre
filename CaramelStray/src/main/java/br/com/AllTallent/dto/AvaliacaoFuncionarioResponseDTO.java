@@ -1,22 +1,22 @@
-package br.com.AllTallent.dto; // Ou o pacote onde seus DTOs estão
+package br.com.AllTallent.dto; 
 
 import br.com.AllTallent.model.AvaliacaoFuncionario;
-import lombok.Getter; // Usar @Getter aqui é útil para records com lógica no construtor
+import lombok.Getter; 
 
-@Getter // Adiciona getters para todos os campos
+@Getter 
 public class AvaliacaoFuncionarioResponseDTO {
 
     private final Long codigo;
-    private final Integer funcionarioCodigo; // ID do funcionário avaliado
-    private final String funcionarioNome;    // Nome do funcionário avaliado
-    private final Integer avaliacaoCodigo;   // ID da avaliação base
-    private final String avaliacaoTitulo;    // Título da avaliação base
+    private final Integer funcionarioCodigo;
+    private final String funcionarioNome;
+    private final Integer avaliacaoCodigo;
+    private final String avaliacaoTitulo;
     private final String comentarioColaborador;
     private final String comentarioSupervisao;
     private final String resultadoStatus;
     private final Integer nota;
 
-    // Construtor que converte a Entidade para o DTO
+    
     public AvaliacaoFuncionarioResponseDTO(AvaliacaoFuncionario entidade) {
         this.codigo = entidade.getCodigo();
         this.funcionarioCodigo = (entidade.getFuncionario() != null) ? entidade.getFuncionario().getCodigo() : null;
@@ -27,9 +27,5 @@ public class AvaliacaoFuncionarioResponseDTO {
         this.comentarioSupervisao = entidade.getComentarioSupervisao();
         this.resultadoStatus = entidade.getResultadoStatus();
         this.nota = entidade.getNota();
-        // Nota: Não incluímos a lista de 'respostas' aqui para manter o DTO leve.
-        // Se precisar das respostas, pode ser melhor ter um endpoint separado para buscá-las.
     }
-
-    // Lombok @Getter gera os métodos getCodigo(), getFuncionarioCodigo(), etc.
 }

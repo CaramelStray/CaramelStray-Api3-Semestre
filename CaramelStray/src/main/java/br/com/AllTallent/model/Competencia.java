@@ -20,6 +20,8 @@ public class Competencia {
 
     private String nome;
 
+    private String categoria;
+
     @ManyToMany(mappedBy = "competencias")
     private Set<Funcionario> funcionarios;
 }

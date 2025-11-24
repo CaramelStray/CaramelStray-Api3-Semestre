@@ -1,18 +1,18 @@
 package br.com.AllTallent.model;
 
-import jakarta.persistence.*; // Import simplificado
-import lombok.*;             // Import simplificado
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "codigo") // Padrão recomendado
+@EqualsAndHashCode(of = "codigo") 
 @Entity
 @Table(name = "tb_cad_area")
 public class Area {
 
-    // --- CORREÇÃO AQUI ---
+       
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer codigo;

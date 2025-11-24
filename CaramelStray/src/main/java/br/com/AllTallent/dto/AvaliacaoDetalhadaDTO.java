@@ -13,6 +13,7 @@ public record AvaliacaoDetalhadaDTO(
     String status,
     LocalDate dataCriacao,
     LocalDate dataPrazo,
+    String nomeCriador,
     List<PerguntaResponseDTO> perguntas,             
     List<AvaliacaoFuncionarioResponseDTO> instancias 
 ) {
@@ -24,21 +25,19 @@ public record AvaliacaoDetalhadaDTO(
             avaliacao.getStatus(),
             avaliacao.getDataCriacao(),
             avaliacao.getDataPrazo(),
-
-            // Mapeia o Set<Pergunta> para uma List<PerguntaResponseDTO>
-            // PerguntaResponseDTO é mais simples que PerguntaParaResponderDTO aqui
+            (avaliacao.getCriador() != null) ? avaliacao.getCriador().getNomeCompleto() : "Sistema",
             (avaliacao.getPerguntas() != null) ?
                 avaliacao.getPerguntas().stream()
-                    .map(PerguntaResponseDTO::new) // Converte cada Pergunta para PerguntaResponseDTO
+                    .map(PerguntaResponseDTO::new) 
                     .collect(Collectors.toList())
-                : Collections.emptyList(), // Retorna lista vazia se não houver perguntas
+                : Collections.emptyList(), 
 
-            // Mapeia o Set<AvaliacaoFuncionario> para uma List<AvaliacaoFuncionarioResponseDTO>
+            
             (avaliacao.getInstanciasAvaliacao() != null) ?
                 avaliacao.getInstanciasAvaliacao().stream()
-                    .map(AvaliacaoFuncionarioResponseDTO::new) // Converte cada instancia para seu DTO
+                    .map(AvaliacaoFuncionarioResponseDTO::new) 
                     .collect(Collectors.toList())
-                : Collections.emptyList() // Retorna lista vazia se não houver instâncias
+                : Collections.emptyList() 
         );
     }
 }

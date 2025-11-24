@@ -1,4 +1,4 @@
-package br.com.AllTallent.model; // Ou o pacote onde seus modelos estão
+package br.com.AllTallent.model; 
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,6 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = "codigo")
 @Entity
 @Table(name = "tb_cad_pergunta_opcao")
 public class PerguntaOpcao {
@@ -25,9 +24,8 @@ public class PerguntaOpcao {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_cad_pergunta_opcao_codigo_seq")
     @SequenceGenerator(name = "tb_cad_pergunta_opcao_codigo_seq", sequenceName = "tb_cad_pergunta_opcao_codigo_seq", allocationSize = 1)
-    private Long codigo; // bigint
+    private Long codigo; 
 
-    // Relacionamento inverso: Muitas Opcoes pertencem a UMA Pergunta
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_pergunta", referencedColumnName = "codigo", nullable = false)
     @ToString.Exclude

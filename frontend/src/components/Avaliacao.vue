@@ -1,27 +1,6 @@
 <template>
-  <div class="page">
-    <header class="topbar">
-      <button class="icon-btn" aria-label="Voltar" @click="goBack">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
 
-      <div class="topbar__title">
-        <div class="app-title">
-          <span class="app-title__icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path d="M8 4h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 0v2h8V4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="16" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="12" cy="10" r="1.5" fill="currentColor"/>
-              <circle cx="8"  cy="10" r="1.5" fill="currentColor"/>
-            </svg>
-          </span>
-          Avaliações
-        </div>
-        <div class="app-subtitle">Gerencie e crie avaliações de colaboradores</div>
-      </div>
-    </header>
+
 
     <main class="container">
       <h1 class="page-title">Sistema de Avaliações</h1>
@@ -56,7 +35,6 @@
         </article>
       </section>
     </main>
-  </div>
 </template>
 
 <script setup>

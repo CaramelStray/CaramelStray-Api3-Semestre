@@ -14,23 +14,20 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-// Removido EqualsAndHashCode para evitar problemas com Set antes do save
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-// Removido ToString para evitar recursão
 
-import java.util.Set; // Import para Set
+import java.util.Set; 
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// @EqualsAndHashCode(of = "codigo") // Removido ou comentado
 @Entity
-@Table(name = "tb_cad_funcionario_avalicacao") // Nome correto da tabela no SQL (com 'c')
-public class AvaliacaoFuncionario { // Mantendo o nome AvaliacaoFuncionario
+@Table(name = "tb_cad_funcionario_avalicacao") 
+public class AvaliacaoFuncionario { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_cad_funcionario_avalicacao_codigo_seq")
@@ -39,11 +36,11 @@ public class AvaliacaoFuncionario { // Mantendo o nome AvaliacaoFuncionario
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "codigo_funcionario_avalidado", nullable = false)
-    private Funcionario funcionario; // Mudado de funcionarioAvaliado para funcionario (como no seu DTO)
+    private Funcionario funcionario; 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "codigo_avalicacao", nullable = false) // Nome da coluna no banco
-    private Avaliacao avaliacao; // Nome da classe Java correspondente
+    @JoinColumn(name = "codigo_avalicacao", nullable = false) 
+    private Avaliacao avaliacao; 
 
     @Column(name = "comentario_colaborador", columnDefinition = "TEXT")
     private String comentarioColaborador;
@@ -59,34 +56,31 @@ public class AvaliacaoFuncionario { // Mantendo o nome AvaliacaoFuncionario
 
 
     @OneToMany(
-        mappedBy = "avaliacaoFuncionario", // Campo na classe RespostaColaborador
+        mappedBy = "avaliacaoFuncionario",
         cascade = CascadeType.ALL,
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
     private Set<RespostaColaborador> respostas;
 
-    // --- Construtor ---
-    // (Pode remover se @AllArgsConstructor e @NoArgsConstructor forem suficientes)
     public AvaliacaoFuncionario(Funcionario funcionario, Avaliacao avaliacao) {
         this.funcionario = funcionario;
         this.avaliacao = avaliacao;
         this.resultadoStatus = "PENDENTE";
     }
 
-     // Opcional: Métodos para adicionar/remover respostas de forma segura
      public void addResposta(RespostaColaborador resposta) {
          if (respostas == null) {
              respostas = new java.util.HashSet<>();
          }
          respostas.add(resposta);
-         resposta.setAvaliacaoFuncionario(this); // Mantém a consistência
+         resposta.setAvaliacaoFuncionario(this);
      }
 
      public void removeResposta(RespostaColaborador resposta) {
          if (respostas != null) {
              respostas.remove(resposta);
-             resposta.setAvaliacaoFuncionario(null); // Mantém a consistência
+             resposta.setAvaliacaoFuncionario(null);
          }
      }
 }

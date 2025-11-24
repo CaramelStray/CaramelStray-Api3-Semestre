@@ -1,4 +1,4 @@
-package br.com.AllTallent.config;
+/*package br.com.AllTallent.config;
 
 
 
@@ -11,10 +11,11 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Aplica o CORS a todos os endpoints que começam com /api
-                .allowedOrigins("http://localhost:5173") // A URL do seu frontend Vue.js
+        registry.addMapping("/api/**") 
+                .allowedOrigins("http://localhost:5173") 
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*");
                 
     }
 }
+*/

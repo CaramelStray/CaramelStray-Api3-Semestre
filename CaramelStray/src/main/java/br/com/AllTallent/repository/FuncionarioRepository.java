@@ -1,25 +1,62 @@
 package br.com.AllTallent.repository;
 
 import java.util.Optional;
-
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param; 
 import org.springframework.stereotype.Repository;
-
 import br.com.AllTallent.model.Funcionario;
+import br.com.AllTallent.dto.MesQuantidadeProjection; // Nossa interface
+import br.com.AllTallent.dto.AreaQuantidadeDTO;       // Novo do Git
+import br.com.AllTallent.dto.CompetenciaQuantidadeDTO; // Novo do Git
 
-// Usamos JpaRepository para mais funcionalidades, como paginação
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
-    // O Spring Data JPA cria todos os métodos CRUD para nós!
-    @Query("SELECT f FROM Funcionario f " +
-           "LEFT JOIN FETCH f.area " +
-           "LEFT JOIN FETCH f.perfil " +
-           "LEFT JOIN FETCH f.gestor " +
-           "LEFT JOIN FETCH f.competencias " +
-           "LEFT JOIN FETCH f.certificados " +
-           "LEFT JOIN FETCH f.experiencias " + // <-- JOIN CORRETO AQUI
-           "WHERE f.codigo = :id")
-    Optional<Funcionario> findByIdCompleto(Integer id);
-}
+    
+    @Query("SELECT f FROM Funcionario f LEFT JOIN FETCH f.area LEFT JOIN FETCH f.perfil WHERE f.codigo = :id")
+    Optional<Funcionario> findByIdCompleto(@Param("id") Integer id); 
 
+    Optional<Funcionario> findByEmail(String email);
+
+    @Query("SELECT f FROM Funcionario f LEFT JOIN FETCH f.perfil LEFT JOIN FETCH f.area WHERE f.email = :email")
+    Optional<Funcionario> findByEmailForSecurity(@Param("email") String email);
+
+    @Query(nativeQuery = true, value = """
+        SELECT TO_CHAR(DATE_TRUNC('month', data_admissao), 'YYYY-MM') AS mes, COUNT(*) AS quantidade
+        FROM tb_cad_funcionario
+        WHERE data_admissao IS NOT NULL
+        GROUP BY DATE_TRUNC('month', data_admissao)
+        ORDER BY mes
+    """)
+    List<MesQuantidadeProjection> findEvolucaoMensal();
+
+    @Query(nativeQuery = true, value = """
+        SELECT TO_CHAR(DATE_TRUNC('month', data_admissao), 'YYYY-MM') AS mes, COUNT(*) AS quantidade
+        FROM tb_cad_funcionario
+        WHERE data_admissao IS NOT NULL AND codigo_area = :codigoArea
+        GROUP BY DATE_TRUNC('month', data_admissao)
+        ORDER BY mes
+    """)
+    List<MesQuantidadeProjection> findEvolucaoMensalByArea(@Param("codigoArea") Integer codigoArea);
+
+    long countByAreaCodigo(Integer codigoArea);
+    
+    @Query("""
+        SELECT new br.com.AllTallent.dto.AreaQuantidadeDTO(COALESCE(a.nome, 'Sem área'), COUNT(f))
+        FROM Funcionario f
+        LEFT JOIN f.area a
+        GROUP BY a.nome
+        ORDER BY a.nome
+    """)
+    List<AreaQuantidadeDTO> countFuncionariosPorArea();
+
+    @Query("""
+        SELECT new br.com.AllTallent.dto.CompetenciaQuantidadeDTO(c.nome, COUNT(c))
+        FROM Funcionario f
+        JOIN f.competencias c
+        GROUP BY c.nome
+        ORDER BY COUNT(c) DESC
+    """)
+    List<CompetenciaQuantidadeDTO> countFuncionariosPorCompetencia();
+}

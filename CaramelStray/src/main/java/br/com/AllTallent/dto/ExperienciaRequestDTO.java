@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-// Usamos anotações de validação para garantir a qualidade dos dados
 public record ExperienciaRequestDTO(
     @NotBlank @Size(max = 150)
     String cargo,

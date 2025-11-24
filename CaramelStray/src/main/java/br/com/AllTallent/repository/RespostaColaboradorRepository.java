@@ -12,14 +12,11 @@ import br.com.AllTallent.model.RespostaColaborador;
 @Repository
 public interface RespostaColaboradorRepository extends JpaRepository<RespostaColaborador, Long> {
 
-    // Método útil para buscar uma resposta existente para uma pergunta específica
-    // dentro de uma instância de avaliação
     @Query("SELECT r FROM RespostaColaborador r WHERE r.avaliacaoFuncionario.codigo = :funcionarioAvaliacaoCodigo AND r.pergunta.codigo = :perguntaCodigo")
     Optional<RespostaColaborador> findByFuncionarioAvaliacaoCodigoAndPerguntaCodigo(
             @Param("funcionarioAvaliacaoCodigo") Long funcionarioAvaliacaoCodigo,
             @Param("perguntaCodigo") Long perguntaCodigo
     );
 
-    // Método útil para buscar todas as respostas de uma instância de avaliação
     List<RespostaColaborador> findByAvaliacaoFuncionarioCodigo(Long avaliacaoFuncionarioCodigo);
 }

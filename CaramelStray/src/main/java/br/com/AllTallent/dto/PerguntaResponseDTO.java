@@ -1,8 +1,7 @@
-package br.com.AllTallent.dto; // Ou o pacote onde seus DTOs estão
+package br.com.AllTallent.dto; 
 
 import br.com.AllTallent.model.Pergunta;
 
-// DTO para retornar a pergunta criada (incluindo o ID)
 public record PerguntaResponseDTO(
     Long codigo,
     String pergunta,
@@ -10,7 +9,6 @@ public record PerguntaResponseDTO(
     String competenciaNome
     
 ) {
-    // Construtor para facilitar a conversão da Entidade para DTO
     public PerguntaResponseDTO(Pergunta entidade) {
         this(
             entidade.getCodigo(),

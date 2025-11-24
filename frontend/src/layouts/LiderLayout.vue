@@ -9,7 +9,7 @@
           </svg>
         </div>
         <div class="sidebar__text">
-          <div class="sidebar__title">Sistema RH</div>
+          <div class="sidebar__title">Gestor de Equipes</div>
           <div class="sidebar__subtitle">Liderança</div>
         </div>
       </div>
@@ -30,6 +30,8 @@
           <span>Início</span>
         </router-link>
 
+        
+
         <router-link :to="{ name: 'LiderFuncionarios' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
             <circle cx="12" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -38,12 +40,29 @@
           <span>Colaboradores</span>
         </router-link>
 
+
         <router-link :to="{ name: 'LiderAvaliacoes' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" fill="none" stroke="currentColor" stroke-width="2"/>
           </svg>
           <span>Avaliações</span>
         </router-link>
+
+        <router-link
+  :to="{ name: 'LiderVerCompetencias', params: { id: usuarioLogado.codigo } }"
+  class="nav-item"
+>
+  <svg viewBox="0 0 24 24" width="20" height="20">
+    <path
+      d="M5 5h14v4H5zM5 11h14v4H5zM5 17h8v4H5z"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linejoin="round"
+    />
+  </svg>
+  <span>Competências</span>
+</router-link>
 
         <router-link :to="{ name: 'LiderDashboard' }" class="nav-item">
           <svg viewBox="0 0 24 24" width="20" height="20">
@@ -52,6 +71,12 @@
           <span>Dashboard</span>
         </router-link>
 
+        <router-link :to="{ name: 'LiderCadastrarColaborador' }" class="nav-item">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        <span>Cadastrar Colaborador</span>
+        </router-link>
       </nav>
 
       <div class="sidebar__footer">
@@ -73,13 +98,11 @@
           </svg>
         </div>
         <div class="brand__text">
-          <div class="brand__title">{{ $route.meta.title || 'Sistema RH' }}</div>
+          <div class="brand__title">{{ $route.meta.title || 'Gestor de Equipes' }}</div>
           <div class="brand__subtitle">{{ $route.meta.subtitle || 'Liderança' }}</div>
         </div>
       </div>
-      <div class="actions">
-        <button class="btn-outline" @click="logout">Sair</button>
-      </div>
+    
     </header>
 
     <div class="content-area">
@@ -90,11 +113,21 @@
 </template>
 
 <script setup>
-// Script setup simples, sem importação do SideMenu
-import { useRoute } from 'vue-router';
-const route = useRoute();
+import { useRoute, useRouter } from 'vue-router';
+import { useAuth } from '../auth';
 
-const logout = () => { console.log("Sair LiderLayout"); };
+const route = useRoute();
+const router = useRouter();
+
+const { usuarioLogado } = useAuth();
+
+const logout = () => {
+  // 1. Remove o token (mesma chave usada no beforeEach)
+  localStorage.removeItem('token');
+
+  // 2. Redireciona para a tela de login
+  router.push('/login');
+};
 </script>
 
 <style scoped>

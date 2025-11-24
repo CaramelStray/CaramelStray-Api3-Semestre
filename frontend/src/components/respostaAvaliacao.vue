@@ -1,39 +1,25 @@
 <template>
-  <div class="page">
-    <header class="topbar">
-      <div class="topbar__inner">
-        <button @click="handleVoltar" class="btn icon" aria-label="Voltar">
-          <svg viewBox="0 0 24 24" class="icon__svg">
-            <path d="M15 18 9 12l6-6"/>
-          </svg>
-        </button>
-        <div class="topbar__title">
-          <div>
-            <h1 class="title__main">{{ avaliacao.titulo }}</h1>
-            <p class="title__sub">{{ avaliacao.respostasRecebidas }} de {{ avaliacao.totalDestinatarios }} respostas recebidas</p>
-          </div>
-        </div>
-      </div>
-    </header>
+  <div class="min-h-screen bg-slate-50 text-slate-800">
 
-    <main class="container">
-      
-      <div v-if="loading" class="text-center py-10 text-slate-600" style="text-align: center; padding: 2.5rem 0; color: #475569;">
+    <!-- Main Content -->
+    <main class="mx-auto max-w-7xl p-6">
+      <div v-if="loading" class="text-center py-10 text-slate-600">
         Carregando respostas da avaliação...
       </div>
       
-      <div v-else-if="error" class="text-center py-10 text-red-600 bg-red-50 rounded-lg p-4" style="text-align: center; padding: 2.5rem 0; color: #dc2626; background-color: #fef2f2; border-radius: 0.5rem; padding: 1rem;">
+      <div v-else-if="error" class="text-center py-10 text-red-600 bg-red-50 rounded-lg p-4">
          {{ error }}
       </div>
 
       <template v-else>
-        <div class="respostas-lista">
+        <div class="space-y-4">
           
-          <p v-if="destinatarios.length === 0" class="sem-respostas" style="padding: 32px 16px; text-align: center; color: #6b7a90; font-size: 14px;">
-              Nenhum colaborador foi associado a esta avaliação.
+          <p v-if="destinatarios.length === 0" class="text-center py-10 text-slate-600 bg-white rounded-xl border border-slate-200 shadow-sm">
+            Nenhum colaborador foi associado a esta avaliação.
           </p>
           
-          <article v-else v-for="dest in destinatarios" :key="dest.id" class="destinatario-card">
+          <article v-else v-for="dest in destinatarios" :key="dest.id" class="rounded-xl bg-white shadow-sm border border-slate-200 overflow-hidden">
+            <!-- Header do Colaborador -->
             <header class="destinatario__header" @click="toggleExpand(dest.id)">
               <div class="destinatario__info">
                 <div class="avatar" :style="{ backgroundColor: dest.cor }">
@@ -51,6 +37,7 @@
               </div>
             </header>
 
+            <!-- Conteúdo Expandido -->
             <div v-if="expandidos[dest.id]">
               
               <div v-if="dest.status === 'PENDENTE'" class="sem-respostas">
@@ -92,7 +79,10 @@
                         <div class="escala-fill" :style="{ width: (pergunta.nota / pergunta.escalaMax * 100) + '%' }"/>
                       </div>
                     </div>
-                  </div> </div> <div class="revisao-wrapper"> 
+                  </div>
+                </div>
+                
+                <div class="revisao-wrapper"> 
                   
                   <div v-if="dest.status === 'AGUARDANDO_REVISAO'" class="pergunta-item revisao-box">
                     <h4 class="revisao-titulo">Revisão do Supervisor</h4>
@@ -130,9 +120,13 @@
                     <p class="revisao-texto"><strong>Comentário Privado:</strong> {{ dest.revisaoComentarioSupervisor || 'N/A' }}</p>
                     <p class="revisao-texto"><strong>Comentário para Colaborador:</strong> {{ dest.revisaoComentarioColaborador || 'Nenhum' }}</p>
                   </div>
-                </div> </div> </div> </article>
+                </div>
+              </div>
+            </div>
+          </article>
         </div>
-      </template> </main>
+      </template>
+    </main>
   </div>
 </template>
 
@@ -140,7 +134,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { useAuth } from '../auth'; // <<< Importação necessária
+import { useAuth } from '../auth';
 
 // === Refs Essenciais ===
 const loading = ref(true);
@@ -401,123 +395,273 @@ async function handleSalvarRevisao(destinatario) {
 
 <style scoped>
 /* ===== Base ===== */
-.page { background: #f6f9ff; color: #0f172a; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-.container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+.min-h-screen { min-height: 100vh; }
+.bg-slate-50 { background: #f8fafc; }
+.bg-white { background: #ffffff; }
+.bg-blue-50 { background: #eff6ff; }
+.bg-blue-100 { background: #dbeafe; }
+.bg-blue-600 { background: #2563eb; }
+.bg-red-50 { background: #fef2f2; }
 
-/* ===== Topbar ===== */
-.topbar { background: rgba(255, 255, 255, 0.8); backdrop-filter: saturate(1.2) blur(2px); border-bottom: 1px solid #e6effa; position: sticky; top: 0; z-index: 100; }
-.topbar__inner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1100px; margin: 0 auto; }
-.topbar__title { flex: 1; }
-.title__main { font-size: 18px; font-weight: 600; color: #1f2d3d; margin: 0; }
-.title__sub { font-size: 13px; color: #6b7a90; margin-top: 2px; }
+/* Cores de texto */
+.text-slate-500 { color: #64748b; }
+.text-slate-600 { color: #475569; }
+.text-slate-700 { color: #334155; }
+.text-slate-800 { color: #1e293b; }
+.text-blue-600 { color: #2563eb; }
+.text-red-600 { color: #dc2626; }
+.text-white { color: #ffffff; }
 
-.btn { height: 36px; padding: 0 12px; border: 1px solid #e6effa; background: #fff; border-radius: 10px; cursor: pointer; color: #1f2d3d; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; }
-.icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; padding: 0; }
-.icon__svg { width: 20px; height: 20px; stroke: #3a4b63; fill: none; stroke-width: 2; }
-.btn:hover { background: #f8fafc; }
-.btn--primary { background: #3a6ce1; color: #fff; border-color: #3a6ce1; font-weight: 500; }
-.btn--primary:hover { background: #315fc6; }
-.btn:disabled { opacity: .6; cursor: not-allowed; }
+/* Bordas */
+.border { border: 1px solid #e2e8f0; }
+.border-slate-200 { border-color: #e2e8f0; }
+.border-t-0 { border-top-width: 0; }
+.border-x-0 { border-left-width: 0; border-right-width: 0; }
+.border-t { border-top-width: 1px; }
 
+/* Bordas arredondadas */
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-full { border-radius: 9999px; }
 
-/* ===== Lista de Respostas ===== */
-.respostas-lista { display: flex; flex-direction: column; gap: 16px; }
+/* Sombras */
+.shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+
+/* Layout */
+.mx-auto { margin-left: auto; margin-right: auto; }
+.max-w-7xl { max-width: 80rem; }
+
+/* Padding */
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+.pt-6 { padding-top: 1.5rem; }
+
+/* Gap */
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+
+/* Flexbox */
+.flex { display: flex; }
+.items-center { align-items: center; }
+
+/* Grid */
+.grid { display: grid; }
+.place-items-center { place-items: center; }
+
+/* Tamanhos */
+.h-5 { height: 1.25rem; }
+.h-8 { height: 2rem; }
+.h-9 { height: 2.25rem; }
+.w-5 { width: 1.25rem; }
+.w-8 { width: 2rem; }
+.w-9 { width: 2.25rem; }
+
+/* Tipografia */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+/* Miscelânea */
+.text-center { text-align: center; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.overflow-hidden { overflow: hidden; }
+
+/* Hovers */
+.hover\:bg-slate-100:hover { background: #f1f5f9; }
 
 /* ===== Card Destinatário ===== */
-.destinatario-card { background: #fff; border: 1px solid #e3edfb; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 4px rgba(18, 39, 76, 0.04); }
-
-.destinatario__header { display: flex; justify-content: space-between; align-items: center; padding: 16px; cursor: pointer; transition: background 0.2s; }
+.destinatario__header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 1rem 1.5rem; 
+  cursor: pointer; 
+  transition: background 0.2s; 
+}
 .destinatario__header:hover { background: #f9fbff; }
 
-.destinatario__info { display: flex; align-items: center; gap: 12px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 14px; }
-.destinatario__nome { font-weight: 600; color: #1f2d3d; font-size: 15px; }
-.destinatario__meta { font-size: 13px; color: #6b7a90; margin-top: 2px; }
+.destinatario__info { display: flex; align-items: center; gap: 0.75rem; }
+.avatar { 
+  width: 2.5rem; 
+  height: 2.5rem; 
+  border-radius: 50%; 
+  display: grid; 
+  place-items: center; 
+  color: #fff; 
+  font-weight: 600; 
+  font-size: 0.875rem; 
+}
+.destinatario__nome { font-weight: 600; color: #1e293b; font-size: 0.9375rem; }
+.destinatario__meta { font-size: 0.8125rem; color: #64748b; margin-top: 0.125rem; }
 
-.destinatario__actions { display: flex; align-items: center; gap: 12px; color: #6b7a90; }
-.respostas-count { font-size: 13px; font-weight: 500; }
-.chevron { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+.destinatario__actions { display: flex; align-items: center; gap: 0.75rem; color: #64748b; }
+.chevron { width: 1.25rem; height: 1.25rem; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Badges */
+.badge { 
+  display: inline-flex; 
+  align-items: center; 
+  padding: 0.25rem 0.75rem; 
+  border-radius: 0.375rem; 
+  font-size: 0.75rem; 
+  font-weight: 500; 
+  border: 1px solid;
+}
+.badge--blue { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+.badge--yellow { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+.badge--green { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+.badge--red { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.badge--muted { background: #f8fafc; color: #64748b; border-color: #e2e8f0; }
 
 /* ===== Lista de Perguntas ===== */
 .perguntas-lista { 
   border-top: 1px solid #e6effa; 
-  padding: 16px; 
+  padding: 1rem 1.5rem; 
   background: #fafcff; 
-  /* Remove o padding de baixo se for seguido pela revisão */
   padding-bottom: 0; 
 }
-/* Remove a margem da última pergunta dentro da lista */
 .perguntas-lista .pergunta-item:last-child {
    margin-bottom: 0;
 }
 
-.pergunta-item { background: #fff; border: 1px solid #e6effa; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.pergunta-item { 
+  background: #fff; 
+  border: 1px solid #e6effa; 
+  border-radius: 0.75rem; 
+  padding: 1rem; 
+  margin-bottom: 0.75rem; 
+}
 .pergunta-item:last-child { margin-bottom: 0; }
 
-.pergunta__header { display: flex; gap: 8px; margin-bottom: 8px; }
-.pergunta__numero { font-weight: 600; color: #3a6ce1; }
-.pergunta__texto { font-weight: 500; color: #1f2d3d; flex: 1; }
+.pergunta__header { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.pergunta__numero { font-weight: 600; color: #2563eb; }
+.pergunta__texto { font-weight: 500; color: #1e293b; flex: 1; }
 
-.pergunta__tipo { margin-bottom: 12px; }
-.tipo-badge { display: inline-block; background: #eef2f6; color: #64758b; font-size: 12px; padding: 4px 10px; border-radius: 6px; font-weight: 500; }
+.pergunta__tipo { margin-bottom: 0.75rem; }
+.tipo-badge { 
+  display: inline-block; 
+  background: #f1f5f9; 
+  color: #475569; 
+  font-size: 0.75rem; 
+  padding: 0.25rem 0.625rem; 
+  border-radius: 0.375rem; 
+  font-weight: 500; 
+}
 
 /* ===== Tipos de Resposta ===== */
-.resposta-box { background: #f3f8ff; border: 1px solid #e1ebfb; border-radius: 10px; padding: 12px; color: #27436b; line-height: 1.5; }
+.resposta-box { 
+  background: #f3f8ff; 
+  border: 1px solid #e1ebfb; 
+  border-radius: 0.625rem; 
+  padding: 0.75rem; 
+  color: #27436b; 
+  line-height: 1.5; 
+}
 
-.resposta-escolha { display: flex; flex-direction: column; gap: 10px; }
+.resposta-escolha { display: flex; flex-direction: column; gap: 0.625rem; }
 
-.resposta-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; width: fit-content; }
-.tag--correto { background: #e7fbef; color: #11a966; }
-.tag--incorreto { background: #feecef; color: #d33b53; }
-.tag__icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+.resposta-tag { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.375rem; 
+  padding: 0.25rem 0.625rem; 
+  border-radius: 0.375rem; 
+  font-size: 0.75rem; 
+  font-weight: 600; 
+  width: fit-content; 
+}
+.tag--correto { background: #f0fdf4; color: #16a34a; }
+.tag--incorreto { background: #fef2f2; color: #dc2626; }
+.tag__icon { width: 0.875rem; height: 0.875rem; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
-.resposta-valor { background: #f3f8ff; border: 1px solid #e1ebfb; border-radius: 10px; padding: 10px 12px; color: #27436b; }
+.resposta-valor { 
+  background: #f3f8ff; 
+  border: 1px solid #e1ebfb; 
+  border-radius: 0.625rem; 
+  padding: 0.625rem 0.75rem; 
+  color: #27436b; 
+}
 
-.resposta-opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
-.opcao-pill { background: #eef4ff; color: #5477d8; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1px solid #d6e4ff; }
+.resposta-escala { display: flex; flex-direction: column; gap: 0.5rem; }
+.escala-label { display: flex; align-items: baseline; gap: 0.25rem; font-weight: 600; color: #1e293b; }
+.escala-max { color: #64748b; font-size: 0.8125rem; }
+.escala-bar { height: 0.5rem; background: #e6effa; border-radius: 999px; overflow: hidden; }
+.escala-fill { 
+  height: 100%; 
+  background: linear-gradient(90deg, #2563eb, #3b82f6); 
+  border-radius: 999px; 
+  transition: width 0.3s; 
+}
 
-.resposta-esperada { font-size: 12px; color: #6b7a90; font-style: italic; }
-
-.resposta-escala { display: flex; flex-direction: column; gap: 8px; }
-.escala-label { display: flex; align-items: baseline; gap: 4px; font-weight: 600; color: #1f2d3d; }
-.escala-max { color: #6b7a90; font-size: 13px; }
-.escala-bar { height: 8px; background: #e6effa; border-radius: 999px; overflow: hidden; }
-.escala-fill { height: 100%; background: linear-gradient(90deg, #3a6ce1, #5477d8); border-radius: 999px; transition: width 0.3s; }
-
-.sem-respostas { padding: 32px 16px; text-align: center; color: #6b7a90; font-size: 14px; }
+.sem-respostas { 
+  padding: 2rem 1rem; 
+  text-align: center; 
+  color: #64748b; 
+  font-size: 0.875rem; 
+}
 
 /* ===== Bloco de Revisão ===== */
+.revisao-wrapper {
+  padding: 1rem 1.5rem;
+  background: #fafcff;
+}
+
+.perguntas-lista + .revisao-wrapper {
+  padding-top: 0; 
+}
+
+.sem-respostas + .revisao-wrapper {
+   border-top: 1px solid #e6effa;
+}
+
 .revisao-box {
   background-color: #f9fbff;
   border-top: 2px dashed #cfe0fb;
-  margin-top: 16px;
+  margin-top: 1rem;
 }
+
 .revisao-titulo {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  color: #1f2d3d;
-  margin-bottom: 16px;
+  color: #1e293b;
+  margin-bottom: 1rem;
 }
+
 .revisao-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
+
 .revisao-campo {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
 }
+
 .revisao-grid .revisao-campo {
   margin-bottom: 0;
 }
+
 .revisao-campo label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: #3a4b63;
+  color: #334155;
 }
+
 .revisao-input, .revisao-textarea, .revisao-campo select {
   width: 100%;
   padding: 0.625rem 1rem;
@@ -531,6 +675,7 @@ async function handleSalvarRevisao(destinatario) {
   -webkit-appearance: none;
   appearance: none;
 }
+
 .revisao-campo select {
    background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23334155%22 stroke-width=%222%22%3E%3Cpolyline points=%226 9 12 15 18 9%22%3E%3C/polyline%3E%3C/svg%3E');
    background-repeat: no-repeat;
@@ -538,62 +683,66 @@ async function handleSalvarRevisao(destinatario) {
    background-size: 1.25rem;
    padding-right: 2.5rem;
 }
+
 .revisao-input:focus, .revisao-textarea:focus, .revisao-campo select:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59,130,246,.3);
 }
+
 .revisao-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 5rem;
 }
 
 /* Box de revisão salva (read-only) */
 .revisao-box-salva {
     background-color: #f8fafc;
     border-top: 1px solid #e2e8f0;
-    margin-top: 16px;
+    margin-top: 1rem;
     color: #334155;
 }
+
 .revisao-texto {
-    font-size: 14px;
-    margin: 8px 0 0;
+    font-size: 0.875rem;
+    margin: 0.5rem 0 0;
     line-height: 1.5;
 }
- .revisao-texto strong {
+
+.revisao-texto strong {
     color: #1e293b;
- }
-.revisao-wrapper {
-  padding: 16px;
-  background: #fafcff; /* Mesmo fundo */
-  
-  /* Adiciona borda superior se NÃO for precedido pela lista de perguntas 
-     (caso de usuário PENDENTE ou sem respostas) - 
-     MAS nós já tratamos isso com v-if, então esse wrapper só aparece
-     com a lista. Vamos simplificar: */
 }
 
-.perguntas-lista + .revisao-wrapper {
-  padding-top: 0; 
+/* Botão */
+.btn { 
+  height: 2.5rem; 
+  padding: 0 1rem; 
+  border: 1px solid #e2e8f0; 
+  background: #fff; 
+  border-radius: 0.5rem; 
+  cursor: pointer; 
+  color: #1e293b; 
+  font-size: 0.875rem; 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0.5rem; 
+  font-weight: 500;
+  transition: background 0.2s;
 }
 
-.sem-respostas + .revisao-wrapper {
-   border-top: 1px solid #e6effa;
-}
-/* Badge Amarelo */
-.badge--yellow { background:#fffbeb; color:#b45309; border-color: #fde68a; }
+.btn:hover { background: #f8fafc; }
 
-/* Estilos de Loading/Erro (para v-if) */
-.text-center { text-align: center; }
-.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
-.text-slate-600 { color: #475569; }
-.text-red-600 { color: #dc2626; }
-.bg-red-50 { background: #fef2f2; }
-.rounded-lg { border-radius: 0.5rem; }
-.p-4 { padding: 1rem; }
+.btn--primary { 
+  background: #2563eb; 
+  color: #fff; 
+  border-color: #2563eb; 
+  font-weight: 600; 
+}
+
+.btn--primary:hover { background: #1d4ed8; }
+
+.btn:disabled { opacity: .6; cursor: not-allowed; }
 
 @media (max-width: 768px) {
-  .title__main { font-size: 16px; }
-  .btn--primary { padding: 0 12px; font-size: 13px; }
-  .revisao-grid { grid-template-columns: 1fr; } /* Coloca nota e status um sobre o outro em telas pequenas */
+  .revisao-grid { grid-template-columns: 1fr; }
 }
 </style>

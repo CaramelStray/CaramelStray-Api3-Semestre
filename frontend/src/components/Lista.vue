@@ -57,7 +57,7 @@
         </div>
         <div class="card__body">
           <div class="card__header">
-            <router-link :to="{ name: 'LiderVerPerfil', params: { id: c.id } }" class="emp-name-link">
+            <router-link :to="{ name: nomeRotaPerfil, params: { id: c.id } }" class="emp-name-link">
               <h3 class="emp-name">{{ c.name }}</h3>
             </router-link>
             <span v-if="c.badge" class="badge">{{ c.badge }}</span>
@@ -82,13 +82,17 @@
     </footer>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+// 1. Importamos o hook de autenticação para saber quem está logado
+import { useAuth } from '@/auth';
 
 const router = useRouter();
+
+// 2. Pegamos os dados do usuário atual
+const { usuarioLogado } = useAuth();
 
 const AVATAR_COLORS = [ "#e57373", "#f06292", "#ba68c8", "#9575cd", "#7986cb", "#64b5f6", "#4fc3f7", "#4dd0e1", "#4db6ac", "#81c784", "#aed581", "#dce775", "#fff176", "#ffd54f", "#ffb74d", "#ff8a65", "#a1887f", "#90a4ae" ];
 
@@ -103,6 +107,13 @@ const statuses = ref(["Ativo", "Férias", "Inativo"]);
 const collaborators = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(6);
+
+const nomeRotaPerfil = computed(() => {
+  if (usuarioLogado.value && usuarioLogado.value.perfilId === 2) {
+    return 'SupervisorVerPerfil';
+  }
+  return 'LiderVerPerfil';
+});
 
 const filtered = computed(() => {
   let list = collaborators.value.filter(c => {
@@ -141,37 +152,48 @@ const rangeEnd = computed(() => {
 watch([deptSelected, roleSelected, statusSelected, searchQuery, collaborators], () => { currentPage.value = 1; });
 watch(filtered, () => { if (currentPage.value > totalPages.value) { currentPage.value = totalPages.value; } });
 
-// ==============================================
-// CORREÇÃO FINAL AQUI: Usando 'id: dto.codigo'
-// ==============================================
 function mapToCollaborator(dto, index) {
-  console.log('API DTO:', dto); // Log extra para ver todos os dados recebidos
   return {
-    id: dto.codigo, // <-- CORRIGIDO AQUI (usa o campo 'codigo' da API)
+    id: dto.codigo,
     name: dto.nomeCompleto,
     role: dto.tituloProfissional || dto.nomePerfil || "Não Definido",
     department: dto.nomeArea || "Não Definido",
     email: dto.email,
     phone: dto.telefone,
-    status: "Ativo", // Assumindo 'Ativo', pode precisar ajustar com dados reais da API
+    status: "Ativo",
     badge: dto.nomePerfil || null,
     avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length]
   };
 }
-// ==============================================
 
 async function fetchData() {
   isLoading.value = true;
   try {
     const response = await axios.get("/api/funcionario");
-    const data = response.data;
-    collaborators.value = Array.isArray(data) ? data.map((dto, i) => mapToCollaborator(dto, i)) : [];
+    let rawData = response.data; // Pega todos os dados primeiro
 
-    // Log para confirmar que o mapeamento funcionou
-    console.log("Colaboradores Mapeados:", collaborators.value);
+    // === LÓGICA DE FILTRO DO SUPERVISOR ===
+    // Verifica se existe usuário logado e se o ID do perfil é 2 (Supervisor)
+    if (usuarioLogado.value && usuarioLogado.value.perfilId === 2) {
+      const areaDoSupervisor = usuarioLogado.value.nomeArea;
+
+      console.log(`🔒 Modo Supervisor Ativo. Filtrando por área: ${areaDoSupervisor}`);
+
+      if (areaDoSupervisor) {
+        // Mantém na lista APENAS quem é da mesma área do supervisor
+        rawData = rawData.filter(func => func.nomeArea === areaDoSupervisor);
+      }
+    }
+    // ======================================
+
+    collaborators.value = Array.isArray(rawData) ? rawData.map((dto, i) => mapToCollaborator(dto, i)) : [];
+
+    // Log para conferência
+    console.log(`Total de Colaboradores carregados: ${collaborators.value.length}`);
 
     depts.value = [...new Set(collaborators.value.map(c => c.department))].sort();
     roles.value = [...new Set(collaborators.value.map(c => c.role))].sort();
+
   } catch (error) {
     console.error("Falha ao buscar dados da API com Axios:", error);
     collaborators.value = [];
@@ -194,11 +216,9 @@ function normalize(str) {
 
 function prevPage() { if (currentPage.value > 1) currentPage.value--; }
 function nextPage() { if (currentPage.value < totalPages.value) currentPage.value++; }
-function handleVoltar() { router.go(-1); }
 
 onMounted(async () => { await fetchData(); });
 </script>
-
 
 <style scoped>
 /* Estilos anteriores mantidos */

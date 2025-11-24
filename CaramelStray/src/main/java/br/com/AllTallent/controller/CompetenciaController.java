@@ -28,16 +28,15 @@ public class CompetenciaController {
         this.competenciaRepository = competenciaRepository;
     }
 
-    // ✅ Listar todas as competências
+    
      @GetMapping
     public ResponseEntity<List<CompetenciaDTO>> listar() {
         List<CompetenciaDTO> dtos = competenciaRepository.findAll().stream()
-                .map(CompetenciaDTO::new) // Converte Competencia para CompetenciaDTO
+                .map(CompetenciaDTO::new) 
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
-    // ✅ Buscar uma competência por ID
     @GetMapping("/{id}")
     public ResponseEntity<Competencia> buscarPorId(@PathVariable Integer id) {
         return competenciaRepository.findById(id)
@@ -45,7 +44,6 @@ public class CompetenciaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Criar uma nova competência
     @PostMapping
     public ResponseEntity<Competencia> criar(@RequestBody Competencia nova) {
         if (competenciaRepository.existsByNomeIgnoreCase(nova.getNome())) {
@@ -55,7 +53,6 @@ public class CompetenciaController {
         return ResponseEntity.created(URI.create("/api/competencia/" + salva.getCodigo())).body(salva);
     }
 
-    // ✅ Atualizar competência existente
     @PutMapping("/{id}")
     public ResponseEntity<Competencia> atualizar(@PathVariable Integer id, @RequestBody Competencia atualizada) {
         return competenciaRepository.findById(id)
@@ -67,7 +64,6 @@ public class CompetenciaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✅ Deletar competência
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         if (!competenciaRepository.existsById(id)) {
