@@ -185,8 +185,58 @@ const fetchFuncionarioData = async () => {
 onMounted(fetchFuncionarioData);
 
 const podeEditarPerfil = computed(() => !!(usuarioLogado.value && funcionario.value && String(usuarioLogado.value.codigo) === String(funcionario.value.codigo)));
-const podeEditarCompetencias = computed(() => !!(usuarioLogado.value && funcionario.value && String(usuarioLogado.value.codigo) === String(funcionario.value.codigo))); // Simplificado, só o user edita por enquanto
-const navegarParaCompetencias = () => router.push({ name: 'ColaboradorCompetencias', params: { id: funcionario.value.codigo } });
+const podeEditarCompetencias = computed(() => {
+  // Segurança básica: dados carregados?
+  if (!usuarioLogado.value || !funcionario.value) return false;
+
+  const meuId = String(usuarioLogado.value.codigo);
+  const alvoId = String(funcionario.value.codigo);
+  const meuPerfil = usuarioLogado.value.perfilId;
+  const alvoPerfil = funcionario.value.perfilId; // Precisamos garantir que o backend manda isso
+
+  // 1. O próprio usuário SEMPRE pode editar o seu
+  if (meuId === alvoId) {
+    return true;
+  }
+
+  // 2. Diretor (Perfil 1) pode editar QUALQUER UM
+  if (meuPerfil === 1) {
+    return true;
+  }
+
+  // 3. Supervisor (Perfil 2)
+  if (meuPerfil === 2) {
+    // Regra: Mesma Área E o alvo tem que ser Colaborador (Perfil 3)
+    // Supervisor NÃO pode editar Diretor (1) nem Supervisor (2)
+    const mesmaArea = usuarioLogado.value.areaId === funcionario.value.areaId;
+    const alvoEhColaborador = alvoPerfil === 3; 
+    
+    return mesmaArea && alvoEhColaborador;
+  }
+
+  return false;
+});
+const navegarParaCompetencias = () => {
+  if (!usuarioLogado.value || !funcionario.value) return;
+
+  let nomeRota = 'ColaboradorCompetencias'; 
+
+  
+  if (usuarioLogado.value.perfilId === 1) {
+    nomeRota = 'LiderVerCompetencias';
+  } 
+  
+  else if (usuarioLogado.value.perfilId === 2) {
+    nomeRota = 'SupervisorVerCompetencias';
+  }
+  
+  
+
+  router.push({ 
+    name: nomeRota, 
+    params: { id: funcionario.value.codigo } 
+  });
+};
 const getInitials = (fullName) => { if (!fullName) return ''; const names = fullName.split(' '); const initials = names.length > 1 ? `${names[0][0]}${names[names.length - 1][0]}` : names[0].substring(0, 2); return initials.toUpperCase(); };
 const formatDate = (dateString) => { if (!dateString) return ''; return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' }); };
 const iniciarEdicaoResumo = () => { resumoEmEdicao.value = funcionario.value.resumo || ''; isEditingResumo.value = true; };
@@ -203,7 +253,57 @@ const salvarNovoCertificado = async () => { const nomeLimpo = novoCertificadoNom
 </script>
 
 <style scoped>
-/* Estilos adaptados sem Tailwind */
+/* Cores de Texto Forçadas para Contraste */
+.name, 
+.section-title, 
+.experience-title {
+  color: #1e293b !important; /* Azul escuro */
+}
+
+.title, 
+.detail-label, 
+.summary-text, 
+.experience-company, 
+.experience-dates,
+.no-data-message {
+  color: #64748b !important; /* Cinza médio */
+}
+
+.detail-value, 
+.experience-description, 
+.certificate-name, 
+.competency-item {
+  color: #334155 !important; /* Cinza escuro */
+}
+
+.email-link {
+  color: #0d9488 !important; /* Teal */
+}
+
+.summary-textarea, 
+.certificate-input {
+  color: #1e293b !important;
+  background-color: #ffffff !important;
+}
+
+/* Estilo do Botão Editar Link */
+.edit-link-button { 
+  border-radius: 0.375rem; 
+  padding: 0.25rem 0.75rem; 
+  font-size: 0.875rem; 
+  font-weight: 600; 
+  color: #fff !important; /* Força texto branco */
+  background-color: #0d9488; /* Teal */
+  border: none; 
+  cursor: pointer; 
+  transition: background-color 0.2s;
+}
+
+.edit-link-button:hover { 
+  background-color: #0f766e; /* Teal mais escuro */
+}
+
+/* Resto dos estilos do template original */
 :root { /* Fallback */
   --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --title: #1e293b; --subtitle: #64748b; --text-secondary: #334155; --text-tertiary: #475569;
