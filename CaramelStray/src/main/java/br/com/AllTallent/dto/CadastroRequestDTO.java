@@ -40,8 +40,13 @@ public class CadastroRequestDTO {
     @NotNull(message = "Cargo (código do perfil) é obrigatório")
     private Integer codigoPerfil; 
 
+    // --- NOVOS CAMPOS ---
+    @NotBlank(message = "CPF é obrigatório")
     private String cpf;
+    
     private String localizacao;
+    
     private String tituloProfissional;
-    private Integer codigoGestor;
+    
+    private Integer codigoGestor; // Opcional
 }
