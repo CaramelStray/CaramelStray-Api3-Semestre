@@ -2,15 +2,15 @@ package br.com.AllTallent.service;
 
 import java.util.stream.Collectors;
 import java.util.List;
-import br.com.AllTallent.dto.*; 
-import br.com.AllTallent.exception.ResourceNotFoundException; 
-import br.com.AllTallent.exception.UnauthorizedActionException; 
-import br.com.AllTallent.model.*; 
-import br.com.AllTallent.repository.*; 
+import br.com.AllTallent.dto.*;
+import br.com.AllTallent.exception.ResourceNotFoundException;
+import br.com.AllTallent.exception.UnauthorizedActionException;
+import br.com.AllTallent.model.*;
+import br.com.AllTallent.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.hibernate.Hibernate; 
+import org.hibernate.Hibernate;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,26 +20,26 @@ import java.util.Objects;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import br.com.AllTallent.config.CustomUserDetails; 
+import br.com.AllTallent.config.CustomUserDetails;
 
 @Service
 public class AvaliacaoService {
 
-    private final AvaliacaoRepository avaliacaoRepository; 
-    private final FuncionarioRepository funcionarioRepository; 
+    private final AvaliacaoRepository avaliacaoRepository;
+    private final FuncionarioRepository funcionarioRepository;
     private final PerguntaRepository perguntaRepository;
-    private final AvaliacaoFuncionarioRepository avaliacaoFuncionarioRepository; 
+    private final AvaliacaoFuncionarioRepository avaliacaoFuncionarioRepository;
     private final RespostaColaboradorRepository respostaColaboradorRepository;
     private final PerguntaOpcaoRepository perguntaOpcaoRepository;
 
     public AvaliacaoService(AvaliacaoRepository avaliacaoRepository,
-                            FuncionarioRepository funcionarioRepository, 
+                            FuncionarioRepository funcionarioRepository,
                             PerguntaRepository perguntaRepository,
                             AvaliacaoFuncionarioRepository avaliacaoFuncionarioRepository,
                             RespostaColaboradorRepository respostaColaboradorRepository,
                             PerguntaOpcaoRepository perguntaOpcaoRepository) {
         this.avaliacaoRepository = avaliacaoRepository;
-        this.funcionarioRepository = funcionarioRepository; 
+        this.funcionarioRepository = funcionarioRepository;
         this.perguntaRepository = perguntaRepository;
         this.avaliacaoFuncionarioRepository = avaliacaoFuncionarioRepository;
         this.respostaColaboradorRepository = respostaColaboradorRepository;
@@ -54,14 +54,14 @@ public class AvaliacaoService {
         }
         return (CustomUserDetails) authentication.getPrincipal();
     }
-    
+
     // --- Lógica de Permissão de Avaliação ---
     private boolean podeAvaliar(CustomUserDetails avaliador, Funcionario avaliado) {
         if (avaliador.getCodigo().equals(avaliado.getCodigo())) {
             return false;
         }
         if (avaliado.getPerfil() == null || avaliado.getArea() == null || avaliador.getAreaId() == null) {
-            return false; 
+            return false;
         }
         boolean mesmoSetor = avaliador.getAreaId().equals(avaliado.getArea().getCodigo());
         int perfilAlvoId = avaliado.getPerfil().getCodigo();
@@ -75,14 +75,14 @@ public class AvaliacaoService {
             boolean alvoEhTime = (perfilAlvoId == 2 || perfilAlvoId == 3);
             return mesmoSetor && alvoEhTime;
         }
-        return false; 
+        return false;
     }
 
     // --- Métodos de Serviço Atualizados ---
 
     @Transactional
     public AvaliacaoResponseDTO criarAvaliacaoCompleta(AvaliacaoRequestDTO dto) {
-        
+
         CustomUserDetails avaliadorLogado = getUsuarioLogado();
         Funcionario criador = funcionarioRepository.getReferenceById(avaliadorLogado.getCodigo());
 
@@ -90,7 +90,7 @@ public class AvaliacaoService {
         if (perguntas.size() != dto.codigosPerguntas().size()) {
             throw new EntityNotFoundException("Uma ou mais perguntas não foram encontradas.");
         }
-        
+
         List<Funcionario> funcionariosAlvo = funcionarioRepository.findAllById(dto.codigosFuncionarios());
         if (funcionariosAlvo.size() != dto.codigosFuncionarios().size()) {
             throw new EntityNotFoundException("Um ou mais funcionários não foram encontrados.");
@@ -106,6 +106,8 @@ public class AvaliacaoService {
         novaAvaliacao.setTitulo(dto.titulo());
         novaAvaliacao.setPerguntas(perguntas);
         novaAvaliacao.setCriador(criador); // <<< SALVA QUEM CRIOU
+        novaAvaliacao.setDataPrazo(dto.dataPrazo());
+
 
         Avaliacao avaliacaoSalva = avaliacaoRepository.save(novaAvaliacao);
 
@@ -116,20 +118,20 @@ public class AvaliacaoService {
 
         return new AvaliacaoResponseDTO(avaliacaoSalva);
     }
-    
+
     // --- MÉTODO ATUALIZADO ---
     @Transactional(readOnly = true)
     public List<AvaliacaoResponseDTO> listarTodasAvaliacoes() {
         CustomUserDetails usuarioLogado = getUsuarioLogado();
         List<Avaliacao> todasAvaliacoes = avaliacaoRepository.findAll();
-        
+
         // Regra do Perfil 1 (Diretor)
         if (usuarioLogado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
             return todasAvaliacoes.stream()
                 // 1. Filtra avaliações sem criador (antigas)
-                .filter(aval -> aval.getCriador() != null) 
+                .filter(aval -> aval.getCriador() != null)
                 // 2. Filtra avaliações da mesma área do Diretor
-                .filter(aval -> aval.getCriador().getArea() != null && 
+                .filter(aval -> aval.getCriador().getArea() != null &&
                                 Objects.equals(aval.getCriador().getArea().getCodigo(), usuarioLogado.getAreaId()))
                 .map(AvaliacaoResponseDTO::new)
                 .collect(Collectors.toList());
@@ -141,7 +143,7 @@ public class AvaliacaoService {
                 // 1. Filtra avaliações sem criador (antigas)
                 .filter(aval -> aval.getCriador() != null)
                 // 2. Filtra avaliações da mesma área
-                .filter(aval -> aval.getCriador().getArea() != null && 
+                .filter(aval -> aval.getCriador().getArea() != null &&
                                 Objects.equals(aval.getCriador().getArea().getCodigo(), usuarioLogado.getAreaId()))
                 // 3. Filtra para ver APENAS as que ele mesmo criou
                 .filter(aval -> Objects.equals(aval.getCriador().getCodigo(), usuarioLogado.getCodigo()))
@@ -155,7 +157,7 @@ public class AvaliacaoService {
 
     // --- MÉTODO ATUALIZADO ---
     @Transactional(readOnly = true)
-    public AvaliacaoDetalhadaDTO buscarAvaliacaoDetalhada(Integer id) { 
+    public AvaliacaoDetalhadaDTO buscarAvaliacaoDetalhada(Integer id) {
         CustomUserDetails usuarioLogado = getUsuarioLogado();
         Avaliacao avaliacao = avaliacaoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Avaliação não encontrada: " + id));
@@ -164,10 +166,10 @@ public class AvaliacaoService {
         validarPermissaoDeAcesso(usuarioLogado, avaliacao);
 
         Hibernate.initialize(avaliacao.getPerguntas());
-        avaliacao.getPerguntas().forEach(p -> Hibernate.initialize(p.getOpcoes())); 
+        avaliacao.getPerguntas().forEach(p -> Hibernate.initialize(p.getOpcoes()));
         Hibernate.initialize(avaliacao.getInstanciasAvaliacao());
-        
-        return new AvaliacaoDetalhadaDTO(avaliacao); 
+
+        return new AvaliacaoDetalhadaDTO(avaliacao);
     }
 
     // --- MÉTODO ATUALIZADO ---
@@ -176,7 +178,7 @@ public class AvaliacaoService {
         CustomUserDetails usuarioLogado = getUsuarioLogado();
         Avaliacao avaliacao = avaliacaoRepository.findById(avaliacaoId)
              .orElseThrow(() -> new EntityNotFoundException("Avaliação base não encontrada: " + avaliacaoId));
-        
+
         // Validação de Segurança
         validarPermissaoDeAcesso(usuarioLogado, avaliacao);
 
@@ -220,21 +222,21 @@ public class AvaliacaoService {
         // Se for Supervisor (GESTOR), verifica se ele é o criador
         if (usuarioLogado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_GESTOR")) &&
             !usuarioLogado.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            
+
             if (!Objects.equals(criadorAvaliacaoId, usuarioLogadoId)) {
                 throw new UnauthorizedActionException("Permissão negada. Supervisores só podem ver avaliações que eles mesmos criaram.");
             }
         }
-        
+
         // Se for Admin da mesma área, passa.
         // (A validação de mesma área já foi feita acima)
     }
 
 
-    // (Métodos salvarOuAtualizarResposta, salvarRevisaoSupervisor, buscarParaResponder, 
-    // finalizarPeloColaborador, buscarPendentesPorFuncionario e buscarParaRevisao 
+    // (Métodos salvarOuAtualizarResposta, salvarRevisaoSupervisor, buscarParaResponder,
+    // finalizarPeloColaborador, buscarPendentesPorFuncionario e buscarParaRevisao
     // JÁ ESTÃO SEGUROS e permanecem iguais)
-    
+
     @Transactional
     public RespostaColaboradorResponseDTO salvarOuAtualizarResposta(RespostaColaboradorRequestDTO dto) {
         CustomUserDetails usuarioLogado = getUsuarioLogado();
@@ -263,7 +265,7 @@ public class AvaliacaoService {
         RespostaColaborador respostaSalva = respostaColaboradorRepository.save(resposta);
         return new RespostaColaboradorResponseDTO(respostaSalva);
     }
-    
+
     @Transactional
     public AvaliacaoFuncionarioResponseDTO salvarRevisaoSupervisor(Long instanciaId, RevisaoSupervisorRequestDTO dto) {
         CustomUserDetails avaliadorLogado = getUsuarioLogado();
@@ -273,13 +275,13 @@ public class AvaliacaoService {
              throw new UnauthorizedActionException("Permissão negada. Você não pode revisar esta avaliação.");
         }
         instancia.setComentarioSupervisao(dto.comentarioSupervisao());
-        instancia.setComentarioColaborador(dto.comentarioParaColaborador()); 
+        instancia.setComentarioColaborador(dto.comentarioParaColaborador());
         instancia.setNota(dto.nota());
         instancia.setResultadoStatus(dto.resultadoStatus());
         AvaliacaoFuncionario instanciaSalva = avaliacaoFuncionarioRepository.save(instancia);
         return new AvaliacaoFuncionarioResponseDTO(instanciaSalva);
     }
-    
+
     @Transactional(readOnly = true)
     public AvaliacaoParaResponderDTO buscarParaResponder(Long instanciaId) {
         CustomUserDetails usuarioLogado = getUsuarioLogado();
@@ -306,21 +308,21 @@ public class AvaliacaoService {
             throw new UnauthorizedActionException("Permissão negada. Você só pode finalizar suas próprias avaliações.");
         }
          if ("PENDENTE".equals(instancia.getResultadoStatus())) {
-              instancia.setResultadoStatus("AGUARDANDO_REVISAO"); 
+              instancia.setResultadoStatus("AGUARDANDO_REVISAO");
               avaliacaoFuncionarioRepository.save(instancia);
          } else {
               throw new IllegalStateException("Avaliação não pode ser finalizada pois não está pendente. Status atual: " + instancia.getResultadoStatus());
          }
     }
-    
+
     @Transactional(readOnly = true)
     public List<AvaliacaoFuncionarioResponseDTO> buscarPendentesPorFuncionario(Integer funcionarioId) {
         return avaliacaoFuncionarioRepository.findByFuncionarioCodigo(funcionarioId).stream()
-               .filter(af -> "PENDENTE".equals(af.getResultadoStatus())) 
+               .filter(af -> "PENDENTE".equals(af.getResultadoStatus()))
                .map(AvaliacaoFuncionarioResponseDTO::new)
                .collect(Collectors.toList());
     }
-    
+
      @Transactional(readOnly = true)
      public AvaliacaoRevisaoDTO buscarParaRevisao(Long instanciaId) {
         // Validação de segurança já ocorre em salvarRevisaoSupervisor,
@@ -329,18 +331,18 @@ public class AvaliacaoService {
             .orElseThrow(() -> new EntityNotFoundException("Instância de avaliação não encontrada: " + instanciaId));
          Hibernate.initialize(instancia.getFuncionario());
          Avaliacao avaliacaoBase = instancia.getAvaliacao();
-         Hibernate.initialize(avaliacaoBase); 
+         Hibernate.initialize(avaliacaoBase);
          Hibernate.initialize(avaliacaoBase.getPerguntas());
          avaliacaoBase.getPerguntas().forEach(p -> Hibernate.initialize(p.getOpcoes()));
          Hibernate.initialize(instancia.getRespostas());
-         instancia.getRespostas().forEach(r -> Hibernate.initialize(r.getOpcaoSelecionada())); 
+         instancia.getRespostas().forEach(r -> Hibernate.initialize(r.getOpcaoSelecionada()));
          return new AvaliacaoRevisaoDTO(instancia, avaliacaoBase);
      }
 
     // --- MÉTODO CORRIGIDO PARA A REVISÃO DO SUPERVISOR ---
     @Transactional(readOnly = true)
     public List<RevisaoDetalhadaDTO> buscarDadosRevisao(Long codigoAvaliacaoFuncionario) {
-        
+
         // 1. Verifica se a avaliação existe
         if (!avaliacaoFuncionarioRepository.existsById(codigoAvaliacaoFuncionario)) {
             throw new EntityNotFoundException("Avaliação de funcionário não encontrada com id: " + codigoAvaliacaoFuncionario);
@@ -360,11 +362,11 @@ public class AvaliacaoService {
             return RevisaoDetalhadaDTO.builder()
                 .perguntaId(resp.getPergunta().getCodigo())
                 .perguntaTexto(resp.getPergunta().getPergunta())
-                .respostaDada(resp.getRespostaTexto()) 
+                .respostaDada(resp.getRespostaTexto())
                 .opcaoSelecionadaId(idOpcao) // Usa a variável que calculamos acima
                 .build();
         }).collect(Collectors.toList());
     }
 
-     
+
 }

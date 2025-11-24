@@ -735,7 +735,7 @@ const handleCriarAvaliacao = async () => {
       titulo: tituloAvaliacao.value.trim(),
       codigosFuncionarios,
       codigosPerguntas: codigosPerguntasSalvas,
-      dataLimite: dataLimite.value
+      dataPrazo: new Date(dataLimite.value).toISOString()
     };
 
     const responseAvaliacao = await axios.post('http://localhost:8080/api/avaliacoes', payloadAvaliacao);

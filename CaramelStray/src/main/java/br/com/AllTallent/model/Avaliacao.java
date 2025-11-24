@@ -1,5 +1,6 @@
 package br.com.AllTallent.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +51,7 @@ public class Avaliacao {
     private LocalDate dataCriacao;
 
     @Column(name = "data_prazo")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dataPrazo;
 
     @ManyToOne(fetch = FetchType.LAZY)
