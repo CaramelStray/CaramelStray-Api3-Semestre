@@ -314,22 +314,20 @@ const handleSubmit = async () => {
   loading.value = true;
 
   try {
-    // Monta o payload SÓ COM O QUE O CadastroRequestDTO (Backend) espera
     const payload = {
       nomeCompleto: formData.nomeCompleto,
       email: formData.email,
-      senha: formData.senhaInicial, // Mapeado de 'senhaInicial' para 'senha'
+      senha: formData.senhaInicial, 
       idCracha: formData.idCracha,
-      codigoArea: formData.codigoArea,     // Mapeado do novo v-model de dropdown
-      codigoPerfil: formData.codigoPerfil, // Mapeado do novo v-model de dropdown
-
-      // Campos opcionais (enviamos null se estiverem vazios)
+      codigoArea: formData.codigoArea,  
+      codigoPerfil: formData.codigoPerfil,
       telefone: formData.telefone || null,
       dataAdmissao: formData.dataAdmissao || null,
-      resumo: formData.observacoes || null // Mapeado de 'observacoes' para 'resumo'
-
-      // Note que 'cpf', 'localizacao', 'tituloProfissional', 'codigoGestor'
-      // são ignorados aqui, pois o DTO não os espera. O formulário não muda.
+      resumo: formData.observacoes || null,
+      cpf: formData.cpf,
+      tituloProfissional: formData.tituloProfissional || null,
+      localizacao: formData.localizacao || null,
+      codigoGestor: formData.codigoGestor ? parseInt(formData.codigoGestor) : null
     };
 
     // 5. CHAMA A URL CORRETA (/api/auth/register)
