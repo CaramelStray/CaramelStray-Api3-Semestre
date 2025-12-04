@@ -30,7 +30,7 @@ export function useAuth() {
       const usuario = await carregarUsuarioLogado(userId);
 
       // === AQUI ESTÁ A MUDANÇA DE ROTA ===
-      if (usuario.perfilId === 1) {
+      if (usuario.perfilId === 1 ) {
         // Diretor
         router.push({ name: 'LiderInicio' });
       } else if (usuario.perfilId === 2) {

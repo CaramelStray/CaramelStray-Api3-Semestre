@@ -184,16 +184,16 @@ async function fetchData() {
 
     // === LÓGICA DE FILTRO DO SUPERVISOR ===
     // Verifica se existe usuário logado e se o ID do perfil é 2 (Supervisor)
-    if (usuarioLogado.value && usuarioLogado.value.perfilId === 2) {
-      const areaDoSupervisor = usuarioLogado.value.nomeArea;
+    //if (usuarioLogado.value && usuarioLogado.value.perfilId === 2) {
+     // const areaDoSupervisor = usuarioLogado.value.nomeArea;
 
-      console.log(`🔒 Modo Supervisor Ativo. Filtrando por área: ${areaDoSupervisor}`);
+     // console.log(`🔒 Modo Supervisor Ativo. Filtrando por área: ${areaDoSupervisor}`);
 
-      if (areaDoSupervisor) {
+    //  if (areaDoSupervisor) {
         // Mantém na lista APENAS quem é da mesma área do supervisor
-        rawData = rawData.filter(func => func.nomeArea === areaDoSupervisor);
-      }
-    }
+    //    rawData = rawData.filter(func => func.nomeArea === areaDoSupervisor);
+    //  }
+   // }
     // ======================================
 
     collaborators.value = Array.isArray(rawData) ? rawData.map((dto, i) => mapToCollaborator(dto, i)) : [];

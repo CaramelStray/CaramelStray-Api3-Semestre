@@ -13,8 +13,8 @@
     <div class="sidebar__user" v-if="usuarioLogado">
       <div class="user-avatar">{{ getInitials(usuarioLogado.nomeCompleto) }}</div>
       <div class="user-info">
-        <div class="user-name">{{ usuarioLogado.nomeCompleto }}</div>
-        <div class="user-email">{{ usuarioLogado.email }}</div>
+        <div class="user-name">{{ cargoFormatado }}</div>
+        <div class="user-email">{{ emailFormatado }}</div>
       </div>
     </div>
 
@@ -52,7 +52,7 @@ const { usuarioLogado, logout } = useAuth();
 const getInitials = (fullName) => {
   if (!fullName) return '?';
   const names = fullName.trim().split(' ');
-  const initials = names.length > 1 
+  const initials = names.length > 1
     ? `${names[0][0]}${names[names.length - 1][0]}`
     : names[0].substring(0, 2);
   return initials.toUpperCase();
