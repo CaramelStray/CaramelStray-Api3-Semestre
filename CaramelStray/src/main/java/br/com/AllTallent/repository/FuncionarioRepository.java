@@ -13,9 +13,9 @@ import br.com.AllTallent.dto.CompetenciaQuantidadeDTO; // Novo do Git
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
-    
+
     @Query("SELECT f FROM Funcionario f LEFT JOIN FETCH f.area LEFT JOIN FETCH f.perfil WHERE f.codigo = :id")
-    Optional<Funcionario> findByIdCompleto(@Param("id") Integer id); 
+    Optional<Funcionario> findByIdCompleto(@Param("id") Integer id);
 
     Optional<Funcionario> findByEmail(String email);
 
@@ -59,4 +59,21 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
         ORDER BY COUNT(c) DESC
     """)
     List<CompetenciaQuantidadeDTO> countFuncionariosPorCompetencia();
+
+    @Query("""
+    SELECT DISTINCT f
+    FROM Funcionario f
+    LEFT JOIN f.area a
+    LEFT JOIN f.perfil p
+    LEFT JOIN f.competencias c
+    WHERE
+        LOWER(f.nomeCompleto) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(f.email) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(a.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(p.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(c.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+""")
+    List<Funcionario> buscarPorTexto(@Param("texto") String texto);
+
+
 }

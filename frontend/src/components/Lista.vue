@@ -122,13 +122,22 @@ const filtered = computed(() => {
     const okStatus = statusSelected.value ? c.status === statusSelected.value : true;
     return okDept && okRole && okStatus;
   });
-  const q = normalize(searchQuery.value);
-  if (!q) return list;
-  return list.filter(c => {
-    const haystack = [ c.name, c.role, c.department, c.email, c.phone ].map(normalize).join(" ");
-    return haystack.includes(q);
-  });
+
+  const textoLower = normalize(searchQuery.value);
+  if (!textoLower) return list;
+
+  return list.filter(c =>
+    normalize(c.name)?.includes(textoLower) ||
+    normalize(c.email)?.includes(textoLower) ||
+    normalize(c.department)?.includes(textoLower) ||
+    normalize(c.role)?.includes(textoLower) ||
+    normalize(c.badge)?.includes(textoLower) ||      // nome do perfil
+    c.competencias?.some(comp =>
+      normalize(comp.nome).includes(textoLower)
+    )
+  );
 });
+
 
 const totalPages = computed(() => {
   const t = Math.ceil(filtered.value.length / pageSize.value);
@@ -162,7 +171,8 @@ function mapToCollaborator(dto, index) {
     phone: dto.telefone,
     status: "Ativo",
     badge: dto.nomePerfil || null,
-    avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length]
+    avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+    competencias: dto.competencias || []
   };
 }
 
