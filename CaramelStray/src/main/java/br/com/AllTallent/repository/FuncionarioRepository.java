@@ -59,4 +59,20 @@ public interface FuncionarioRepository extends JpaRepository<Funcionario, Intege
         ORDER BY COUNT(c) DESC
     """)
     List<CompetenciaQuantidadeDTO> countFuncionariosPorCompetencia();
+
+    @Query("""
+    SELECT DISTINCT f
+    FROM Funcionario f
+    LEFT JOIN f.area a
+    LEFT JOIN f.perfil p
+    LEFT JOIN f.competencias c
+    WHERE
+        LOWER(f.nomeCompleto) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(f.email) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(a.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(p.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+        OR LOWER(c.nome) LIKE LOWER(CONCAT('%', :texto, '%'))
+""")
+    List<Funcionario> buscarPorTexto(@Param("texto") String texto);
+
 }
