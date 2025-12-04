@@ -277,7 +277,7 @@ async function loadCompetencias() {
       nome: comp.nome,
       descricao: comp.descricao || `Detalhe da competência: ${comp.nome}`,
       // categoria fake baseada no id (como já estava no seu código)
-      categoria: categorias[comp.id % categorias.length] || 'Outros',
+      categoria: comp.categoria || 'Outros',
       extras: []
     }))
     all.value = allCompetencias
